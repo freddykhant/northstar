@@ -17,6 +17,7 @@ export const createTable = pgTableCreator((name) => `northstar_${name}`);
 
 export const categories = createTable("category", (d) => ({
   id: d.varchar({ length: 50 }).primaryKey(), // 'mind', 'body', 'soul'
+  name: d.varchar({ length: 100 }).notNull(),
   color: d.varchar({ length: 50 }).notNull(), // 'blue', 'red', 'purple'
   createdAt: d
     .timestamp({ withTimezone: true })
@@ -131,6 +132,8 @@ export const users = createTable("user", (d) => ({
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
+  habits: many(habits),
+  completions: many(completions),
 }));
 
 export const accounts = createTable(
