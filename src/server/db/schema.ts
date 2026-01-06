@@ -81,6 +81,35 @@ export const completions = createTable(
   ],
 );
 
+// app schema relations
+
+export const categoriesRelations = relations(categories, ({ many }) => ({
+  habits: many(habits),
+}));
+
+export const habitsRelations = relations(habits, ({ one, many }) => ({
+  user: one(users, {
+    fields: [habits.userId],
+    references: [users.id],
+  }),
+  category: one(categories, {
+    fields: [habits.categoryId],
+    references: [categories.id],
+  }),
+  completions: many(completions),
+}));
+
+export const completionsRelations = relations(completions, ({ one }) => ({
+  habit: one(habits, {
+    fields: [completions.habitId],
+    references: [habits.id],
+  }),
+  user: one(users, {
+    fields: [completions.userId],
+    references: [users.id],
+  }),
+}));
+
 // auth related schemas
 
 export const users = createTable("user", (d) => ({
@@ -127,6 +156,8 @@ export const accounts = createTable(
     index("account_user_id_idx").on(t.userId),
   ],
 );
+
+// auth relations
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
   user: one(users, { fields: [accounts.userId], references: [users.id] }),
