@@ -13,14 +13,39 @@ export const createTable = pgTableCreator((name) => `northstar_${name}`);
 
 export const categories = createTable("category", (d) => ({
   id: d.varchar({ length: 50 }).primaryKey(), // 'mind', 'body', 'soul'
-  name: d.varchar({ length: 100 }).notNull(),
   color: d.varchar({ length: 50 }).notNull(), // 'blue', 'red', 'purple'
-  description: d.text(),
   createdAt: d
     .timestamp({ withTimezone: true })
     .$defaultFn(() => new Date())
     .notNull(),
 }));
+
+export const habits = createTable(
+  "habit",
+  (d) => ({
+    id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+    userId: d
+      .varchar({ length: 255 })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    categoryId: d
+      .varchar({ length: 50 })
+      .notNull()
+      .references(() => categories.id),
+    name: d.varchar({ length: 256 }).notNull(),
+    description: d.text(),
+    isActive: d.boolean().default(true).notNull(), // soft delete
+    createdAt: d
+      .timestamp({ withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
+  }),
+  (t) => [
+    index("habit_user_id_idx").on(t.userId),
+    index("habit_category_id_idx").on(t.categoryId),
+  ],
+);
 
 // auth related schemas
 
