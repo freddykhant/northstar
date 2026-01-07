@@ -50,14 +50,21 @@ export const authConfig = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
+
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        // properly validate and type the credentials
+        const { email, password } = credentials as {
+          email: string;
+          password: string;
+        };
+
+        if (!email || !password) {
           return null;
         }
 
         // find user by email
         const user = await db.query.users.findFirst({
-          where: (users, { eq }) => eq(users.email, credentials.email),
+          where: (users, { eq }) => eq(users.email, email),
         });
 
         if (!user || !user.password) {
@@ -65,10 +72,7 @@ export const authConfig = {
         }
 
         // verify password
-        const isValid = await bcrypt.compare(
-          credentials.password,
-          user.password,
-        );
+        const isValid = await bcrypt.compare(password, user.password);
 
         if (!isValid) {
           return null;
