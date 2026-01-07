@@ -67,6 +67,7 @@ export const habitRouter = createTRPCRouter({
         id: z.number(),
         name: z.string().min(1).max(256),
         description: z.string().optional(),
+        categoryId: z.enum(["mind", "body", "soul"]).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -77,6 +78,7 @@ export const habitRouter = createTRPCRouter({
         .set({
           name: input.name,
           description: input.description,
+          ...(input.categoryId && { categoryId: input.categoryId }),
         })
         .where(eq(habits.id, input.id))
         .returning();
