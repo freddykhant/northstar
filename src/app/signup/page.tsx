@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "~/trpc/react";
+import { PanelLeftOpen } from "lucide-react";
 
 export default function SignUpPage() {
   const router = useRouter();
