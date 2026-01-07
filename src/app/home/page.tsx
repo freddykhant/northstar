@@ -4,6 +4,8 @@ import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { api } from "~/trpc/react";
+import Link from "next/link";
+import { Settings } from "lucide-react";
 
 export default function HomePage() {
   const { data: session, status } = useSession();
@@ -104,12 +106,21 @@ export default function HomePage() {
             <h1 className="mb-1 text-3xl font-bold text-white">Northstar</h1>
             <p className="text-sm text-zinc-400">{formatDate(today!)}</p>
           </div>
-          <button
-            onClick={handleSignOut}
-            className="rounded-lg bg-zinc-800 px-4 py-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-700"
-          >
-            Sign Out
-          </button>
+          <div className="flex gap-3">
+            <Link
+              href="/habits"
+              className="flex items-center gap-2 rounded-lg bg-zinc-800 px-4 py-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-700"
+            >
+              <Settings className="h-4 w-4" />
+              Manage Habits
+            </Link>
+            <button
+              onClick={handleSignOut}
+              className="rounded-lg bg-zinc-800 px-4 py-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-700"
+            >
+              Sign Out
+            </button>
+          </div>
         </div>
 
         {/* Stats Summary */}
@@ -192,9 +203,12 @@ export default function HomePage() {
           })}
         </div>
 
-        {/* Empty State */}
-        {habitsWithStatus?.length === 0 && (
-          <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-12 text-center backdrop-blur-sm">
+        {/* ELink
+              href="/habits"
+              className="inline-block rounded-lg bg-white px-6 py-3 font-semibold text-black transition-colors hover:bg-zinc-200"
+            >
+              Create Habit
+            </LinkName="rounded-lg border border-zinc-800 bg-zinc-900/50 p-12 text-center backdrop-blur-sm">
             <h2 className="mb-2 text-xl font-semibold text-white">
               No habits yet
             </h2>
