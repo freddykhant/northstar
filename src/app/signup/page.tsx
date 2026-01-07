@@ -10,7 +10,8 @@ export default function SignUpPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -42,13 +43,13 @@ export default function SignUpPage() {
     setError("");
     setIsLoading(true);
 
-    if (!email || !password) {
+    if (!email || !password || !firstName || !lastName) {
       setError("Please fill in all fields");
       setIsLoading(false);
       return;
     }
 
-    signUpMutation.mutate({ email, password, name: name || undefined });
+    signUpMutation.mutate({ email, password, firstName, lastName });
   };
 
   const handleGoogleSignIn = () => {
@@ -73,18 +74,36 @@ export default function SignUpPage() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name Input */}
-          <div>
-            <label className="mb-2 block text-sm text-zinc-300">
-              Name (optional)
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Your name"
-              className="w-full rounded-xl border border-zinc-700 bg-zinc-800/50 px-4 py-3 text-white placeholder-zinc-500 focus:border-zinc-600 focus:outline-none"
-            />
+          {/* First Name Input */}
+          <div className="flex flex-1 justify-between gap-8">
+            <div>
+              <label className="mb-2 block text-sm text-zinc-300">
+                First Name
+              </label>
+              <input
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="John"
+                required
+                className="w-full rounded-xl border border-zinc-700 bg-zinc-800/50 px-4 py-3 text-white placeholder-zinc-500 focus:border-zinc-600 focus:outline-none"
+              />
+            </div>
+
+            {/* Last Name Input */}
+            <div>
+              <label className="mb-2 block text-sm text-zinc-300">
+                Last Name
+              </label>
+              <input
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Doe"
+                required
+                className="w-full rounded-xl border border-zinc-700 bg-zinc-800/50 px-4 py-3 text-white placeholder-zinc-500 focus:border-zinc-600 focus:outline-none"
+              />
+            </div>
           </div>
 
           {/* Email Input */}
@@ -95,6 +114,7 @@ export default function SignUpPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@email.com"
+              required
               className="w-full rounded-xl border border-zinc-700 bg-zinc-800/50 px-4 py-3 text-white placeholder-zinc-500 focus:border-zinc-600 focus:outline-none"
             />
           </div>
