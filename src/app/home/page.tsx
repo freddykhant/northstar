@@ -1,11 +1,11 @@
 "use client";
 
+import { Settings } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { api } from "~/trpc/react";
-import Link from "next/link";
-import { Settings } from "lucide-react";
 
 export default function HomePage() {
   const { data: session, status } = useSession();
@@ -34,6 +34,23 @@ export default function HomePage() {
     },
   });
 
+  // Group habits by category
+  const habitsByCategory = useMemo(() => {
+    if (!habitsWithStatus) return { mind: [], body: [], soul: [] };
+
+    return habitsWithStatus.reduce(
+      (acc, habit) => {
+        const categoryId = habit.category.id as "mind" | "body" | "soul";
+        acc[categoryId].push(habit);
+        return acc;
+      },
+      { mind: [], body: [], soul: [] } as Record<
+        "mind" | "body" | "soul",
+        typeof habitsWithStatus
+      >,
+    );
+  }, [habitsWithStatus]);
+
   // authentication check
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -41,6 +58,7 @@ export default function HomePage() {
     }
   }, [status, router]);
 
+  // Conditional returns AFTER all hooks
   if (status === "loading") {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-[#0a0a0a] text-white">
@@ -60,23 +78,6 @@ export default function HomePage() {
   const handleToggle = (habitId: number) => {
     toggleMutation.mutate({ habitId, date: today! });
   };
-
-  // Group habits by category
-  const habitsByCategory = useMemo(() => {
-    if (!habitsWithStatus) return { mind: [], body: [], soul: [] };
-
-    return habitsWithStatus.reduce(
-      (acc, habit) => {
-        const categoryId = habit.category.id as "mind" | "body" | "soul";
-        acc[categoryId].push(habit);
-        return acc;
-      },
-      { mind: [], body: [], soul: [] } as Record<
-        "mind" | "body" | "soul",
-        typeof habitsWithStatus
-      >,
-    );
-  }, [habitsWithStatus]);
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr + "T00:00:00");
@@ -203,21 +204,21 @@ export default function HomePage() {
           })}
         </div>
 
-        {/* ELink
-              href="/habits"
-              className="inline-block rounded-lg bg-white px-6 py-3 font-semibold text-black transition-colors hover:bg-zinc-200"
-            >
-              Create Habit
-            </LinkName="rounded-lg border border-zinc-800 bg-zinc-900/50 p-12 text-center backdrop-blur-sm">
+        {/* Empty State */}
+        {habitsWithStatus?.length === 0 && (
+          <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-12 text-center backdrop-blur-sm">
             <h2 className="mb-2 text-xl font-semibold text-white">
               No habits yet
             </h2>
             <p className="mb-6 text-zinc-400">
               Create your first habit to start tracking your progress
             </p>
-            <button className="rounded-lg bg-white px-6 py-3 font-semibold text-black transition-colors hover:bg-zinc-200">
+            <Link
+              href="/habits"
+              className="inline-block rounded-lg bg-white px-6 py-3 font-semibold text-black transition-colors hover:bg-zinc-200"
+            >
               Create Habit
-            </button>
+            </Link>
           </div>
         )}
       </div>
