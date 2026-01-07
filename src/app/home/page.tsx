@@ -18,9 +18,7 @@ export default async function HomePage() {
         <p className="text-zinc-400">
           You&apos;re successfully logged in to Northstar.
         </p>
-        <p className="mt-4 text-sm text-zinc-500">
-          Dashboard coming soon...
-        </p>
+        <p className="mt-4 text-sm text-zinc-500">Dashboard coming soon...</p>
       </div>
     </main>
   );
