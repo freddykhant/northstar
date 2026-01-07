@@ -42,7 +42,7 @@ export default function HomePage() {
         </p>
         <button
           onClick={handleSignOut}
-          className="w-full rounded-xl bg-white py-3.5 font-medium text-black transition-all hover:bg-zinc-200 disabled:opacity-50"
+          className="w-full rounded-3xl bg-white py-3.5 font-medium text-black transition-all hover:bg-zinc-200 disabled:opacity-50"
         >
           Sign Out
         </button>
