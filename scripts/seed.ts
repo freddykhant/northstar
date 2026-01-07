@@ -1,7 +1,17 @@
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import { env } from "../src/env.js";
-import { pgTable, varchar, integer, text, boolean, timestamp, date, uniqueIndex, index } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  varchar,
+  integer,
+  text,
+  boolean,
+  timestamp,
+  date,
+  uniqueIndex,
+  index,
+} from "drizzle-orm/pg-core";
 
 // Define tables inline to avoid NextAuth import issues
 const createTable = (name: string) => `northstar_${name}`;
@@ -44,10 +54,15 @@ async function seed() {
 
   try {
     // Get a user from the database (we need an actual user ID)
-    const [existingUser] = await db.select({ id: users.id }).from(users).limit(1);
-    
+    const [existingUser] = await db
+      .select({ id: users.id })
+      .from(users)
+      .limit(1);
+
     if (!existingUser) {
-      console.error("❌ No users found in database. Please sign up first before seeding.");
+      console.error(
+        "❌ No users found in database. Please sign up first before seeding.",
+      );
       process.exit(1);
     }
 
@@ -56,50 +71,65 @@ async function seed() {
 
     // Seed habits
     console.log("📝 Seeding habits...");
-    const [habit1] = await db.insert(habits).values({
-      userId,
-      categoryId: "mind",
-      name: "Morning Meditation",
-      description: "10 minutes of mindfulness",
-      isActive: true,
-      createdAt: new Date(),
-    }).returning();
+    const [habit1] = await db
+      .insert(habits)
+      .values({
+        userId,
+        categoryId: "mind",
+        name: "Morning Meditation",
+        description: "10 minutes of mindfulness",
+        isActive: true,
+        createdAt: new Date(),
+      })
+      .returning();
 
-    const [habit2] = await db.insert(habits).values({
-      userId,
-      categoryId: "body",
-      name: "Exercise",
-      description: "30 minutes of physical activity",
-      isActive: true,
-      createdAt: new Date(),
-    }).returning();
+    const [habit2] = await db
+      .insert(habits)
+      .values({
+        userId,
+        categoryId: "body",
+        name: "Exercise",
+        description: "30 minutes of physical activity",
+        isActive: true,
+        createdAt: new Date(),
+      })
+      .returning();
 
-    const [habit3] = await db.insert(habits).values({
-      userId,
-      categoryId: "soul",
-      name: "Gratitude Journal",
-      description: "Write 3 things I'm grateful for",
-      isActive: true,
-      createdAt: new Date(),
-    }).returning();
+    const [habit3] = await db
+      .insert(habits)
+      .values({
+        userId,
+        categoryId: "soul",
+        name: "Gratitude Journal",
+        description: "Write 3 things I'm grateful for",
+        isActive: true,
+        createdAt: new Date(),
+      })
+      .returning();
 
-    const [habit4] = await db.insert(habits).values({
-      userId,
-      categoryId: "mind",
-      name: "Read",
-      description: "Read for 20 minutes",
-      isActive: true,
-      createdAt: new Date(),
-    }).returning();
+    const [habit4] = await db
+      .insert(habits)
+      .values({
+        userId,
+        categoryId: "mind",
+        name: "Read",
+        description: "Read for 20 minutes",
+        isActive: true,
+        createdAt: new Date(),
+      })
+      .returning();
 
-    const [habit5] = await db.insert(habits).values({
-      userId,
-      categoryId: "body",
-      name: "Drink Water",
-      description: "8 glasses throughout the day",
-      isActive: true,
-      createdAt: new Date(),
-    }).returning();
+    const [habit5] = await db
+      .insert(habits)
+      .values({
+        userId,
+        categoryId: "body",
+        name: "Drink Water",
+        description: "8 glasses throughout the day",
+        isActive: true,
+        createdAt: new Date(),
+      })
+      .returning();
 
     console.log(`✅ Created ${5} habits`);
 
@@ -111,11 +141,11 @@ async function seed() {
     for (let i = 0; i < 30; i++) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
+      const dateStr = date.toISOString().split("T")[0];
 
       // Randomly complete habits (simulate realistic usage)
       const allHabits = [habit1, habit2, habit3, habit4, habit5];
-      
+
       for (const habit of allHabits) {
         // 70% chance of completion
         if (Math.random() > 0.3) {

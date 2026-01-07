@@ -1,7 +1,15 @@
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import { env } from "../src/env.js";
-import { pgTable, varchar, integer, text, boolean, timestamp, date } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  varchar,
+  integer,
+  text,
+  boolean,
+  timestamp,
+  date,
+} from "drizzle-orm/pg-core";
 
 // Define tables inline to avoid NextAuth import issues
 const createTable = (name: string) => `northstar_${name}`;
@@ -41,7 +49,9 @@ async function clear() {
     console.log("✅ Cleared habits table");
 
     console.log("🎉 Database cleared successfully!");
-    console.log("ℹ️  Users, accounts, sessions, verification tokens, and categories were preserved.");
+    console.log(
+      "ℹ️  Users, accounts, sessions, verification tokens, and categories were preserved.",
+    );
   } catch (error) {
     console.error("❌ Error clearing database:", error);
     process.exit(1);
