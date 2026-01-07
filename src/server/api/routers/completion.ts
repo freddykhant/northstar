@@ -1,7 +1,7 @@
+import { and, eq, gte, lte } from "drizzle-orm";
 import { z } from "zod";
-import { eq, and, gte, lte, sql } from "drizzle-orm";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { completions, habits, categories } from "~/server/db/schema";
+import { completions, habits } from "~/server/db/schema";
 
 export const completionRouter = createTRPCRouter({
   // toggle completion for a habit on a specific date

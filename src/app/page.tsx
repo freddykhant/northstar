@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { auth } from "~/server/auth";
 import { redirect } from "next/navigation";
-import { PanelLeftOpen } from "lucide-react";
+import { auth } from "~/server/auth";
 
 export default async function LandingPage() {
   const session = await auth();

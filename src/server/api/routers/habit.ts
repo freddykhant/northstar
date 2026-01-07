@@ -1,10 +1,10 @@
+import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { eq, desc } from "drizzle-orm";
 
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
-import { habits } from "~/server/db/schema";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
+import { habits } from "~/server/db/schema";
 
 // helper function to verify habit ownership
 async function verifyHabitOwnership(
