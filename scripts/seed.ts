@@ -1,17 +1,15 @@
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
-import { env } from "../src/env.js";
 import {
-  pgTable,
-  varchar,
-  integer,
-  text,
   boolean,
-  timestamp,
   date,
-  uniqueIndex,
-  index,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+  varchar,
 } from "drizzle-orm/pg-core";
+import { env } from "../src/env.js";
 
 // Define tables inline to avoid NextAuth import issues
 const createTable = (name: string) => `northstar_${name}`;
