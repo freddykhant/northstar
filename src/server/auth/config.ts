@@ -43,6 +43,7 @@ export const authConfig = {
     GoogleProvider({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      allowDangerousEmailAccountLinking: true,
     }),
     CredentialsProvider({
       name: "credentials",
@@ -80,7 +81,7 @@ export const authConfig = {
 
         return {
           id: user.id,
-          email: user.email,
+          email: user.email ?? "",
           name: user.name,
           image: user.image,
         };
@@ -106,18 +107,23 @@ export const authConfig = {
     strategy: "jwt", // required for CredentialsProvider
   },
   callbacks: {
-    jwt: async ({ token, user }) => {
+    jwt: async ({ token, user, account }) => {
+      // Initial sign in
       if (user) {
         token.id = user.id;
+        token.email = user.email;
       }
       return token;
     },
-    session: ({ session, token }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: token.id as string,
-      },
-    }),
+    session: ({ session, token }) => {
+      if (token && session.user) {
+        session.user.id = token.id as string;
+        session.user.email = token.email as string;
+      }
+      return session;
+    },
+  },
+  pages: {
+    signIn: "/signin",
   },
 } satisfies NextAuthConfig;
