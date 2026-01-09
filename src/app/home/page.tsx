@@ -235,7 +235,7 @@ export default function HomePage() {
               href="/habits"
               className="inline-block rounded-xl bg-white px-6 py-3 font-semibold text-black transition-transform hover:scale-105"
             >
-              Create Habit
+              Create
             </Link>
           </div>
         )}
