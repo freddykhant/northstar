@@ -7,6 +7,109 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { api } from "~/trpc/react";
 
+type CategoryId = "mind" | "body" | "soul";
+
+interface DayData {
+  date: string;
+  categories: {
+    mind: boolean;
+    body: boolean;
+    soul: boolean;
+  };
+}
+
+function HabitGraph({ completions }: { completions: DayData[] }) {
+  const categoryEmojis = {
+    mind: "🧠",
+    body: "💪",
+    soul: "✨",
+  };
+
+  const categoryColors = {
+    mind: "bg-blue-500",
+    body: "bg-red-500",
+    soul: "bg-purple-500",
+  };
+
+  const categoryLabels = {
+    mind: "Mind",
+    body: "Body",
+    soul: "Soul",
+  };
+
+  // Get the last 60 days
+  const days = useMemo(() => {
+    const result: string[] = [];
+    const today = new Date();
+    for (let i = 59; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      result.push(date.toISOString().split("T")[0]!);
+    }
+    return result;
+  }, []);
+
+  // Create a map for quick lookup
+  const completionMap = useMemo(() => {
+    const map = new Map<string, DayData["categories"]>();
+    completions.forEach((day) => {
+      map.set(day.date, day.categories);
+    });
+    return map;
+  }, [completions]);
+
+  const categories: CategoryId[] = ["mind", "body", "soul"];
+
+  return (
+    <div className="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-8">
+      <h2 className="mb-6 text-xl font-bold text-white">Activity Graph</h2>
+      <div className="flex gap-4">
+        {/* Category labels */}
+        <div className="flex flex-col justify-around py-2">
+          {categories.map((cat) => (
+            <div
+              key={cat}
+              className="flex h-4 items-center gap-2 text-xs text-zinc-400"
+            >
+              <span>{categoryEmojis[cat]}</span>
+              <span className="capitalize">{categoryLabels[cat]}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Graph grid */}
+        <div className="flex-1 overflow-x-auto">
+          <div className="flex gap-1">
+            {days.map((date) => {
+              const dayData = completionMap.get(date);
+              return (
+                <div key={date} className="flex flex-col gap-1">
+                  {categories.map((cat) => {
+                    const isComplete = dayData?.[cat] ?? false;
+                    return (
+                      <div
+                        key={`${date}-${cat}`}
+                        className={`h-4 w-4 rounded-sm transition-all ${
+                          isComplete
+                            ? `${categoryColors[cat]} opacity-100`
+                            : "bg-zinc-800 opacity-40"
+                        }`}
+                        title={`${date} - ${categoryLabels[cat]}: ${
+                          isComplete ? "Completed" : "Not completed"
+                        }`}
+                      />
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function HomePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -26,6 +129,48 @@ export default function HomePage() {
     { date: today! },
     { enabled: !!today },
   );
+
+  // Fetch completion data for the past 60 days
+  const dateRange = useMemo(() => {
+    const end = new Date();
+    const start = new Date();
+    start.setDate(start.getDate() - 59);
+    return {
+      startDate: start.toISOString().split("T")[0]!,
+      endDate: end.toISOString().split("T")[0]!,
+    };
+  }, []);
+
+  const { data: completionsData } = api.completion.getMyCompletions.useQuery({
+    startDate: dateRange.startDate,
+    endDate: dateRange.endDate,
+  });
+
+  // Transform completions data for the graph
+  const graphData = useMemo(() => {
+    if (!completionsData) return [];
+
+    // Group completions by date and category
+    const dataByDate = new Map<
+      string,
+      { mind: boolean; body: boolean; soul: boolean }
+    >();
+
+    completionsData.forEach((completion) => {
+      const dateKey = completion.completedDate;
+      if (!dataByDate.has(dateKey)) {
+        dataByDate.set(dateKey, { mind: false, body: false, soul: false });
+      }
+      const categoryId = completion.habit.category.id as CategoryId;
+      dataByDate.get(dateKey)![categoryId] = true;
+    });
+
+    // Convert to array format
+    return Array.from(dataByDate.entries()).map(([date, categories]) => ({
+      date,
+      categories,
+    }));
+  }, [completionsData]);
 
   // Toggle completion mutation
   const toggleMutation = api.completion.toggle.useMutation({
@@ -164,6 +309,11 @@ export default function HomePage() {
             </div>
           </div>
         )}
+
+        {/* Activity Graph */}
+        <div className="mb-6">
+          <HabitGraph completions={graphData} />
+        </div>
 
         {/* Today's Checklist */}
         {habitsWithStatus && habitsWithStatus.length > 0 ? (
