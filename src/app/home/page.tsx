@@ -4,461 +4,72 @@ import { Settings, Sparkles } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { api } from "~/trpc/react";
-
-type CategoryId = "mind" | "body" | "soul";
-
-interface DayData {
-  date: string;
-  categories: {
-    mind: boolean;
-    body: boolean;
-    soul: boolean;
-  };
-}
-
-function HabitGraph({
-  completions,
-  todayDate,
-}: {
-  completions: DayData[];
-  todayDate: string;
-}) {
-  const categoryEmojis = {
-    mind: "🧠",
-    body: "💪",
-    soul: "✨",
-  };
-
-  const categoryColors = {
-    mind: "bg-blue-500",
-    body: "bg-red-500",
-    soul: "bg-purple-500",
-  };
-
-  const categoryShadows = {
-    mind: "shadow-blue-500/50",
-    body: "shadow-red-500/50",
-    soul: "shadow-purple-500/50",
-  };
-
-  const categoryLabels = {
-    mind: "Mind",
-    body: "Body",
-    soul: "Soul",
-  };
-
-  // Get all days in the current year (Jan 1 to Dec 31)
-  const days = useMemo(() => {
-    const result: string[] = [];
-    const today = new Date();
-    const currentYear = today.getFullYear();
-    const startOfYear = new Date(currentYear, 0, 1); // January 1st
-    const endOfYear = new Date(currentYear, 11, 31); // December 31st
-
-    const current = new Date(startOfYear);
-    while (current <= endOfYear) {
-      result.push(current.toISOString().split("T")[0]!);
-      current.setDate(current.getDate() + 1);
-    }
-    return result;
-  }, []);
-
-  // Calculate month labels and positions for the x-axis
-  const monthLabels = useMemo(() => {
-    const labels: { month: string; startIndex: number }[] = [];
-    let currentMonth = -1;
-
-    days.forEach((date, index) => {
-      const dateObj = new Date(date + "T00:00:00");
-      const month = dateObj.getMonth();
-
-      if (month !== currentMonth) {
-        currentMonth = month;
-        labels.push({
-          month: dateObj.toLocaleDateString("en-US", { month: "short" }),
-          startIndex: index,
-        });
-      }
-    });
-
-    return labels;
-  }, [days]);
-
-  // Create a map for quick lookup
-  const completionMap = useMemo(() => {
-    const map = new Map<string, DayData["categories"]>();
-    completions.forEach((day) => {
-      map.set(day.date, day.categories);
-    });
-    return map;
-  }, [completions, todayDate]);
-
-  const categories: CategoryId[] = ["mind", "body", "soul"];
-
-  // Calculate total completions for insight
-  const totalCompletions = useMemo(() => {
-    let count = 0;
-    completions.forEach((day) => {
-      if (day.categories.mind) count++;
-      if (day.categories.body) count++;
-      if (day.categories.soul) count++;
-    });
-    return count;
-  }, [completions]);
-
-  return (
-    <div className="overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900/70 backdrop-blur-xl">
-      <div className="border-b border-zinc-800 p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="mb-1.5 text-xl font-bold text-white">Activity</h2>
-            <p className="text-sm text-zinc-500">
-              {new Date().getFullYear()} progress • {completions.length} days
-              tracked
-            </p>
-          </div>
-          <div className="text-right">
-            <div className="text-3xl font-bold text-white transition-all duration-300">
-              {totalCompletions}
-            </div>
-            <div className="text-xs font-medium text-zinc-500">completions</div>
-          </div>
-        </div>
-      </div>
-      <div className="p-6">
-        <div className="flex gap-6">
-          {/* Category labels */}
-          <div className="flex flex-col justify-around py-3">
-            {categories.map((cat) => (
-              <div
-                key={cat}
-                className="flex h-4 items-center gap-2.5 text-xs font-medium text-zinc-400"
-              >
-                <span className="text-base">{categoryEmojis[cat]}</span>
-                <span className="capitalize">{categoryLabels[cat]}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Graph grid */}
-          <div className="flex-1 overflow-x-auto pb-1">
-            {/* Month labels */}
-            <div className="mb-3 flex gap-1">
-              {monthLabels.map((label) => (
-                <div
-                  key={`month-${label.startIndex}`}
-                  className="text-[11px] font-semibold tracking-wide text-zinc-500 uppercase"
-                  style={{
-                    marginLeft:
-                      label.startIndex === 0 ? 0 : `${label.startIndex * 20}px`,
-                  }}
-                >
-                  {label.month}
-                </div>
-              ))}
-            </div>
-
-            {/* Squares grid */}
-            <div className="flex gap-1">
-              {days.map((date) => {
-                const dayData = completionMap.get(date);
-                const isToday = date === todayDate;
-                return (
-                  <div key={date} className="flex flex-col gap-1">
-                    {categories.map((cat) => {
-                      const isComplete = dayData?.[cat] ?? false;
-
-                      return (
-                        <div
-                          key={`${date}-${cat}`}
-                          className={`h-4 w-4 rounded-sm border transition-all duration-300 hover:scale-125 hover:rounded-md ${
-                            isComplete
-                              ? cat === "mind"
-                                ? `border-blue-500/50 bg-blue-500 opacity-100 ${
-                                    isToday
-                                      ? "animate-pulse shadow-lg shadow-blue-500/50"
-                                      : "shadow-sm hover:shadow-md hover:shadow-blue-500/30"
-                                  }`
-                                : cat === "body"
-                                  ? `border-red-500/50 bg-red-500 opacity-100 ${
-                                      isToday
-                                        ? "animate-pulse shadow-lg shadow-red-500/50"
-                                        : "shadow-sm hover:shadow-md hover:shadow-red-500/30"
-                                    }`
-                                  : `border-purple-500/50 bg-purple-500 opacity-100 ${
-                                      isToday
-                                        ? "animate-pulse shadow-lg shadow-purple-500/50"
-                                        : "shadow-sm hover:shadow-md hover:shadow-purple-500/30"
-                                    }`
-                              : "border-zinc-800 bg-zinc-800 opacity-30 hover:border-zinc-700 hover:opacity-50"
-                          }`}
-                          title={`${date} - ${categoryLabels[cat]}: ${
-                            isComplete ? "Completed" : "Not completed"
-                          }`}
-                        />
-                      );
-                    })}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+import type { CategoryId } from "~/lib/types";
+import {
+  CATEGORY_EMOJIS,
+  CATEGORY_IDS,
+} from "~/lib/constants";
+import {
+  formatDate,
+  getTodayDate,
+  getGreeting,
+  getCurrentYearRange,
+  calculateCompletionPercentage,
+} from "~/lib/utils";
+import { CategoryStatCard } from "~/components/ui/category-stat-card";
+import { CategoryBadge } from "~/components/ui/category-badge";
+import { ProgressBarWithLabel } from "~/components/ui/progress-bar";
+import { GlassCard, GlassCardHeader, GlassCardBody } from "~/components/ui/glass-card";
+import { GradientBackground } from "~/components/ui/gradient-background";
+import { HabitGraph } from "~/components/features/habit-graph";
+import { useHabitCompletion } from "~/hooks/use-habit-completion";
+import { useGraphData } from "~/hooks/use-graph-data";
 
 export default function HomePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [justCompleted, setJustCompleted] = useState<Set<number>>(new Set());
-  const utils = api.useUtils();
 
-  // Get today's date in YYYY-MM-DD format
-  const today = useMemo(() => {
-    const date = new Date();
-    return date.toISOString().split("T")[0];
-  }, []);
+  // Get today's date
+  const today = useMemo(() => getTodayDate(), []);
 
-  // Fetch habits with completion status for today
+  // Get date range for current year
+  const dateRange = useMemo(() => getCurrentYearRange(), []);
+
+  // Fetch data
   const { data: habitsWithStatus } = api.completion.getForDate.useQuery(
-    { date: today! },
+    { date: today },
     { enabled: !!today },
   );
 
-  // Fetch today's stats
   const { data: stats } = api.completion.getStatsForDate.useQuery(
-    { date: today! },
+    { date: today },
     { enabled: !!today },
   );
-
-  // Fetch completion data for the entire current year
-  const dateRange = useMemo(() => {
-    const today = new Date();
-    const currentYear = today.getFullYear();
-    const startOfYear = new Date(currentYear, 0, 1); // January 1st
-    const endOfYear = new Date(currentYear, 11, 31); // December 31st
-
-    return {
-      startDate: startOfYear.toISOString().split("T")[0]!,
-      endDate: endOfYear.toISOString().split("T")[0]!,
-    };
-  }, []);
 
   const { data: completionsData } = api.completion.getMyCompletions.useQuery({
     startDate: dateRange.startDate,
     endDate: dateRange.endDate,
   });
 
-  // Transform completions data for the graph - recalculate whenever completionsData changes
-  const graphData = useMemo(() => {
-    if (!completionsData) return [];
+  // Transform completions data for the graph
+  const graphData = useGraphData(completionsData);
 
-    // Group completions by date and category
-    const dataByDate = new Map<
-      string,
-      { mind: boolean; body: boolean; soul: boolean }
-    >();
-
-    completionsData.forEach((completion) => {
-      const dateKey = completion.completedDate;
-      if (!dataByDate.has(dateKey)) {
-        dataByDate.set(dateKey, { mind: false, body: false, soul: false });
-      }
-      const categoryId = completion.habit.category.id as CategoryId;
-      dataByDate.get(dateKey)![categoryId] = true;
-    });
-
-    // Convert to array format
-    return Array.from(dataByDate.entries()).map(([date, categories]) => ({
-      date,
-      categories,
-    }));
-  }, [completionsData, today]);
-
-  // Toggle completion mutation with optimistic updates
-  const toggleMutation = api.completion.toggle.useMutation({
-    onMutate: async ({ habitId }) => {
-      // Cancel outgoing refetches
-      await utils.completion.getForDate.cancel();
-      await utils.completion.getStatsForDate.cancel();
-      await utils.completion.getMyCompletions.cancel();
-
-      // Snapshot the previous values
-      const previousHabits = utils.completion.getForDate.getData({
-        date: today!,
-      });
-      const previousStats = utils.completion.getStatsForDate.getData({
-        date: today!,
-      });
-      const previousCompletions = utils.completion.getMyCompletions.getData({
-        startDate: dateRange.startDate,
-        endDate: dateRange.endDate,
-      });
-
-      // Find the habit being toggled
-      const habit = previousHabits?.find((h) => h.id === habitId);
-      if (!habit) return { previousHabits, previousStats, previousCompletions };
-
-      const isCompleting = !habit.isCompleted;
-
-      // Optimistically update habits
-      if (previousHabits) {
-        utils.completion.getForDate.setData(
-          { date: today! },
-          previousHabits.map((h) =>
-            h.id === habitId ? { ...h, isCompleted: !h.isCompleted } : h,
-          ),
-        );
-      }
-
-      // Optimistically update stats
-      if (previousStats && habit) {
-        const categoryId = habit.category.id;
-        const updatedByCategory = previousStats.byCategory.map((cat) => {
-          if (cat.category.id === categoryId) {
-            return {
-              ...cat,
-              count: isCompleting ? cat.count + 1 : cat.count - 1,
-            };
-          }
-          return cat;
-        });
-
-        utils.completion.getStatsForDate.setData(
-          { date: today! },
-          {
-            ...previousStats,
-            totalCompletions: isCompleting
-              ? previousStats.totalCompletions + 1
-              : previousStats.totalCompletions - 1,
-            byCategory: updatedByCategory,
-          },
-        );
-      }
-
-      // Optimistically update graph data
-      if (previousCompletions && habit) {
-        if (isCompleting) {
-          // Add completion to graph with proper structure matching server response
-          const newCompletion = {
-            id: Date.now(), // temporary ID
-            habitId: habitId,
-            userId: habit.userId,
-            completedDate: today!,
-            createdAt: new Date(),
-            habit: {
-              id: habit.id,
-              name: habit.name,
-              description: habit.description,
-              categoryId: habit.category.id,
-              userId: habit.userId,
-              isActive: habit.isActive,
-              createdAt: habit.createdAt,
-              category: {
-                id: habit.category.id,
-                name: habit.category.name,
-              },
-            },
-          };
-
-          const updatedCompletions = [...previousCompletions, newCompletion];
-
-          utils.completion.getMyCompletions.setData(
-            {
-              startDate: dateRange.startDate,
-              endDate: dateRange.endDate,
-            },
-            updatedCompletions as any,
-          );
-        } else {
-          // Remove completion from graph
-          const filteredCompletions = previousCompletions.filter(
-            (c) => !(c.habitId === habitId && c.completedDate === today!),
-          );
-
-          utils.completion.getMyCompletions.setData(
-            {
-              startDate: dateRange.startDate,
-              endDate: dateRange.endDate,
-            },
-            filteredCompletions,
-          );
-        }
-      }
-
-      // Show completion animation
-      if (isCompleting) {
-        setJustCompleted((prev) => new Set(prev).add(habitId));
-        setTimeout(() => {
-          setJustCompleted((prev) => {
-            const next = new Set(prev);
-            next.delete(habitId);
-            return next;
-          });
-        }, 1000);
-      }
-
-      return { previousHabits, previousStats, previousCompletions };
-    },
-    onError: (err, variables, context) => {
-      // Rollback on error
-      if (context?.previousHabits) {
-        utils.completion.getForDate.setData(
-          { date: today! },
-          context.previousHabits,
-        );
-      }
-      if (context?.previousStats) {
-        utils.completion.getStatsForDate.setData(
-          { date: today! },
-          context.previousStats,
-        );
-      }
-      if (context?.previousCompletions) {
-        utils.completion.getMyCompletions.setData(
-          {
-            startDate: dateRange.startDate,
-            endDate: dateRange.endDate,
-          },
-          context.previousCompletions,
-        );
-      }
-    },
-    onSuccess: () => {
-      // Refetch to sync with server
-      utils.completion.getForDate.invalidate({ date: today! });
-      utils.completion.getStatsForDate.invalidate({ date: today! });
-      utils.completion.getMyCompletions.invalidate({
-        startDate: dateRange.startDate,
-        endDate: dateRange.endDate,
-      });
-    },
+  // Handle habit completion with optimistic updates
+  const { handleToggle, justCompleted, toggleMutation } = useHabitCompletion({
+    today,
+    dateRange,
   });
 
-  const categoryEmojis = {
-    mind: "🧠",
-    body: "💪",
-    soul: "✨",
-  };
-
-  const categoryColors = {
-    mind: "bg-blue-500/20 text-blue-300 border-blue-500/30",
-    body: "bg-red-500/20 text-red-300 border-red-500/30",
-    soul: "bg-purple-500/20 text-purple-300 border-purple-500/30",
-  };
-
-  // authentication check
+  // Authentication check
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/signin");
     }
   }, [status, router]);
 
-  // Conditional returns AFTER all hooks
+  // Loading state
   if (status === "loading") {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-[#0a0a0a] text-white">
@@ -467,61 +78,24 @@ export default function HomePage() {
     );
   }
 
+  // Not authenticated
   if (!session?.user) {
     return null;
   }
 
-  const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/" });
-  };
-
-  const handleToggle = (habitId: number) => {
-    toggleMutation.mutate({ habitId, date: today! });
-  };
-
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr + "T00:00:00");
-    return date.toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
-
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 18) return "Good afternoon";
-    return "Good evening";
-  };
-
+  // Calculate completion percentage
   const completedCount =
     habitsWithStatus?.filter((h) => h.isCompleted).length ?? 0;
   const totalCount = habitsWithStatus?.length ?? 0;
-  const completionPercentage =
-    totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+  const completionPercentage = calculateCompletionPercentage(
+    completedCount,
+    totalCount,
+  );
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#0a0a0a] text-white">
-      {/* Enhanced Background */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: `
-            radial-gradient(ellipse 80% 60% at 50% -20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
-            radial-gradient(ellipse 80% 50% at 20% 50%, rgba(239, 68, 68, 0.1) 0%, transparent 50%),
-            radial-gradient(ellipse 80% 50% at 80% 50%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
-            radial-gradient(ellipse 100% 80% at 50% 50%, rgba(25, 23, 22, 0.4) 0%, transparent 60%)
-          `,
-        }}
-      />
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.015]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-        }}
-      />
+      {/* Background */}
+      <GradientBackground />
 
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-8">
@@ -542,7 +116,7 @@ export default function HomePage() {
               Manage Habits
             </Link>
             <button
-              onClick={handleSignOut}
+              onClick={() => signOut({ callbackUrl: "/" })}
               className="rounded-xl border border-zinc-800 bg-zinc-900/70 px-4 py-2.5 text-sm font-medium text-zinc-400 backdrop-blur-xl transition-all hover:border-zinc-700 hover:bg-zinc-800/70 hover:text-zinc-300"
             >
               Sign Out
@@ -553,9 +127,9 @@ export default function HomePage() {
         {/* Greeting Header */}
         <div className="mb-10">
           <h1 className="mb-2 bg-gradient-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-5xl font-bold text-transparent">
-            {getGreeting()}, {session?.user?.name?.split(" ")[0] ?? "there"}
+            {getGreeting()}, {session.user.name?.split(" ")[0] ?? "there"}
           </h1>
-          <p className="text-lg text-zinc-400">{formatDate(today!)}</p>
+          <p className="text-lg text-zinc-400">{formatDate(today)}</p>
         </div>
 
         {/* Main Grid Layout */}
@@ -564,93 +138,46 @@ export default function HomePage() {
           <div className="lg:col-span-2">
             {/* Stats Overview Cards */}
             <div className="mb-6 grid grid-cols-3 gap-4">
-              {/* Mind Card */}
-              <div className="group relative overflow-hidden rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-500/10 to-blue-600/5 p-5 backdrop-blur-xl transition-all hover:scale-[1.02] hover:border-blue-500/30">
-                <div className="absolute top-0 right-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-blue-500/20 blur-3xl transition-opacity group-hover:opacity-100" />
-                <div className="relative">
-                  <div className="mb-2 text-3xl">🧠</div>
-                  <div className="mb-1 text-sm font-medium text-blue-300">
-                    Mind
-                  </div>
-                  <div className="text-2xl font-bold text-white transition-all duration-300">
-                    {stats?.byCategory.find((c) => c.category.id === "mind")
-                      ?.count ?? 0}
-                  </div>
-                  <div className="text-xs text-zinc-500">completed today</div>
-                </div>
-              </div>
-
-              {/* Body Card */}
-              <div className="group relative overflow-hidden rounded-2xl border border-red-500/20 bg-gradient-to-br from-red-500/10 to-red-600/5 p-5 backdrop-blur-xl transition-all hover:scale-[1.02] hover:border-red-500/30">
-                <div className="absolute top-0 right-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-red-500/20 blur-3xl transition-opacity group-hover:opacity-100" />
-                <div className="relative">
-                  <div className="mb-2 text-3xl">💪</div>
-                  <div className="mb-1 text-sm font-medium text-red-300">
-                    Body
-                  </div>
-                  <div className="text-2xl font-bold text-white transition-all duration-300">
-                    {stats?.byCategory.find((c) => c.category.id === "body")
-                      ?.count ?? 0}
-                  </div>
-                  <div className="text-xs text-zinc-500">completed today</div>
-                </div>
-              </div>
-
-              {/* Soul Card */}
-              <div className="group relative overflow-hidden rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-500/10 to-purple-600/5 p-5 backdrop-blur-xl transition-all hover:scale-[1.02] hover:border-purple-500/30">
-                <div className="absolute top-0 right-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-purple-500/20 blur-3xl transition-opacity group-hover:opacity-100" />
-                <div className="relative">
-                  <div className="mb-2 text-3xl">✨</div>
-                  <div className="mb-1 text-sm font-medium text-purple-300">
-                    Soul
-                  </div>
-                  <div className="text-2xl font-bold text-white transition-all duration-300">
-                    {stats?.byCategory.find((c) => c.category.id === "soul")
-                      ?.count ?? 0}
-                  </div>
-                  <div className="text-xs text-zinc-500">completed today</div>
-                </div>
-              </div>
+              {CATEGORY_IDS.map((categoryId) => {
+                const count =
+                  stats?.byCategory.find((c) => c.category.id === categoryId)
+                    ?.count ?? 0;
+                return (
+                  <CategoryStatCard
+                    key={categoryId}
+                    categoryId={categoryId}
+                    count={count}
+                  />
+                );
+              })}
             </div>
 
             {/* Activity Graph */}
-            <HabitGraph completions={graphData} todayDate={today!} />
+            <HabitGraph completions={graphData} todayDate={today} />
           </div>
 
           {/* Right Column - Today's Checklist */}
           <div className="lg:col-span-1">
             <div className="sticky top-8">
               {habitsWithStatus && habitsWithStatus.length > 0 ? (
-                <div className="overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900/70 backdrop-blur-xl">
+                <GlassCard>
                   {/* Checklist Header */}
-                  <div className="border-b border-zinc-800 p-6">
+                  <GlassCardHeader>
                     <h2 className="mb-3 text-xl font-bold text-white">
                       Today&apos;s Focus
                     </h2>
-                    <div className="flex items-center gap-3">
-                      <div className="flex-1">
-                        <div className="mb-1.5 h-2 overflow-hidden rounded-full bg-zinc-800">
-                          <div
-                            className="h-full rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-500"
-                            style={{ width: `${completionPercentage}%` }}
-                          />
-                        </div>
-                      </div>
-                      <div className="text-sm font-semibold text-white">
-                        {completionPercentage}%
-                      </div>
-                    </div>
-                    <div className="mt-2 text-xs text-zinc-500">
-                      {completedCount} of {totalCount} completed
-                    </div>
-                  </div>
+                    <ProgressBarWithLabel
+                      percentage={completionPercentage}
+                      completedCount={completedCount}
+                      totalCount={totalCount}
+                    />
+                  </GlassCardHeader>
 
                   {/* Checklist Items */}
-                  <div className="max-h-[600px] overflow-y-auto p-4">
+                  <GlassCardBody className="max-h-[600px] overflow-y-auto p-4">
                     <div className="space-y-2">
                       {habitsWithStatus.map((habit) => {
                         const categoryId = habit.category.id as CategoryId;
-                        const categoryColor = categoryColors[categoryId];
                         const isJustCompleted = justCompleted.has(habit.id);
 
                         return (
@@ -676,7 +203,7 @@ export default function HomePage() {
                                     isJustCompleted ? "scale-125" : ""
                                   }`}
                                 >
-                                  {categoryEmojis[categoryId]}
+                                  {CATEGORY_EMOJIS[categoryId]}
                                 </span>
                                 <div
                                   className={`flex-1 text-sm font-medium transition-all ${
@@ -694,21 +221,17 @@ export default function HomePage() {
                                 </div>
                               )}
                               <div className="mt-1.5">
-                                <span
-                                  className={`inline-block rounded-full border px-2 py-0.5 text-[10px] font-medium tracking-wide uppercase ${categoryColor}`}
-                                >
-                                  {categoryId}
-                                </span>
+                                <CategoryBadge categoryId={categoryId} />
                               </div>
                             </div>
                           </label>
                         );
                       })}
                     </div>
-                  </div>
-                </div>
+                  </GlassCardBody>
+                </GlassCard>
               ) : (
-                <div className="flex flex-col items-center justify-center rounded-3xl border border-zinc-800 bg-zinc-900/70 p-12 text-center backdrop-blur-xl">
+                <GlassCard className="flex flex-col items-center justify-center p-12 text-center">
                   <div className="mb-4 text-6xl">🌟</div>
                   <h2 className="mb-2 text-xl font-bold text-white">
                     No habits yet
@@ -722,7 +245,7 @@ export default function HomePage() {
                   >
                     Create Habit
                   </Link>
-                </div>
+                </GlassCard>
               )}
             </div>
           </div>
