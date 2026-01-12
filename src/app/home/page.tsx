@@ -25,6 +25,8 @@ function HabitGraph({
   completions: DayData[];
   todayDate: string;
 }) {
+  console.log("HabitGraph rendering, completions:", completions.length, "days");
+
   const categoryEmojis = {
     mind: "🧠",
     body: "💪",
@@ -67,8 +69,15 @@ function HabitGraph({
     completions.forEach((day) => {
       map.set(day.date, day.categories);
     });
+
+    const todayInMap = map.get(todayDate);
+    console.log(
+      "HabitGraph completionMap built, today categories:",
+      todayInMap,
+    );
+
     return map;
-  }, [completions]);
+  }, [completions, todayDate]);
 
   const categories: CategoryId[] = ["mind", "body", "soul"];
 
@@ -124,16 +133,36 @@ function HabitGraph({
                   <div key={date} className="flex flex-col gap-1">
                     {categories.map((cat) => {
                       const isComplete = dayData?.[cat] ?? false;
+
+                      if (isToday) {
+                        console.log(`Square for ${cat} on ${date}:`, {
+                          isComplete,
+                          color: categoryColors[cat],
+                        });
+                      }
+
                       return (
                         <div
                           key={`${date}-${cat}`}
                           className={`h-4 w-4 rounded-sm transition-all duration-300 hover:scale-110 ${
                             isComplete
-                              ? `${categoryColors[cat]} opacity-100 ${
-                                  isToday
-                                    ? `animate-pulse shadow-lg ${categoryShadows[cat]}`
-                                    : "shadow-sm"
-                                }`
+                              ? cat === "mind"
+                                ? `bg-blue-500 opacity-100 ${
+                                    isToday
+                                      ? "animate-pulse shadow-lg shadow-blue-500/50"
+                                      : "shadow-sm"
+                                  }`
+                                : cat === "body"
+                                  ? `bg-red-500 opacity-100 ${
+                                      isToday
+                                        ? "animate-pulse shadow-lg shadow-red-500/50"
+                                        : "shadow-sm"
+                                    }`
+                                  : `bg-purple-500 opacity-100 ${
+                                      isToday
+                                        ? "animate-pulse shadow-lg shadow-purple-500/50"
+                                        : "shadow-sm"
+                                    }`
                               : "bg-zinc-800 opacity-30"
                           }`}
                           title={`${date} - ${categoryLabels[cat]}: ${
@@ -197,6 +226,11 @@ export default function HomePage() {
   const graphData = useMemo(() => {
     if (!completionsData) return [];
 
+    console.log(
+      "Transforming graph data, completions count:",
+      completionsData.length,
+    );
+
     // Group completions by date and category
     const dataByDate = new Map<
       string,
@@ -210,14 +244,33 @@ export default function HomePage() {
       }
       const categoryId = completion.habit.category.id as CategoryId;
       dataByDate.get(dateKey)![categoryId] = true;
+
+      if (dateKey === today) {
+        console.log("Today completion found:", {
+          dateKey,
+          categoryId,
+          habitName: completion.habit.name,
+          completionId: completion.id,
+        });
+      }
     });
 
     // Convert to array format
-    return Array.from(dataByDate.entries()).map(([date, categories]) => ({
-      date,
-      categories,
-    }));
-  }, [completionsData]);
+    const result = Array.from(dataByDate.entries()).map(
+      ([date, categories]) => ({
+        date,
+        categories,
+      }),
+    );
+
+    console.log("Graph data result:", result.length, "days with completions");
+    const todayData = result.find((d) => d.date === today);
+    if (todayData) {
+      console.log("Today graph data:", todayData);
+    }
+
+    return result;
+  }, [completionsData, today]);
 
   // Toggle completion mutation with optimistic updates
   const toggleMutation = api.completion.toggle.useMutation({
@@ -283,7 +336,7 @@ export default function HomePage() {
       // Optimistically update graph data
       if (previousCompletions && habit) {
         if (isCompleting) {
-          // Add completion to graph with proper structure
+          // Add completion to graph with proper structure matching server response
           const newCompletion = {
             id: Date.now(), // temporary ID
             habitId: habitId,
@@ -298,26 +351,47 @@ export default function HomePage() {
               userId: habit.userId,
               isActive: habit.isActive,
               createdAt: habit.createdAt,
-              category: habit.category,
+              category: {
+                id: habit.category.id,
+                name: habit.category.name,
+              },
             },
           };
+
+          const updatedCompletions = [...previousCompletions, newCompletion];
+          console.log("Adding optimistic completion:", {
+            newCompletion,
+            categoryId: habit.category.id,
+            habitName: habit.name,
+            today,
+          });
+
           utils.completion.getMyCompletions.setData(
             {
               startDate: dateRange.startDate,
               endDate: dateRange.endDate,
             },
-            [...previousCompletions, newCompletion] as any,
+            updatedCompletions as any,
           );
         } else {
           // Remove completion from graph
+          const filteredCompletions = previousCompletions.filter(
+            (c) => !(c.habitId === habitId && c.completedDate === today!),
+          );
+
+          console.log("Removing optimistic completion:", {
+            habitId,
+            today,
+            before: previousCompletions.length,
+            after: filteredCompletions.length,
+          });
+
           utils.completion.getMyCompletions.setData(
             {
               startDate: dateRange.startDate,
               endDate: dateRange.endDate,
             },
-            previousCompletions.filter(
-              (c) => !(c.habitId === habitId && c.completedDate === today!),
-            ),
+            filteredCompletions,
           );
         }
       }
