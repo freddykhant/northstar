@@ -9,6 +9,7 @@ import {
   X,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -385,6 +386,86 @@ export default function HabitsPage() {
 
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Category Selection - First */}
+                <div>
+                  <label className="mb-3 block text-sm font-medium text-white">
+                    Choose Category
+                  </label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {(["mind", "body", "soul"] as const).map((cat) => {
+                      const isSelected = formData.categoryId === cat;
+                      const gradients = {
+                        mind: "from-blue-500 to-blue-400",
+                        body: "from-red-500 to-red-400",
+                        soul: "from-purple-500 to-purple-400",
+                      };
+                      const glowColors = {
+                        mind: "shadow-blue-500/50",
+                        body: "shadow-red-500/50",
+                        soul: "shadow-purple-500/50",
+                      };
+                      const hoverGlow = {
+                        mind: "hover:shadow-blue-500/30",
+                        body: "hover:shadow-red-500/30",
+                        soul: "hover:shadow-purple-500/30",
+                      };
+                      const hoverBorder = {
+                        mind: "hover:border-blue-500/50",
+                        body: "hover:border-red-500/50",
+                        soul: "hover:border-purple-500/50",
+                      };
+                      const radialGradient = {
+                        mind: "radial-gradient(circle at center, rgba(59, 130, 246, 0.08) 0%, transparent 70%)",
+                        body: "radial-gradient(circle at center, rgba(239, 68, 68, 0.08) 0%, transparent 70%)",
+                        soul: "radial-gradient(circle at center, rgba(168, 85, 247, 0.08) 0%, transparent 70%)",
+                      };
+
+                      return (
+                        <button
+                          key={cat}
+                          type="button"
+                          onClick={() =>
+                            setFormData({ ...formData, categoryId: cat })
+                          }
+                          className={`group relative flex flex-col items-center gap-3 overflow-hidden rounded-2xl border-2 py-5 transition-all ${
+                            isSelected
+                              ? `border-white shadow-lg ${glowColors[cat]}`
+                              : `border-zinc-700 bg-zinc-900 hover:shadow-md ${hoverBorder[cat]} ${hoverGlow[cat]}`
+                          }`}
+                          style={
+                            !isSelected
+                              ? {
+                                  background: `${radialGradient[cat]}, rgb(24 24 27)`,
+                                }
+                              : undefined
+                          }
+                        >
+                          {/* Icon */}
+                          <div className="flex h-12 w-12 items-center justify-center drop-shadow-lg">
+                            <Image
+                              src={`/${cat}.svg`}
+                              alt={cat}
+                              width={48}
+                              height={48}
+                              className="transition-all group-hover:scale-110"
+                            />
+                          </div>
+
+                          {/* Label */}
+                          <span
+                            className={`text-sm font-semibold capitalize transition-all ${
+                              isSelected ? "text-white" : "text-zinc-300"
+                            }`}
+                          >
+                            {cat}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Habit Name */}
                 <div>
                   <label className="mb-2 block text-sm font-medium text-white">
                     Habit Name
@@ -401,6 +482,7 @@ export default function HabitsPage() {
                   />
                 </div>
 
+                {/* Description */}
                 <div>
                   <label className="mb-2 block text-sm font-medium text-white">
                     Description (optional)
@@ -414,31 +496,6 @@ export default function HabitsPage() {
                     rows={3}
                     className="w-full rounded-xl border border-zinc-700 bg-zinc-800/50 px-4 py-3 text-white placeholder-zinc-500 transition-all focus:border-transparent focus:ring-2 focus:ring-zinc-600 focus:outline-none"
                   />
-                </div>
-
-                <div>
-                  <label className="mb-3 block text-sm font-medium text-white">
-                    Category
-                  </label>
-                  <div className="grid grid-cols-3 gap-3">
-                    {(["mind", "body", "soul"] as const).map((cat) => (
-                      <button
-                        key={cat}
-                        type="button"
-                        onClick={() =>
-                          setFormData({ ...formData, categoryId: cat })
-                        }
-                        className={`flex flex-col items-center gap-2 rounded-xl border-2 py-4 font-medium transition-all ${
-                          formData.categoryId === cat
-                            ? "border-white bg-white text-black"
-                            : "border-zinc-700 bg-zinc-800/50 text-zinc-300 hover:border-zinc-500"
-                        }`}
-                      >
-                        <span className="text-2xl">{categoryEmojis[cat]}</span>
-                        <span className="text-sm capitalize">{cat}</span>
-                      </button>
-                    ))}
-                  </div>
                 </div>
 
                 {/* Actions */}
