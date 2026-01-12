@@ -16,7 +16,9 @@ interface CompletionData {
   };
 }
 
-export function useGraphData(completionsData: CompletionData[] | undefined): DayData[] {
+export function useGraphData(
+  completionsData: CompletionData[] | undefined,
+): DayData[] {
   return useMemo(() => {
     if (!completionsData) return [];
 

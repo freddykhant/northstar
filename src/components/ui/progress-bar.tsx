@@ -8,10 +8,10 @@ interface ProgressBarProps {
   totalCount: number;
 }
 
-export function ProgressBar({ 
-  percentage, 
-  completedCount, 
-  totalCount 
+export function ProgressBar({
+  percentage,
+  completedCount,
+  totalCount,
 }: ProgressBarProps) {
   return (
     <div className="flex items-center gap-3">

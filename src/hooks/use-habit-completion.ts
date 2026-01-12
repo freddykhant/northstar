@@ -6,7 +6,6 @@
 
 import { useState } from "react";
 import { api } from "~/trpc/react";
-import type { CategoryId } from "~/lib/types";
 
 interface UseHabitCompletionOptions {
   today: string;
@@ -16,7 +15,10 @@ interface UseHabitCompletionOptions {
   };
 }
 
-export function useHabitCompletion({ today, dateRange }: UseHabitCompletionOptions) {
+export function useHabitCompletion({
+  today,
+  dateRange,
+}: UseHabitCompletionOptions) {
   const [justCompleted, setJustCompleted] = useState<Set<number>>(new Set());
   const utils = api.useUtils();
 

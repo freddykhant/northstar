@@ -2,8 +2,8 @@
  * CategoryBadge - Reusable badge for displaying categories
  */
 
-import type { CategoryId } from "~/lib/types";
 import { CATEGORY_COLORS } from "~/lib/constants";
+import type { CategoryId } from "~/lib/types";
 
 interface CategoryBadgeProps {
   categoryId: CategoryId;

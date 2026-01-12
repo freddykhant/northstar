@@ -68,7 +68,7 @@ export function getAllDaysInCurrentYear(): string[] {
     result.push(current.toISOString().split("T")[0]!);
     current.setDate(current.getDate() + 1);
   }
-  
+
   return result;
 }
 

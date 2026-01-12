@@ -5,8 +5,13 @@
 "use client";
 
 import { useMemo } from "react";
-import type { CategoryId, DayData } from "~/lib/types";
-import { CATEGORY_COLORS, CATEGORY_EMOJIS, CATEGORY_LABELS, CATEGORY_IDS } from "~/lib/constants";
+import {
+  CATEGORY_COLORS,
+  CATEGORY_EMOJIS,
+  CATEGORY_IDS,
+  CATEGORY_LABELS,
+} from "~/lib/constants";
+import type { DayData } from "~/lib/types";
 import { getAllDaysInCurrentYear, getCurrentYear } from "~/lib/utils";
 import { GlassCard, GlassCardBody, GlassCardHeader } from "../ui/glass-card";
 
@@ -117,7 +122,7 @@ export function HabitGraph({ completions, todayDate }: HabitGraphProps) {
               {days.map((date) => {
                 const dayData = completionMap.get(date);
                 const isToday = date === todayDate;
-                
+
                 return (
                   <div key={date} className="flex flex-col gap-1">
                     {CATEGORY_IDS.map((cat) => {

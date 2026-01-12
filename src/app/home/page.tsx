@@ -5,27 +5,28 @@ import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
-import { api } from "~/trpc/react";
+import { HabitGraph } from "~/components/features/habit-graph";
+import { CategoryBadge } from "~/components/ui/category-badge";
+import { CategoryStatCard } from "~/components/ui/category-stat-card";
+import {
+  GlassCard,
+  GlassCardBody,
+  GlassCardHeader,
+} from "~/components/ui/glass-card";
+import { GradientBackground } from "~/components/ui/gradient-background";
+import { ProgressBarWithLabel } from "~/components/ui/progress-bar";
+import { useGraphData } from "~/hooks/use-graph-data";
+import { useHabitCompletion } from "~/hooks/use-habit-completion";
+import { CATEGORY_EMOJIS, CATEGORY_IDS } from "~/lib/constants";
 import type { CategoryId } from "~/lib/types";
 import {
-  CATEGORY_EMOJIS,
-  CATEGORY_IDS,
-} from "~/lib/constants";
-import {
-  formatDate,
-  getTodayDate,
-  getGreeting,
-  getCurrentYearRange,
   calculateCompletionPercentage,
+  formatDate,
+  getCurrentYearRange,
+  getGreeting,
+  getTodayDate,
 } from "~/lib/utils";
-import { CategoryStatCard } from "~/components/ui/category-stat-card";
-import { CategoryBadge } from "~/components/ui/category-badge";
-import { ProgressBarWithLabel } from "~/components/ui/progress-bar";
-import { GlassCard, GlassCardHeader, GlassCardBody } from "~/components/ui/glass-card";
-import { GradientBackground } from "~/components/ui/gradient-background";
-import { HabitGraph } from "~/components/features/habit-graph";
-import { useHabitCompletion } from "~/hooks/use-habit-completion";
-import { useGraphData } from "~/hooks/use-graph-data";
+import { api } from "~/trpc/react";
 
 export default function HomePage() {
   const { data: session, status } = useSession();

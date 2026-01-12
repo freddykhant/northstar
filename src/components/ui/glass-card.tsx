@@ -22,9 +22,9 @@ interface GlassCardHeaderProps extends PropsWithChildren {
   className?: string;
 }
 
-export function GlassCardHeader({ 
-  children, 
-  className = "" 
+export function GlassCardHeader({
+  children,
+  className = "",
 }: GlassCardHeaderProps) {
   return (
     <div className={`border-b border-zinc-800 p-6 ${className}`}>
@@ -37,9 +37,9 @@ interface GlassCardBodyProps extends PropsWithChildren {
   className?: string;
 }
 
-export function GlassCardBody({ 
-  children, 
-  className = "" 
+export function GlassCardBody({
+  children,
+  className = "",
 }: GlassCardBodyProps) {
   return <div className={`p-6 ${className}`}>{children}</div>;
 }
