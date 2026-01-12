@@ -4,15 +4,9 @@
 
 interface ProgressBarProps {
   percentage: number;
-  completedCount: number;
-  totalCount: number;
 }
 
-export function ProgressBar({
-  percentage,
-  completedCount,
-  totalCount,
-}: ProgressBarProps) {
+export function ProgressBar({ percentage }: ProgressBarProps) {
   return (
     <div className="flex items-center gap-3">
       <div className="flex-1">
@@ -28,7 +22,10 @@ export function ProgressBar({
   );
 }
 
-interface ProgressBarWithLabelProps extends ProgressBarProps {
+interface ProgressBarWithLabelProps {
+  percentage: number;
+  completedCount: number;
+  totalCount: number;
   label?: string;
 }
 
@@ -40,11 +37,7 @@ export function ProgressBarWithLabel({
 }: ProgressBarWithLabelProps) {
   return (
     <>
-      <ProgressBar
-        percentage={percentage}
-        completedCount={completedCount}
-        totalCount={totalCount}
-      />
+      <ProgressBar percentage={percentage} />
       <div className="mt-2 text-xs text-zinc-500">
         {completedCount} of {totalCount} {label}
       </div>

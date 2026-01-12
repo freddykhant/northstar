@@ -31,11 +31,10 @@ export default function HabitsPage() {
   });
 
   const { data: habits, refetch } = api.habit.getAll.useQuery();
-  const { data: categories } = api.category.getAll.useQuery();
 
   const createMutation = api.habit.create.useMutation({
     onSuccess: () => {
-      refetch();
+      void refetch();
       setIsModalOpen(false);
       setFormData({ name: "", description: "", categoryId: "mind" });
     },
@@ -43,7 +42,7 @@ export default function HabitsPage() {
 
   const updateMutation = api.habit.update.useMutation({
     onSuccess: () => {
-      refetch();
+      void refetch();
       setEditingHabit(null);
       setFormData({ name: "", description: "", categoryId: "mind" });
       setIsModalOpen(false);
@@ -51,12 +50,27 @@ export default function HabitsPage() {
   });
 
   const toggleMutation = api.habit.toggleActive.useMutation({
-    onSuccess: () => refetch(),
+    onSuccess: () => void refetch(),
   });
 
   const deleteMutation = api.habit.delete.useMutation({
-    onSuccess: () => refetch(),
+    onSuccess: () => void void refetch(),
   });
+
+  const habitsByCategory = useMemo(() => {
+    if (!habits) return { mind: [], body: [], soul: [] };
+    return habits.reduce(
+      (acc, habit) => {
+        const catId = habit.categoryId as "mind" | "body" | "soul";
+        acc[catId].push(habit);
+        return acc;
+      },
+      { mind: [], body: [], soul: [] } as Record<
+        "mind" | "body" | "soul",
+        NonNullable<typeof habits>
+      >,
+    );
+  }, [habits]);
 
   if (status === "loading") {
     return (
@@ -67,7 +81,7 @@ export default function HabitsPage() {
   }
 
   if (status === "unauthenticated") {
-    router.push("/signin");
+    void router.push("/signin");
     return null;
   }
 
@@ -100,21 +114,6 @@ export default function HabitsPage() {
     setEditingHabit(null);
     setFormData({ name: "", description: "", categoryId: "mind" });
   };
-
-  const habitsByCategory = useMemo(() => {
-    if (!habits) return { mind: [], body: [], soul: [] };
-    return habits.reduce(
-      (acc, habit) => {
-        const catId = habit.categoryId as "mind" | "body" | "soul";
-        acc[catId].push(habit);
-        return acc;
-      },
-      { mind: [], body: [], soul: [] } as Record<
-        "mind" | "body" | "soul",
-        typeof habits
-      >,
-    );
-  }, [habits]);
 
   const categoryEmojis = {
     mind: "🧠",

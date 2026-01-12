@@ -114,6 +114,7 @@ export function useHabitCompletion({
               startDate: dateRange.startDate,
               endDate: dateRange.endDate,
             },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
             updatedCompletions as any,
           );
         } else {
@@ -172,9 +173,9 @@ export function useHabitCompletion({
     },
     onSuccess: () => {
       // Refetch to sync with server
-      utils.completion.getForDate.invalidate({ date: today });
-      utils.completion.getStatsForDate.invalidate({ date: today });
-      utils.completion.getMyCompletions.invalidate({
+      void utils.completion.getForDate.invalidate({ date: today });
+      void utils.completion.getStatsForDate.invalidate({ date: today });
+      void utils.completion.getMyCompletions.invalidate({
         startDate: dateRange.startDate,
         endDate: dateRange.endDate,
       });

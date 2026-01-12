@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { db } from "~/server/db";
+import type { db } from "~/server/db";
 import { habits } from "~/server/db/schema";
 
 // helper function to verify habit ownership
@@ -16,7 +16,7 @@ async function verifyHabitOwnership(
     where: eq(habits.id, habitId),
   });
 
-  if (!habit || habit.userId !== userId) {
+  if (!habit?.userId || habit.userId !== userId) {
     throw new TRPCError({
       code: "FORBIDDEN",
       message: "Not your habit",

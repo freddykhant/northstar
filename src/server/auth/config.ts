@@ -1,8 +1,8 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { type DefaultSession, type NextAuthConfig } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
-import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
+import { type DefaultSession, type NextAuthConfig } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 
 import { db } from "~/server/db";
 import {
@@ -68,7 +68,7 @@ export const authConfig = {
           where: (users, { eq }) => eq(users.email, email),
         });
 
-        if (!user || !user.password) {
+        if (!user?.password) {
           return null;
         }
 
@@ -107,7 +107,7 @@ export const authConfig = {
     strategy: "jwt", // required for CredentialsProvider
   },
   callbacks: {
-    jwt: async ({ token, user, account }) => {
+    jwt: async ({ token, user }) => {
       // Initial sign in
       if (user) {
         token.id = user.id;
@@ -117,8 +117,8 @@ export const authConfig = {
     },
     session: ({ session, token }) => {
       if (token && session.user) {
-        session.user.id = token.id as string;
-        session.user.email = token.email as string;
+        session.user.id = token.id!;
+        session.user.email = token.email!;
       }
       return session;
     },

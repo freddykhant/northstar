@@ -131,13 +131,11 @@ export const completionRouter = createTRPCRouter({
       const stats = completionsForDate.reduce(
         (acc, completion) => {
           const categoryId = completion.habit.category.id;
-          if (!acc[categoryId]) {
-            acc[categoryId] = {
-              category: completion.habit.category,
-              count: 0,
-              habits: [],
-            };
-          }
+          acc[categoryId] ??= {
+            category: completion.habit.category,
+            count: 0,
+            habits: [],
+          };
           acc[categoryId].count++;
           acc[categoryId].habits.push(completion.habit);
           return acc;
