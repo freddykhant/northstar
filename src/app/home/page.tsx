@@ -60,49 +60,73 @@ function HabitGraph({ completions }: { completions: DayData[] }) {
 
   const categories: CategoryId[] = ["mind", "body", "soul"];
 
-  return (
-    <div className="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-8">
-      <h2 className="mb-6 text-xl font-bold text-white">Activity Graph</h2>
-      <div className="flex gap-4">
-        {/* Category labels */}
-        <div className="flex flex-col justify-around py-2">
-          {categories.map((cat) => (
-            <div
-              key={cat}
-              className="flex h-4 items-center gap-2 text-xs text-zinc-400"
-            >
-              <span>{categoryEmojis[cat]}</span>
-              <span className="capitalize">{categoryLabels[cat]}</span>
-            </div>
-          ))}
-        </div>
+  // Calculate total completions for insight
+  const totalCompletions = useMemo(() => {
+    let count = 0;
+    completions.forEach((day) => {
+      if (day.categories.mind) count++;
+      if (day.categories.body) count++;
+      if (day.categories.soul) count++;
+    });
+    return count;
+  }, [completions]);
 
-        {/* Graph grid */}
-        <div className="flex-1 overflow-x-auto">
-          <div className="flex gap-1">
-            {days.map((date) => {
-              const dayData = completionMap.get(date);
-              return (
-                <div key={date} className="flex flex-col gap-1">
-                  {categories.map((cat) => {
-                    const isComplete = dayData?.[cat] ?? false;
-                    return (
-                      <div
-                        key={`${date}-${cat}`}
-                        className={`h-4 w-4 rounded-sm transition-all ${
-                          isComplete
-                            ? `${categoryColors[cat]} opacity-100`
-                            : "bg-zinc-800 opacity-40"
-                        }`}
-                        title={`${date} - ${categoryLabels[cat]}: ${
-                          isComplete ? "Completed" : "Not completed"
-                        }`}
-                      />
-                    );
-                  })}
-                </div>
-              );
-            })}
+  return (
+    <div className="overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900/70 backdrop-blur-xl">
+      <div className="border-b border-zinc-800 p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="mb-1 text-xl font-bold text-white">Activity</h2>
+            <p className="text-sm text-zinc-500">Last 60 days of progress</p>
+          </div>
+          <div className="text-right">
+            <div className="text-2xl font-bold text-white">{totalCompletions}</div>
+            <div className="text-xs text-zinc-500">total completions</div>
+          </div>
+        </div>
+      </div>
+      <div className="p-6">
+        <div className="flex gap-4">
+          {/* Category labels */}
+          <div className="flex flex-col justify-around py-2">
+            {categories.map((cat) => (
+              <div
+                key={cat}
+                className="flex h-4 items-center gap-2 text-xs font-medium text-zinc-400"
+              >
+                <span>{categoryEmojis[cat]}</span>
+                <span className="capitalize">{categoryLabels[cat]}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Graph grid */}
+          <div className="flex-1 overflow-x-auto">
+            <div className="flex gap-1">
+              {days.map((date) => {
+                const dayData = completionMap.get(date);
+                return (
+                  <div key={date} className="flex flex-col gap-1">
+                    {categories.map((cat) => {
+                      const isComplete = dayData?.[cat] ?? false;
+                      return (
+                        <div
+                          key={`${date}-${cat}`}
+                          className={`h-4 w-4 rounded-sm transition-all hover:scale-110 ${
+                            isComplete
+                              ? `${categoryColors[cat]} opacity-100 shadow-sm`
+                              : "bg-zinc-800 opacity-30"
+                          }`}
+                          title={`${date} - ${categoryLabels[cat]}: ${
+                            isComplete ? "Completed" : "Not completed"
+                          }`}
+                        />
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
@@ -229,16 +253,30 @@ export default function HomePage() {
     });
   };
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  };
+
+  const completedCount =
+    habitsWithStatus?.filter((h) => h.isCompleted).length ?? 0;
+  const totalCount = habitsWithStatus?.length ?? 0;
+  const completionPercentage =
+    totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#0a0a0a] text-white">
-      {/* Background */}
+      {/* Enhanced Background */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background: `
-            radial-gradient(ellipse 80% 50% at 50% 50%, rgba(38, 35, 32, 0.4) 0%, transparent 50%),
-            radial-gradient(ellipse 60% 40% at 50% 45%, rgba(45, 40, 35, 0.3) 0%, transparent 40%),
-            radial-gradient(ellipse 100% 80% at 50% 50%, rgba(25, 23, 22, 0.5) 0%, transparent 60%)
+            radial-gradient(ellipse 80% 60% at 50% -20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse 80% 50% at 20% 50%, rgba(239, 68, 68, 0.1) 0%, transparent 50%),
+            radial-gradient(ellipse 80% 50% at 80% 50%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
+            radial-gradient(ellipse 100% 80% at 50% 50%, rgba(25, 23, 22, 0.4) 0%, transparent 60%)
           `,
         }}
       />
@@ -250,145 +288,200 @@ export default function HomePage() {
       />
 
       {/* Content */}
-      <div className="relative z-10 mx-auto max-w-3xl px-6 py-12">
-        {/* Header */}
-        <div className="mb-8 flex items-start justify-between">
-          <div>
-            <h1 className="mb-2 flex items-center gap-2 text-4xl font-bold text-white">
-              <Sparkles className="h-9 w-9 text-yellow-400" />
-              Northstar
-            </h1>
-            <p className="text-sm text-zinc-400">{formatDate(today!)}</p>
+      <div className="relative z-10 mx-auto max-w-7xl px-6 py-8">
+        {/* Top Navigation Bar */}
+        <nav className="mb-12 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500">
+              <Sparkles className="h-6 w-6 text-white" />
+            </div>
+            <span className="text-xl font-bold text-white">Northstar</span>
           </div>
-          <div className="flex gap-3">
+          <div className="flex items-center gap-3">
             <Link
               href="/habits"
-              className="flex items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-900/50 px-4 py-2 text-sm text-zinc-300 transition-all hover:bg-zinc-800"
+              className="flex items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900/70 px-4 py-2.5 text-sm font-medium text-zinc-300 backdrop-blur-xl transition-all hover:border-zinc-700 hover:bg-zinc-800/70"
             >
               <Settings className="h-4 w-4" />
-              Manage
+              Manage Habits
             </Link>
             <button
               onClick={handleSignOut}
-              className="rounded-xl border border-zinc-700 bg-zinc-900/50 px-4 py-2 text-sm text-zinc-300 transition-all hover:bg-zinc-800"
+              className="rounded-xl border border-zinc-800 bg-zinc-900/70 px-4 py-2.5 text-sm font-medium text-zinc-400 backdrop-blur-xl transition-all hover:border-zinc-700 hover:bg-zinc-800/70 hover:text-zinc-300"
             >
               Sign Out
             </button>
           </div>
+        </nav>
+
+        {/* Greeting Header */}
+        <div className="mb-10">
+          <h1 className="mb-2 bg-gradient-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-5xl font-bold text-transparent">
+            {getGreeting()}, {session?.user?.name?.split(" ")[0] ?? "there"}
+          </h1>
+          <p className="text-lg text-zinc-400">{formatDate(today!)}</p>
         </div>
 
-        {/* Stats Summary */}
-        {stats && stats.totalCompletions > 0 && (
-          <div className="mb-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-            <div className="flex items-center gap-6">
-              <div>
-                <div className="text-3xl font-bold text-white">
-                  {stats.totalCompletions}
+        {/* Main Grid Layout */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {/* Left Column - Activity Graph (takes 2 columns) */}
+          <div className="lg:col-span-2">
+            {/* Stats Overview Cards */}
+            <div className="mb-6 grid grid-cols-3 gap-4">
+              {/* Mind Card */}
+              <div className="group relative overflow-hidden rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-500/10 to-blue-600/5 p-5 backdrop-blur-xl transition-all hover:border-blue-500/30">
+                <div className="absolute top-0 right-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-blue-500/20 blur-3xl" />
+                <div className="relative">
+                  <div className="mb-2 text-3xl">🧠</div>
+                  <div className="mb-1 text-sm font-medium text-blue-300">
+                    Mind
+                  </div>
+                  <div className="text-2xl font-bold text-white">
+                    {stats?.byCategory.find((c) => c.category.id === "mind")
+                      ?.count ?? 0}
+                  </div>
+                  <div className="text-xs text-zinc-500">completed today</div>
                 </div>
-                <div className="text-sm text-zinc-400">completed today</div>
               </div>
-              {stats.byCategory.map((cat) => (
-                <div key={cat.category.id} className="flex items-center gap-2">
-                  <span className="text-2xl">
-                    {
-                      categoryEmojis[
-                        cat.category.id as "mind" | "body" | "soul"
-                      ]
-                    }
-                  </span>
-                  <div>
-                    <div className="text-xl font-semibold text-white">
-                      {cat.count}
+
+              {/* Body Card */}
+              <div className="group relative overflow-hidden rounded-2xl border border-red-500/20 bg-gradient-to-br from-red-500/10 to-red-600/5 p-5 backdrop-blur-xl transition-all hover:border-red-500/30">
+                <div className="absolute top-0 right-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-red-500/20 blur-3xl" />
+                <div className="relative">
+                  <div className="mb-2 text-3xl">💪</div>
+                  <div className="mb-1 text-sm font-medium text-red-300">
+                    Body
+                  </div>
+                  <div className="text-2xl font-bold text-white">
+                    {stats?.byCategory.find((c) => c.category.id === "body")
+                      ?.count ?? 0}
+                  </div>
+                  <div className="text-xs text-zinc-500">completed today</div>
+                </div>
+              </div>
+
+              {/* Soul Card */}
+              <div className="group relative overflow-hidden rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-500/10 to-purple-600/5 p-5 backdrop-blur-xl transition-all hover:border-purple-500/30">
+                <div className="absolute top-0 right-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-purple-500/20 blur-3xl" />
+                <div className="relative">
+                  <div className="mb-2 text-3xl">✨</div>
+                  <div className="mb-1 text-sm font-medium text-purple-300">
+                    Soul
+                  </div>
+                  <div className="text-2xl font-bold text-white">
+                    {stats?.byCategory.find((c) => c.category.id === "soul")
+                      ?.count ?? 0}
+                  </div>
+                  <div className="text-xs text-zinc-500">completed today</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Activity Graph */}
+            <HabitGraph completions={graphData} />
+          </div>
+
+          {/* Right Column - Today's Checklist */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-8">
+              {habitsWithStatus && habitsWithStatus.length > 0 ? (
+                <div className="overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900/70 backdrop-blur-xl">
+                  {/* Checklist Header */}
+                  <div className="border-b border-zinc-800 p-6">
+                    <h2 className="mb-3 text-xl font-bold text-white">
+                      Today&apos;s Focus
+                    </h2>
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1">
+                        <div className="mb-1.5 h-2 overflow-hidden rounded-full bg-zinc-800">
+                          <div
+                            className="h-full rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-500"
+                            style={{ width: `${completionPercentage}%` }}
+                          />
+                        </div>
+                      </div>
+                      <div className="text-sm font-semibold text-white">
+                        {completionPercentage}%
+                      </div>
                     </div>
-                    <div className="text-xs text-zinc-500 capitalize">
-                      {cat.category.name}
+                    <div className="mt-2 text-xs text-zinc-500">
+                      {completedCount} of {totalCount} completed
+                    </div>
+                  </div>
+
+                  {/* Checklist Items */}
+                  <div className="max-h-[600px] overflow-y-auto p-4">
+                    <div className="space-y-2">
+                      {habitsWithStatus.map((habit) => {
+                        const categoryId = habit.category.id as CategoryId;
+                        const categoryColor = categoryColors[categoryId];
+
+                        return (
+                          <label
+                            key={habit.id}
+                            className="group flex cursor-pointer items-start gap-3 rounded-2xl border border-transparent p-3 transition-all hover:border-zinc-800 hover:bg-zinc-800/50"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={habit.isCompleted}
+                              onChange={() => handleToggle(habit.id)}
+                              disabled={toggleMutation.isPending}
+                              className="mt-0.5 h-5 w-5 cursor-pointer rounded-md border-zinc-600 bg-zinc-800 text-white transition-all focus:ring-2 focus:ring-white focus:ring-offset-0 disabled:opacity-50"
+                            />
+                            <div className="min-w-0 flex-1">
+                              <div className="mb-1 flex items-center gap-2">
+                                <span className="text-lg">
+                                  {categoryEmojis[categoryId]}
+                                </span>
+                                <div
+                                  className={`flex-1 text-sm font-medium transition-all ${
+                                    habit.isCompleted
+                                      ? "text-zinc-500 line-through"
+                                      : "text-white"
+                                  }`}
+                                >
+                                  {habit.name}
+                                </div>
+                              </div>
+                              {habit.description && (
+                                <div className="text-xs text-zinc-600">
+                                  {habit.description}
+                                </div>
+                              )}
+                              <div className="mt-1.5">
+                                <span
+                                  className={`inline-block rounded-full border px-2 py-0.5 text-[10px] font-medium tracking-wide uppercase ${categoryColor}`}
+                                >
+                                  {categoryId}
+                                </span>
+                              </div>
+                            </div>
+                          </label>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Activity Graph */}
-        <div className="mb-6">
-          <HabitGraph completions={graphData} />
-        </div>
-
-        {/* Today's Checklist */}
-        {habitsWithStatus && habitsWithStatus.length > 0 ? (
-          <div className="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-8">
-            <h2 className="mb-6 text-xl font-bold text-white">
-              Today&apos;s Checklist
-            </h2>
-            <div className="space-y-2">
-              {habitsWithStatus.map((habit) => {
-                const categoryId = habit.category.id as
-                  | "mind"
-                  | "body"
-                  | "soul";
-                const categoryColor = categoryColors[categoryId];
-
-                return (
-                  <label
-                    key={habit.id}
-                    className="group flex cursor-pointer items-center gap-4 rounded-xl p-4 transition-all hover:bg-zinc-800/50"
+              ) : (
+                <div className="flex flex-col items-center justify-center rounded-3xl border border-zinc-800 bg-zinc-900/70 p-12 text-center backdrop-blur-xl">
+                  <div className="mb-4 text-6xl">🌟</div>
+                  <h2 className="mb-2 text-xl font-bold text-white">
+                    No habits yet
+                  </h2>
+                  <p className="mb-6 text-sm text-zinc-400">
+                    Create your first habit to start building consistency
+                  </p>
+                  <Link
+                    href="/habits"
+                    className="inline-block rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black transition-transform hover:scale-105"
                   >
-                    <input
-                      type="checkbox"
-                      checked={habit.isCompleted}
-                      onChange={() => handleToggle(habit.id)}
-                      disabled={toggleMutation.isPending}
-                      className="h-5 w-5 cursor-pointer rounded-md border-zinc-600 bg-zinc-800 text-white transition-all focus:ring-2 focus:ring-white focus:ring-offset-0 disabled:opacity-50"
-                    />
-                    <div className="flex flex-1 items-center gap-3">
-                      <span className="text-2xl">
-                        {categoryEmojis[categoryId]}
-                      </span>
-                      <div className="flex-1">
-                        <div
-                          className={`font-medium transition-all ${
-                            habit.isCompleted
-                              ? "text-zinc-500 line-through"
-                              : "text-white"
-                          }`}
-                        >
-                          {habit.name}
-                        </div>
-                        {habit.description && (
-                          <div className="text-sm text-zinc-500">
-                            {habit.description}
-                          </div>
-                        )}
-                      </div>
-                      <span
-                        className={`rounded-full border px-3 py-1 text-xs font-medium ${categoryColor}`}
-                      >
-                        {categoryId}
-                      </span>
-                    </div>
-                  </label>
-                );
-              })}
+                    Create Habit
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center rounded-3xl border border-zinc-800 bg-zinc-900/50 p-16">
-            <div className="mb-4 text-6xl">🌟</div>
-            <h2 className="mb-2 text-2xl font-bold text-white">
-              No habits yet
-            </h2>
-            <p className="mb-6 text-zinc-400">
-              Create your first habit to start tracking your progress
-            </p>
-            <Link
-              href="/habits"
-              className="inline-block rounded-xl bg-white px-6 py-3 font-semibold text-black transition-transform hover:scale-105"
-            >
-              Create
-            </Link>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
