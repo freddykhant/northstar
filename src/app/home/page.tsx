@@ -4,7 +4,7 @@ import { Settings, Sparkles } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api } from "~/trpc/react";
 
 type CategoryId = "mind" | "body" | "soul";
@@ -18,7 +18,13 @@ interface DayData {
   };
 }
 
-function HabitGraph({ completions }: { completions: DayData[] }) {
+function HabitGraph({
+  completions,
+  todayDate,
+}: {
+  completions: DayData[];
+  todayDate: string;
+}) {
   const categoryEmojis = {
     mind: "🧠",
     body: "💪",
@@ -29,6 +35,12 @@ function HabitGraph({ completions }: { completions: DayData[] }) {
     mind: "bg-blue-500",
     body: "bg-red-500",
     soul: "bg-purple-500",
+  };
+
+  const categoryShadows = {
+    mind: "shadow-blue-500/50",
+    body: "shadow-red-500/50",
+    soul: "shadow-purple-500/50",
   };
 
   const categoryLabels = {
@@ -107,6 +119,7 @@ function HabitGraph({ completions }: { completions: DayData[] }) {
             <div className="flex gap-1">
               {days.map((date) => {
                 const dayData = completionMap.get(date);
+                const isToday = date === todayDate;
                 return (
                   <div key={date} className="flex flex-col gap-1">
                     {categories.map((cat) => {
@@ -114,9 +127,13 @@ function HabitGraph({ completions }: { completions: DayData[] }) {
                       return (
                         <div
                           key={`${date}-${cat}`}
-                          className={`h-4 w-4 rounded-sm transition-all hover:scale-110 ${
+                          className={`h-4 w-4 rounded-sm transition-all duration-300 hover:scale-110 ${
                             isComplete
-                              ? `${categoryColors[cat]} opacity-100 shadow-sm`
+                              ? `${categoryColors[cat]} opacity-100 ${
+                                  isToday
+                                    ? `animate-pulse shadow-lg ${categoryShadows[cat]}`
+                                    : "shadow-sm"
+                                }`
                               : "bg-zinc-800 opacity-30"
                           }`}
                           title={`${date} - ${categoryLabels[cat]}: ${
@@ -139,6 +156,8 @@ function HabitGraph({ completions }: { completions: DayData[] }) {
 export default function HomePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [justCompleted, setJustCompleted] = useState<Set<number>>(new Set());
+  const utils = api.useUtils();
 
   // Get today's date in YYYY-MM-DD format
   const today = useMemo(() => {
@@ -147,8 +166,10 @@ export default function HomePage() {
   }, []);
 
   // Fetch habits with completion status for today
-  const { data: habitsWithStatus, refetch } =
-    api.completion.getForDate.useQuery({ date: today! }, { enabled: !!today });
+  const { data: habitsWithStatus } = api.completion.getForDate.useQuery(
+    { date: today! },
+    { enabled: !!today },
+  );
 
   // Fetch today's stats
   const { data: stats } = api.completion.getStatsForDate.useQuery(
@@ -198,10 +219,113 @@ export default function HomePage() {
     }));
   }, [completionsData]);
 
-  // Toggle completion mutation
+  // Toggle completion mutation with optimistic updates
   const toggleMutation = api.completion.toggle.useMutation({
+    onMutate: async ({ habitId }) => {
+      // Cancel outgoing refetches
+      await utils.completion.getForDate.cancel();
+      await utils.completion.getStatsForDate.cancel();
+      await utils.completion.getMyCompletions.cancel();
+
+      // Snapshot the previous values
+      const previousHabits = utils.completion.getForDate.getData({
+        date: today!,
+      });
+      const previousStats = utils.completion.getStatsForDate.getData({
+        date: today!,
+      });
+      const previousCompletions = utils.completion.getMyCompletions.getData({
+        startDate: dateRange.startDate,
+        endDate: dateRange.endDate,
+      });
+
+      // Find the habit being toggled
+      const habit = previousHabits?.find((h) => h.id === habitId);
+      if (!habit) return { previousHabits, previousStats, previousCompletions };
+
+      const isCompleting = !habit.isCompleted;
+
+      // Optimistically update habits
+      if (previousHabits) {
+        utils.completion.getForDate.setData(
+          { date: today! },
+          previousHabits.map((h) =>
+            h.id === habitId ? { ...h, isCompleted: !h.isCompleted } : h,
+          ),
+        );
+      }
+
+      // Optimistically update stats
+      if (previousStats && habit) {
+        const categoryId = habit.category.id;
+        const updatedByCategory = previousStats.byCategory.map((cat) => {
+          if (cat.category.id === categoryId) {
+            return {
+              ...cat,
+              count: isCompleting ? cat.count + 1 : cat.count - 1,
+            };
+          }
+          return cat;
+        });
+
+        utils.completion.getStatsForDate.setData(
+          { date: today! },
+          {
+            ...previousStats,
+            totalCompletions: isCompleting
+              ? previousStats.totalCompletions + 1
+              : previousStats.totalCompletions - 1,
+            byCategory: updatedByCategory,
+          },
+        );
+      }
+
+      // Show completion animation
+      if (isCompleting) {
+        setJustCompleted((prev) => new Set(prev).add(habitId));
+        setTimeout(() => {
+          setJustCompleted((prev) => {
+            const next = new Set(prev);
+            next.delete(habitId);
+            return next;
+          });
+        }, 1000);
+      }
+
+      return { previousHabits, previousStats, previousCompletions };
+    },
+    onError: (err, variables, context) => {
+      // Rollback on error
+      if (context?.previousHabits) {
+        utils.completion.getForDate.setData(
+          { date: today! },
+          context.previousHabits,
+        );
+      }
+      if (context?.previousStats) {
+        utils.completion.getStatsForDate.setData(
+          { date: today! },
+          context.previousStats,
+        );
+      }
+      if (context?.previousCompletions) {
+        utils.completion.getMyCompletions.setData(
+          {
+            startDate: dateRange.startDate,
+            endDate: dateRange.endDate,
+          },
+          context.previousCompletions,
+        );
+      }
+    },
     onSuccess: () => {
-      refetch();
+      // Refetch to sync with server
+      utils.completion.getForDate.invalidate({ date: today! });
+      utils.completion.getStatsForDate.invalidate({ date: today! });
+      utils.completion.getMyCompletions.invalidate({
+        startDate: dateRange.startDate,
+        endDate: dateRange.endDate,
+      });
     },
   });
 
@@ -331,14 +455,14 @@ export default function HomePage() {
             {/* Stats Overview Cards */}
             <div className="mb-6 grid grid-cols-3 gap-4">
               {/* Mind Card */}
-              <div className="group relative overflow-hidden rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-500/10 to-blue-600/5 p-5 backdrop-blur-xl transition-all hover:border-blue-500/30">
-                <div className="absolute top-0 right-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-blue-500/20 blur-3xl" />
+              <div className="group relative overflow-hidden rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-500/10 to-blue-600/5 p-5 backdrop-blur-xl transition-all hover:scale-[1.02] hover:border-blue-500/30">
+                <div className="absolute top-0 right-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-blue-500/20 blur-3xl transition-opacity group-hover:opacity-100" />
                 <div className="relative">
                   <div className="mb-2 text-3xl">🧠</div>
                   <div className="mb-1 text-sm font-medium text-blue-300">
                     Mind
                   </div>
-                  <div className="text-2xl font-bold text-white">
+                  <div className="text-2xl font-bold text-white transition-all duration-300">
                     {stats?.byCategory.find((c) => c.category.id === "mind")
                       ?.count ?? 0}
                   </div>
@@ -347,14 +471,14 @@ export default function HomePage() {
               </div>
 
               {/* Body Card */}
-              <div className="group relative overflow-hidden rounded-2xl border border-red-500/20 bg-gradient-to-br from-red-500/10 to-red-600/5 p-5 backdrop-blur-xl transition-all hover:border-red-500/30">
-                <div className="absolute top-0 right-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-red-500/20 blur-3xl" />
+              <div className="group relative overflow-hidden rounded-2xl border border-red-500/20 bg-gradient-to-br from-red-500/10 to-red-600/5 p-5 backdrop-blur-xl transition-all hover:scale-[1.02] hover:border-red-500/30">
+                <div className="absolute top-0 right-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-red-500/20 blur-3xl transition-opacity group-hover:opacity-100" />
                 <div className="relative">
                   <div className="mb-2 text-3xl">💪</div>
                   <div className="mb-1 text-sm font-medium text-red-300">
                     Body
                   </div>
-                  <div className="text-2xl font-bold text-white">
+                  <div className="text-2xl font-bold text-white transition-all duration-300">
                     {stats?.byCategory.find((c) => c.category.id === "body")
                       ?.count ?? 0}
                   </div>
@@ -363,14 +487,14 @@ export default function HomePage() {
               </div>
 
               {/* Soul Card */}
-              <div className="group relative overflow-hidden rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-500/10 to-purple-600/5 p-5 backdrop-blur-xl transition-all hover:border-purple-500/30">
-                <div className="absolute top-0 right-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-purple-500/20 blur-3xl" />
+              <div className="group relative overflow-hidden rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-500/10 to-purple-600/5 p-5 backdrop-blur-xl transition-all hover:scale-[1.02] hover:border-purple-500/30">
+                <div className="absolute top-0 right-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-purple-500/20 blur-3xl transition-opacity group-hover:opacity-100" />
                 <div className="relative">
                   <div className="mb-2 text-3xl">✨</div>
                   <div className="mb-1 text-sm font-medium text-purple-300">
                     Soul
                   </div>
-                  <div className="text-2xl font-bold text-white">
+                  <div className="text-2xl font-bold text-white transition-all duration-300">
                     {stats?.byCategory.find((c) => c.category.id === "soul")
                       ?.count ?? 0}
                   </div>
@@ -380,7 +504,7 @@ export default function HomePage() {
             </div>
 
             {/* Activity Graph */}
-            <HabitGraph completions={graphData} />
+            <HabitGraph completions={graphData} todayDate={today!} />
           </div>
 
           {/* Right Column - Today's Checklist */}
@@ -417,11 +541,16 @@ export default function HomePage() {
                       {habitsWithStatus.map((habit) => {
                         const categoryId = habit.category.id as CategoryId;
                         const categoryColor = categoryColors[categoryId];
+                        const isJustCompleted = justCompleted.has(habit.id);
 
                         return (
                           <label
                             key={habit.id}
-                            className="group flex cursor-pointer items-start gap-3 rounded-2xl border border-transparent p-3 transition-all hover:border-zinc-800 hover:bg-zinc-800/50"
+                            className={`group flex cursor-pointer items-start gap-3 rounded-2xl border p-3 transition-all duration-300 ${
+                              isJustCompleted
+                                ? "scale-[1.02] border-green-500/50 bg-green-500/10 shadow-lg shadow-green-500/20"
+                                : "border-transparent hover:border-zinc-800 hover:bg-zinc-800/50"
+                            }`}
                           >
                             <input
                               type="checkbox"
@@ -432,7 +561,11 @@ export default function HomePage() {
                             />
                             <div className="min-w-0 flex-1">
                               <div className="mb-1 flex items-center gap-2">
-                                <span className="text-lg">
+                                <span
+                                  className={`text-lg transition-transform duration-300 ${
+                                    isJustCompleted ? "scale-125" : ""
+                                  }`}
+                                >
                                   {categoryEmojis[categoryId]}
                                 </span>
                                 <div

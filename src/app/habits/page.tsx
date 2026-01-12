@@ -186,7 +186,8 @@ export default function HabitsPage() {
                 </span>
               </h1>
               <p className="pl-[60px] text-lg text-zinc-400">
-                {habits?.length ?? 0} habit{habits?.length !== 1 ? "s" : ""} · Build the life you want
+                {habits?.length ?? 0} habit{habits?.length !== 1 ? "s" : ""} ·
+                Build the life you want
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -271,9 +272,15 @@ export default function HabitsPage() {
                           habit.isActive ? "" : "opacity-50"
                         }`}
                       >
-                        <div className={`absolute right-0 top-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full blur-3xl transition-opacity opacity-0 group-hover:opacity-100 ${
-                          categoryId === 'mind' ? 'bg-blue-500/20' : categoryId === 'body' ? 'bg-red-500/20' : 'bg-purple-500/20'
-                        }`} />
+                        <div
+                          className={`absolute top-0 right-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full opacity-0 blur-3xl transition-opacity group-hover:opacity-100 ${
+                            categoryId === "mind"
+                              ? "bg-blue-500/20"
+                              : categoryId === "body"
+                                ? "bg-red-500/20"
+                                : "bg-purple-500/20"
+                          }`}
+                        />
                         <div className="mb-3 flex items-start justify-between">
                           <h3 className="flex-1 text-lg font-semibold text-white">
                             {habit.name}
