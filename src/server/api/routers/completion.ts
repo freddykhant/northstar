@@ -84,7 +84,21 @@ export const completionRouter = createTRPCRouter({
         orderBy: (completions, { desc }) => [desc(completions.completedDate)],
       });
 
-      return result;
+      // Format dates to ensure they're strings in YYYY-MM-DD format
+      return result.map((completion) => {
+        const date = completion.completedDate as unknown;
+        const dateStr =
+          typeof date === "string"
+            ? date
+            : date instanceof Date
+              ? date.toISOString().split("T")[0]!
+              : String(date).split("T")[0]!;
+
+        return {
+          ...completion,
+          completedDate: dateStr,
+        };
+      });
     }),
 
   // get stats for a specific date (grouped by category)

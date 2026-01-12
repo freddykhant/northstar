@@ -25,8 +25,6 @@ function HabitGraph({
   completions: DayData[];
   todayDate: string;
 }) {
-  console.log("HabitGraph rendering, completions:", completions.length, "days");
-
   const categoryEmojis = {
     mind: "🧠",
     body: "💪",
@@ -51,17 +49,42 @@ function HabitGraph({
     soul: "Soul",
   };
 
-  // Get the last 60 days
+  // Get all days in the current year (Jan 1 to Dec 31)
   const days = useMemo(() => {
     const result: string[] = [];
     const today = new Date();
-    for (let i = 59; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - i);
-      result.push(date.toISOString().split("T")[0]!);
+    const currentYear = today.getFullYear();
+    const startOfYear = new Date(currentYear, 0, 1); // January 1st
+    const endOfYear = new Date(currentYear, 11, 31); // December 31st
+
+    const current = new Date(startOfYear);
+    while (current <= endOfYear) {
+      result.push(current.toISOString().split("T")[0]!);
+      current.setDate(current.getDate() + 1);
     }
     return result;
   }, []);
+
+  // Calculate month labels and positions for the x-axis
+  const monthLabels = useMemo(() => {
+    const labels: { month: string; startIndex: number }[] = [];
+    let currentMonth = -1;
+
+    days.forEach((date, index) => {
+      const dateObj = new Date(date + "T00:00:00");
+      const month = dateObj.getMonth();
+
+      if (month !== currentMonth) {
+        currentMonth = month;
+        labels.push({
+          month: dateObj.toLocaleDateString("en-US", { month: "short" }),
+          startIndex: index,
+        });
+      }
+    });
+
+    return labels;
+  }, [days]);
 
   // Create a map for quick lookup
   const completionMap = useMemo(() => {
@@ -69,13 +92,6 @@ function HabitGraph({
     completions.forEach((day) => {
       map.set(day.date, day.categories);
     });
-
-    const todayInMap = map.get(todayDate);
-    console.log(
-      "HabitGraph completionMap built, today categories:",
-      todayInMap,
-    );
-
     return map;
   }, [completions, todayDate]);
 
@@ -97,34 +113,54 @@ function HabitGraph({
       <div className="border-b border-zinc-800 p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="mb-1 text-xl font-bold text-white">Activity</h2>
-            <p className="text-sm text-zinc-500">Last 60 days of progress</p>
+            <h2 className="mb-1.5 text-xl font-bold text-white">Activity</h2>
+            <p className="text-sm text-zinc-500">
+              {new Date().getFullYear()} progress • {completions.length} days
+              tracked
+            </p>
           </div>
           <div className="text-right">
-            <div className="text-2xl font-bold text-white">
+            <div className="text-3xl font-bold text-white transition-all duration-300">
               {totalCompletions}
             </div>
-            <div className="text-xs text-zinc-500">total completions</div>
+            <div className="text-xs font-medium text-zinc-500">completions</div>
           </div>
         </div>
       </div>
       <div className="p-6">
-        <div className="flex gap-4">
+        <div className="flex gap-6">
           {/* Category labels */}
-          <div className="flex flex-col justify-around py-2">
+          <div className="flex flex-col justify-around py-3">
             {categories.map((cat) => (
               <div
                 key={cat}
-                className="flex h-4 items-center gap-2 text-xs font-medium text-zinc-400"
+                className="flex h-4 items-center gap-2.5 text-xs font-medium text-zinc-400"
               >
-                <span>{categoryEmojis[cat]}</span>
+                <span className="text-base">{categoryEmojis[cat]}</span>
                 <span className="capitalize">{categoryLabels[cat]}</span>
               </div>
             ))}
           </div>
 
           {/* Graph grid */}
-          <div className="flex-1 overflow-x-auto">
+          <div className="flex-1 overflow-x-auto pb-1">
+            {/* Month labels */}
+            <div className="mb-3 flex gap-1">
+              {monthLabels.map((label) => (
+                <div
+                  key={`month-${label.startIndex}`}
+                  className="text-[11px] font-semibold tracking-wide text-zinc-500 uppercase"
+                  style={{
+                    marginLeft:
+                      label.startIndex === 0 ? 0 : `${label.startIndex * 20}px`,
+                  }}
+                >
+                  {label.month}
+                </div>
+              ))}
+            </div>
+
+            {/* Squares grid */}
             <div className="flex gap-1">
               {days.map((date) => {
                 const dayData = completionMap.get(date);
@@ -134,36 +170,29 @@ function HabitGraph({
                     {categories.map((cat) => {
                       const isComplete = dayData?.[cat] ?? false;
 
-                      if (isToday) {
-                        console.log(`Square for ${cat} on ${date}:`, {
-                          isComplete,
-                          color: categoryColors[cat],
-                        });
-                      }
-
                       return (
                         <div
                           key={`${date}-${cat}`}
-                          className={`h-4 w-4 rounded-sm transition-all duration-300 hover:scale-110 ${
+                          className={`h-4 w-4 rounded-sm border transition-all duration-300 hover:scale-125 hover:rounded-md ${
                             isComplete
                               ? cat === "mind"
-                                ? `bg-blue-500 opacity-100 ${
+                                ? `border-blue-500/50 bg-blue-500 opacity-100 ${
                                     isToday
                                       ? "animate-pulse shadow-lg shadow-blue-500/50"
-                                      : "shadow-sm"
+                                      : "shadow-sm hover:shadow-md hover:shadow-blue-500/30"
                                   }`
                                 : cat === "body"
-                                  ? `bg-red-500 opacity-100 ${
+                                  ? `border-red-500/50 bg-red-500 opacity-100 ${
                                       isToday
                                         ? "animate-pulse shadow-lg shadow-red-500/50"
-                                        : "shadow-sm"
+                                        : "shadow-sm hover:shadow-md hover:shadow-red-500/30"
                                     }`
-                                  : `bg-purple-500 opacity-100 ${
+                                  : `border-purple-500/50 bg-purple-500 opacity-100 ${
                                       isToday
                                         ? "animate-pulse shadow-lg shadow-purple-500/50"
-                                        : "shadow-sm"
+                                        : "shadow-sm hover:shadow-md hover:shadow-purple-500/30"
                                     }`
-                              : "bg-zinc-800 opacity-30"
+                              : "border-zinc-800 bg-zinc-800 opacity-30 hover:border-zinc-700 hover:opacity-50"
                           }`}
                           title={`${date} - ${categoryLabels[cat]}: ${
                             isComplete ? "Completed" : "Not completed"
@@ -206,14 +235,16 @@ export default function HomePage() {
     { enabled: !!today },
   );
 
-  // Fetch completion data for the past 60 days
+  // Fetch completion data for the entire current year
   const dateRange = useMemo(() => {
-    const end = new Date();
-    const start = new Date();
-    start.setDate(start.getDate() - 59);
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const startOfYear = new Date(currentYear, 0, 1); // January 1st
+    const endOfYear = new Date(currentYear, 11, 31); // December 31st
+
     return {
-      startDate: start.toISOString().split("T")[0]!,
-      endDate: end.toISOString().split("T")[0]!,
+      startDate: startOfYear.toISOString().split("T")[0]!,
+      endDate: endOfYear.toISOString().split("T")[0]!,
     };
   }, []);
 
@@ -225,11 +256,6 @@ export default function HomePage() {
   // Transform completions data for the graph - recalculate whenever completionsData changes
   const graphData = useMemo(() => {
     if (!completionsData) return [];
-
-    console.log(
-      "Transforming graph data, completions count:",
-      completionsData.length,
-    );
 
     // Group completions by date and category
     const dataByDate = new Map<
@@ -244,32 +270,13 @@ export default function HomePage() {
       }
       const categoryId = completion.habit.category.id as CategoryId;
       dataByDate.get(dateKey)![categoryId] = true;
-
-      if (dateKey === today) {
-        console.log("Today completion found:", {
-          dateKey,
-          categoryId,
-          habitName: completion.habit.name,
-          completionId: completion.id,
-        });
-      }
     });
 
     // Convert to array format
-    const result = Array.from(dataByDate.entries()).map(
-      ([date, categories]) => ({
-        date,
-        categories,
-      }),
-    );
-
-    console.log("Graph data result:", result.length, "days with completions");
-    const todayData = result.find((d) => d.date === today);
-    if (todayData) {
-      console.log("Today graph data:", todayData);
-    }
-
-    return result;
+    return Array.from(dataByDate.entries()).map(([date, categories]) => ({
+      date,
+      categories,
+    }));
   }, [completionsData, today]);
 
   // Toggle completion mutation with optimistic updates
@@ -359,12 +366,6 @@ export default function HomePage() {
           };
 
           const updatedCompletions = [...previousCompletions, newCompletion];
-          console.log("Adding optimistic completion:", {
-            newCompletion,
-            categoryId: habit.category.id,
-            habitName: habit.name,
-            today,
-          });
 
           utils.completion.getMyCompletions.setData(
             {
@@ -378,13 +379,6 @@ export default function HomePage() {
           const filteredCompletions = previousCompletions.filter(
             (c) => !(c.habitId === habitId && c.completedDate === today!),
           );
-
-          console.log("Removing optimistic completion:", {
-            habitId,
-            today,
-            before: previousCompletions.length,
-            after: filteredCompletions.length,
-          });
 
           utils.completion.getMyCompletions.setData(
             {
