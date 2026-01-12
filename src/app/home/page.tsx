@@ -193,7 +193,7 @@ export default function HomePage() {
     endDate: dateRange.endDate,
   });
 
-  // Transform completions data for the graph
+  // Transform completions data for the graph - recalculate whenever completionsData changes
   const graphData = useMemo(() => {
     if (!completionsData) return [];
 
@@ -278,6 +278,48 @@ export default function HomePage() {
             byCategory: updatedByCategory,
           },
         );
+      }
+
+      // Optimistically update graph data
+      if (previousCompletions && habit) {
+        if (isCompleting) {
+          // Add completion to graph with proper structure
+          const newCompletion = {
+            id: Date.now(), // temporary ID
+            habitId: habitId,
+            userId: habit.userId,
+            completedDate: today!,
+            createdAt: new Date(),
+            habit: {
+              id: habit.id,
+              name: habit.name,
+              description: habit.description,
+              categoryId: habit.category.id,
+              userId: habit.userId,
+              isActive: habit.isActive,
+              createdAt: habit.createdAt,
+              category: habit.category,
+            },
+          };
+          utils.completion.getMyCompletions.setData(
+            {
+              startDate: dateRange.startDate,
+              endDate: dateRange.endDate,
+            },
+            [...previousCompletions, newCompletion] as any,
+          );
+        } else {
+          // Remove completion from graph
+          utils.completion.getMyCompletions.setData(
+            {
+              startDate: dateRange.startDate,
+              endDate: dateRange.endDate,
+            },
+            previousCompletions.filter(
+              (c) => !(c.habitId === habitId && c.completedDate === today!),
+            ),
+          );
+        }
       }
 
       // Show completion animation
