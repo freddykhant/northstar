@@ -80,7 +80,9 @@ function HabitGraph({ completions }: { completions: DayData[] }) {
             <p className="text-sm text-zinc-500">Last 60 days of progress</p>
           </div>
           <div className="text-right">
-            <div className="text-2xl font-bold text-white">{totalCompletions}</div>
+            <div className="text-2xl font-bold text-white">
+              {totalCompletions}
+            </div>
             <div className="text-xs text-zinc-500">total completions</div>
           </div>
         </div>

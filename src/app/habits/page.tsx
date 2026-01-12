@@ -145,14 +145,15 @@ export default function HabitsPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#0a0a0a] text-white">
-      {/* Background */}
+      {/* Enhanced Background */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background: `
-            radial-gradient(ellipse 80% 50% at 50% 50%, rgba(38, 35, 32, 0.4) 0%, transparent 50%),
-            radial-gradient(ellipse 60% 40% at 50% 45%, rgba(45, 40, 35, 0.3) 0%, transparent 40%),
-            radial-gradient(ellipse 100% 80% at 50% 50%, rgba(25, 23, 22, 0.5) 0%, transparent 60%)
+            radial-gradient(ellipse 80% 60% at 50% -20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse 80% 50% at 20% 50%, rgba(239, 68, 68, 0.1) 0%, transparent 50%),
+            radial-gradient(ellipse 80% 50% at 80% 50%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
+            radial-gradient(ellipse 100% 80% at 50% 50%, rgba(25, 23, 22, 0.4) 0%, transparent 60%)
           `,
         }}
       />
@@ -164,35 +165,38 @@ export default function HabitsPage() {
       />
 
       {/* Content */}
-      <div className="relative z-10 mx-auto max-w-6xl px-6 py-12">
+      <div className="relative z-10 mx-auto max-w-7xl px-6 py-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-10">
           <Link
             href="/home"
-            className="mb-4 inline-flex items-center gap-2 text-sm text-zinc-400 transition-colors hover:text-white"
+            className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-400 transition-colors hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Home
+            Back to Dashboard
           </Link>
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="mb-2 flex items-center gap-3 text-4xl font-bold text-white">
-                <Sparkles className="h-9 w-9 text-yellow-400" />
-                Your Habits
+              <h1 className="mb-3 flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500">
+                  <Sparkles className="h-7 w-7 text-white" />
+                </div>
+                <span className="bg-gradient-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-5xl font-bold text-transparent">
+                  Your Habits
+                </span>
               </h1>
-              <p className="text-zinc-400">
-                {habits?.length ?? 0} habit{habits?.length !== 1 ? "s" : ""} •
-                Build the life you want
+              <p className="pl-[60px] text-lg text-zinc-400">
+                {habits?.length ?? 0} habit{habits?.length !== 1 ? "s" : ""} · Build the life you want
               </p>
             </div>
             <div className="flex items-center gap-3">
               {/* View Toggle */}
-              <div className="flex rounded-lg border border-zinc-700 bg-zinc-900/50 p-1">
+              <div className="flex rounded-xl border border-zinc-800 bg-zinc-900/70 p-1 backdrop-blur-xl">
                 <button
                   onClick={() => setViewMode("grid")}
-                  className={`rounded-md px-3 py-1.5 text-sm font-medium transition-all ${
+                  className={`rounded-lg px-3 py-2 text-sm font-medium transition-all ${
                     viewMode === "grid"
-                      ? "bg-zinc-800 text-white"
+                      ? "bg-zinc-800 text-white shadow-sm"
                       : "text-zinc-400 hover:text-white"
                   }`}
                 >
@@ -200,9 +204,9 @@ export default function HabitsPage() {
                 </button>
                 <button
                   onClick={() => setViewMode("list")}
-                  className={`rounded-md px-3 py-1.5 text-sm font-medium transition-all ${
+                  className={`rounded-lg px-3 py-2 text-sm font-medium transition-all ${
                     viewMode === "list"
-                      ? "bg-zinc-800 text-white"
+                      ? "bg-zinc-800 text-white shadow-sm"
                       : "text-zinc-400 hover:text-white"
                   }`}
                 >
@@ -211,7 +215,7 @@ export default function HabitsPage() {
               </div>
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="group flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 font-semibold text-black transition-all hover:scale-105 hover:bg-zinc-100"
+                className="group flex items-center gap-2 rounded-xl bg-white px-6 py-2.5 font-semibold text-black shadow-lg shadow-white/10 transition-all hover:scale-105 hover:bg-zinc-100"
               >
                 <Plus className="h-5 w-5 transition-transform group-hover:rotate-90" />
                 New Habit
@@ -222,17 +226,17 @@ export default function HabitsPage() {
 
         {/* Habits Display */}
         {habits?.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-3xl border border-zinc-800 bg-zinc-900/50 p-20">
-            <div className="mb-4 text-6xl">🌟</div>
-            <h2 className="mb-2 text-2xl font-bold text-white">
+          <div className="flex flex-col items-center justify-center rounded-3xl border border-zinc-800 bg-zinc-900/70 p-20 backdrop-blur-xl">
+            <div className="mb-6 text-7xl">🌟</div>
+            <h2 className="mb-3 bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-3xl font-bold text-transparent">
               Start Your Journey
             </h2>
-            <p className="mb-6 text-zinc-400">
+            <p className="mb-8 text-center text-lg text-zinc-400">
               Create your first habit and begin building momentum
             </p>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 font-semibold text-black transition-transform hover:scale-105"
+              className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-4 font-semibold text-black shadow-lg shadow-white/10 transition-transform hover:scale-105"
             >
               <Plus className="h-5 w-5" />
               Create Your First Habit
@@ -261,12 +265,15 @@ export default function HabitsPage() {
                       <div
                         key={habit.id}
                         onClick={() => openEditModal(habit)}
-                        className={`group relative cursor-pointer overflow-hidden rounded-2xl border bg-gradient-to-br p-6 transition-all hover:scale-[1.02] ${
+                        className={`group relative cursor-pointer overflow-hidden rounded-2xl border bg-gradient-to-br p-6 backdrop-blur-xl transition-all hover:scale-[1.02] hover:shadow-lg ${
                           colors.bg
                         } ${colors.border} ${
                           habit.isActive ? "" : "opacity-50"
                         }`}
                       >
+                        <div className={`absolute right-0 top-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full blur-3xl transition-opacity opacity-0 group-hover:opacity-100 ${
+                          categoryId === 'mind' ? 'bg-blue-500/20' : categoryId === 'body' ? 'bg-red-500/20' : 'bg-purple-500/20'
+                        }`} />
                         <div className="mb-3 flex items-start justify-between">
                           <h3 className="flex-1 text-lg font-semibold text-white">
                             {habit.name}
@@ -306,7 +313,7 @@ export default function HabitsPage() {
                 <div
                   key={habit.id}
                   onClick={() => openEditModal(habit)}
-                  className={`group flex cursor-pointer items-center gap-4 rounded-xl border bg-zinc-900/50 p-4 transition-all hover:bg-zinc-800/50 ${
+                  className={`group flex cursor-pointer items-center gap-4 rounded-xl border bg-zinc-900/70 p-5 backdrop-blur-xl transition-all hover:bg-zinc-800/70 hover:shadow-lg ${
                     colors.border
                   } ${habit.isActive ? "" : "opacity-50"}`}
                 >
@@ -343,13 +350,13 @@ export default function HabitsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/90 backdrop-blur-md"
             onClick={closeModal}
           />
 
           {/* Modal Content */}
           <div className="relative w-full max-w-lg">
-            <div className="rounded-3xl border border-zinc-800 bg-zinc-900/95 p-8 shadow-2xl">
+            <div className="rounded-3xl border border-zinc-800 bg-zinc-900/95 p-8 shadow-2xl shadow-black/50 backdrop-blur-xl">
               {/* Close Button */}
               <button
                 onClick={closeModal}

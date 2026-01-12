@@ -12,14 +12,15 @@ export default async function LandingPage() {
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#0a0a0a] text-white">
-      {/* Base dark gradient layer */}
+      {/* Enhanced Background */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background: `
-            radial-gradient(ellipse 80% 50% at 50% 50%, rgba(38, 35, 32, 0.4) 0%, transparent 50%),
-            radial-gradient(ellipse 60% 40% at 50% 45%, rgba(45, 40, 35, 0.3) 0%, transparent 40%),
-            radial-gradient(ellipse 100% 80% at 50% 50%, rgba(25, 23, 22, 0.5) 0%, transparent 60%)
+            radial-gradient(ellipse 80% 60% at 50% -20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse 80% 50% at 20% 50%, rgba(239, 68, 68, 0.1) 0%, transparent 50%),
+            radial-gradient(ellipse 80% 50% at 80% 50%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
+            radial-gradient(ellipse 100% 80% at 50% 50%, rgba(25, 23, 22, 0.4) 0%, transparent 60%)
           `,
         }}
       />
@@ -31,31 +32,33 @@ export default async function LandingPage() {
         }}
       />
       <main className="relative z-10 flex flex-1 items-center justify-center px-4">
-        <div className="flex flex-col items-center gap-8">
+        <div className="flex flex-col items-center gap-10">
           {/* Logo/Icon */}
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-zinc-800">
-            <p className="text-4xl">✨</p>
+          <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 shadow-lg shadow-yellow-500/20">
+            <p className="text-5xl">✨</p>
           </div>
 
           {/* Heading */}
           <div className="text-center">
-            <h1 className="mb-3 text-5xl font-semibold">Northstar</h1>
-            <p className="text-lg text-zinc-400">
-              Track your habits. Reach your goals.
+            <h1 className="mb-4 bg-gradient-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-6xl font-bold text-transparent">
+              Northstar
+            </h1>
+            <p className="text-xl text-zinc-400">
+              Track your habits. Build consistency. Reach your goals.
             </p>
           </div>
 
           {/* CTA Buttons */}
-          <div className="mt-8 flex flex-col gap-3">
+          <div className="mt-6 flex flex-col gap-3">
             <Link
               href="/signup"
-              className="rounded-xl bg-white px-32 py-3 text-center font-medium text-black transition-colors hover:bg-zinc-200"
+              className="rounded-xl bg-white px-32 py-4 text-center font-semibold text-black shadow-lg shadow-white/10 transition-all hover:scale-105 hover:bg-zinc-100"
             >
               Get Started
             </Link>
             <Link
               href="/signin"
-              className="rounded-xl bg-zinc-800 px-32 py-3 text-center font-medium text-white transition-colors hover:bg-zinc-700"
+              className="rounded-xl border border-zinc-800 bg-zinc-900/70 px-32 py-4 text-center font-semibold text-white backdrop-blur-xl transition-all hover:border-zinc-700 hover:bg-zinc-800/70"
             >
               Log In
             </Link>
