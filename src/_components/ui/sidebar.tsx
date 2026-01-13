@@ -44,9 +44,6 @@ export function Sidebar({ user, onCreateHabit }: SidebarProps) {
           <h1 className="text-lg font-bold text-black dark:text-white">
             Northstar
           </h1>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            Daily habits
-          </p>
         </div>
       </div>
 

@@ -87,9 +87,6 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
               <p className="truncate text-sm font-medium text-black dark:text-white">
                 {user.name || "User"}
               </p>
-              <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">
-                {user.email}
-              </p>
             </div>
             <svg
               className="h-4 w-4 text-zinc-400 dark:text-zinc-500"
