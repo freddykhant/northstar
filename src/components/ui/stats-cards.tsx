@@ -1,4 +1,4 @@
-import { Flame, TrendingUp, Target, Calendar } from "lucide-react";
+import { Calendar, Flame, Target, TrendingUp } from "lucide-react";
 
 interface StatsCardsProps {
   currentStreak: number;
@@ -57,12 +57,12 @@ export function StatsCards({
         >
           {/* Subtle glow */}
           <div
-            className={`absolute -right-8 -top-8 h-24 w-24 bg-gradient-radial ${stat.bgGlow} to-transparent blur-2xl opacity-50`}
+            className={`bg-gradient-radial absolute -top-8 -right-8 h-24 w-24 ${stat.bgGlow} to-transparent opacity-50 blur-2xl`}
           />
 
           <div className="relative">
             <div className="mb-3 flex items-center justify-between">
-              <span className="text-xs uppercase tracking-wider text-zinc-500">
+              <span className="text-xs tracking-wider text-zinc-500 uppercase">
                 {stat.label}
               </span>
               <stat.icon className={`h-4 w-4 ${stat.color}`} />
