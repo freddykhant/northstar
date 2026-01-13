@@ -227,7 +227,7 @@ export function UnifiedDemo() {
                     onClick={() => toggleHabit(habit)}
                     className={`group relative w-full overflow-hidden rounded-xl border-2 p-4 text-left transition-all ${
                       isCompleted
-                        ? `${colors.border} bg-gradient-to-r from-${habit.category === "mind" ? "blue" : habit.category === "body" ? "red" : "purple"}-50 to-white`
+                        ? `${colors.border} bg-linear-to-r from-${habit.category === "mind" ? "blue" : habit.category === "body" ? "red" : "purple"}-50 to-white`
                         : "border-zinc-200 bg-white hover:border-zinc-300 hover:bg-zinc-50"
                     }`}
                     whileTap={{ scale: 0.98 }}
@@ -299,7 +299,7 @@ export function UnifiedDemo() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="mt-6 rounded-xl bg-gradient-to-r from-blue-500 via-red-500 to-purple-500 p-4 text-center text-white"
+                  className="mt-6 rounded-xl bg-linear-to-r from-blue-500 via-red-500 to-purple-500 p-4 text-center text-white"
                 >
                   <span className="text-2xl">🎉</span>
                   <p className="mt-1 font-semibold">

@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export function LandingFooter() {
   return (
-    <footer className="bg-gradient-to-b from-zinc-50 to-zinc-100 px-4 py-24">
+    <footer className="bg-linear-to-b from-zinc-50 to-zinc-100 px-4 py-24">
       <div className="mx-auto max-w-4xl text-center">
         {/* Logo */}
         <motion.div
@@ -14,7 +14,7 @@ export function LandingFooter() {
           viewport={{ once: true }}
           className="mb-8 flex justify-center"
         >
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 via-red-500 to-purple-500 shadow-lg">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br from-blue-500 via-red-500 to-purple-500 shadow-lg">
             <svg
               width="28"
               height="28"
@@ -41,7 +41,7 @@ export function LandingFooter() {
           Habits that set you
           <br />
           up for{" "}
-          <span className="bg-gradient-to-r from-blue-500 via-red-500 to-purple-500 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-blue-500 via-red-500 to-purple-500 bg-clip-text text-transparent">
             success
           </span>
           .
@@ -79,7 +79,7 @@ export function LandingFooter() {
           className="flex flex-col items-center justify-center gap-4 border-t border-zinc-200 pt-8 sm:flex-row sm:justify-between"
         >
           <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 via-red-500 to-purple-500">
+            <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-linear-to-br from-blue-500 via-red-500 to-purple-500">
               <svg
                 width="12"
                 height="12"

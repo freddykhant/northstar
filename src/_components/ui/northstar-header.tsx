@@ -19,7 +19,7 @@ export function NorthstarHeader({ user }: NorthstarHeaderProps) {
     <header className="relative z-50 flex items-center justify-between px-6 py-4">
       <div className="flex items-center gap-8">
         <Link href="/home" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 via-red-500 to-purple-500">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-blue-500 via-red-500 to-purple-500">
             <svg
               width="16"
               height="16"

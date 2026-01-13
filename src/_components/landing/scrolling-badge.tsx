@@ -59,7 +59,7 @@ export function ScrollingBadge({
 
       {/* Animated gradient text */}
       <span
-        className={`animate-shimmer bg-gradient-to-r ${textGradient} bg-[length:200%_100%] bg-clip-text text-sm font-semibold text-transparent`}
+        className={`animate-shimmer bg-linear-to-r ${textGradient} bg-size-[200%_100%] bg-clip-text text-sm font-semibold text-transparent`}
       >
         {label}
       </span>

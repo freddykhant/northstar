@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Brain, Dumbbell, Sparkles } from "lucide-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 interface Category {
   id: string;
@@ -257,11 +257,10 @@ function CategoryCard({
   return (
     <motion.div
       id={category.id}
-      className="shrink-0 snap-center scroll-mt-24"
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ delay: index * 0.1 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ delay: index * 0.15, duration: 0.5 }}
     >
       <motion.div
         className="group relative h-[520px] w-[380px] overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-lg transition-all hover:shadow-xl"
@@ -327,52 +326,25 @@ function CategoryCard({
 }
 
 export function CategoryCarousel() {
-  const containerRef = useRef<HTMLDivElement>(null);
-
   return (
-    <section className="relative overflow-hidden bg-white py-24">
-      <div className="mb-12 px-4 text-center">
-        <h2 className="mb-4 text-5xl font-bold text-black">
-          Three dimensions of growth
-        </h2>
-        <p className="mx-auto max-w-2xl text-xl text-zinc-600">
-          Track habits across mind, body, and soul.
-        </p>
-      </div>
+    <section className="bg-white px-4 py-24">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-16 text-center">
+          <h2 className="mb-4 text-5xl font-bold text-black">
+            Three dimensions of growth
+          </h2>
+          <p className="mx-auto max-w-2xl text-xl text-zinc-600">
+            Track habits across mind, body, and soul.
+          </p>
+        </div>
 
-      {/* Scrollable container */}
-      <div className="relative">
-        {/* Left fade */}
-        <div className="pointer-events-none absolute top-0 left-0 z-10 h-full w-20 bg-linear-to-r from-white to-transparent" />
-
-        {/* Right fade */}
-        <div className="pointer-events-none absolute top-0 right-0 z-10 h-full w-20 bg-linear-to-l from-white to-transparent" />
-
-        {/* Cards container */}
-        <div
-          ref={containerRef}
-          className="scrollbar-hide flex gap-6 overflow-x-auto px-8 pb-8"
-          style={{
-            scrollSnapType: "x mandatory",
-            WebkitOverflowScrolling: "touch",
-          }}
-        >
+        {/* Centered cards grid */}
+        <div className="flex flex-wrap items-start justify-center gap-6">
           {CATEGORIES.map((category, index) => (
             <CategoryCard key={category.id} category={category} index={index} />
           ))}
         </div>
       </div>
-
-      {/* Hide scrollbar */}
-      <style jsx global>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
     </section>
   );
 }
