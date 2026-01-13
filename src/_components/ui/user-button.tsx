@@ -1,7 +1,8 @@
 "use client";
 
-import { LogOut } from "lucide-react";
+import { LogOut, Moon, Sun } from "lucide-react";
 import { signOut } from "next-auth/react";
+import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
@@ -16,7 +17,14 @@ interface UserButtonProps {
 
 export function UserButton({ user, position = "right" }: UserButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { theme, setTheme } = useTheme();
+
+  // Wait for client-side hydration
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -107,6 +115,30 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
 
             {/* Menu Items */}
             <div className="py-1">
+              {/* Theme Toggle */}
+              {mounted && (
+                <button
+                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-zinc-300 transition-colors hover:bg-white/5 hover:text-white"
+                >
+                  {theme === "dark" ? (
+                    <>
+                      <Sun size={16} />
+                      Light mode
+                    </>
+                  ) : (
+                    <>
+                      <Moon size={16} />
+                      Dark mode
+                    </>
+                  )}
+                </button>
+              )}
+
+              {/* Divider */}
+              <div className="my-1 border-t border-white/10" />
+
+              {/* Sign Out */}
               <button
                 onClick={() => signOut({ callbackUrl: "/signin" })}
                 className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-zinc-300 transition-colors hover:bg-white/5 hover:text-white"

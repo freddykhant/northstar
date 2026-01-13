@@ -16,11 +16,11 @@ export default async function LandingPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-linear-to-b from-zinc-50 via-white to-zinc-50">
+    <div className="relative min-h-screen overflow-hidden bg-linear-to-b from-zinc-50 via-white to-zinc-50 dark:from-black dark:via-zinc-950 dark:to-black">
       {/* Subtle Background Gradient Orbs */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute top-0 left-1/4 h-[600px] w-[600px] rounded-full bg-blue-400/10 blur-[120px]" />
-        <div className="absolute top-20 right-1/4 h-[500px] w-[500px] rounded-full bg-purple-400/10 blur-[100px]" />
+        <div className="absolute top-0 left-1/4 h-[600px] w-[600px] rounded-full bg-blue-400/10 blur-[120px] dark:bg-blue-400/20" />
+        <div className="absolute top-20 right-1/4 h-[500px] w-[500px] rounded-full bg-purple-400/10 blur-[100px] dark:bg-purple-400/20" />
       </div>
 
       {/* Floating Navigation */}
@@ -33,7 +33,7 @@ export default async function LandingPage() {
           <div className="mx-auto max-w-7xl">
             {/* Headline */}
             <div className="mb-16 text-center">
-              <h1 className="animate-fade-in-up mb-8 text-6xl leading-[1.05] font-bold text-black sm:text-7xl lg:text-[5.5rem]">
+              <h1 className="animate-fade-in-up mb-8 text-6xl leading-[1.05] font-bold text-black sm:text-7xl lg:text-[5.5rem] dark:text-white">
                 Build habits to reach
                 <br />
                 your{" "}
@@ -51,14 +51,14 @@ export default async function LandingPage() {
               >
                 <Link
                   href="/signup"
-                  className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white shadow-lg transition-all hover:bg-blue-700 hover:shadow-xl"
+                  className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white shadow-lg transition-all hover:bg-blue-700 hover:shadow-xl dark:bg-blue-500 dark:hover:bg-blue-600"
                 >
                   Get Started
                 </Link>
-                <span className="text-zinc-600">or</span>
+                <span className="text-zinc-600 dark:text-zinc-400">or</span>
                 <Link
                   href="#demo"
-                  className="font-medium text-blue-600 transition-colors hover:text-blue-700"
+                  className="font-medium text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                 >
                   See it in action
                 </Link>

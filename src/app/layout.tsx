@@ -3,6 +3,7 @@ import "~/styles/globals.css";
 import { type Metadata } from "next";
 
 import { AuthProvider } from "~/_components/auth-provider";
+import { ThemeProvider } from "~/_components/theme-provider";
 import { TRPCReactProvider } from "~/trpc/react";
 
 export const metadata: Metadata = {
@@ -15,11 +16,18 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
-        <AuthProvider>
-          <TRPCReactProvider>{children}</TRPCReactProvider>
-        </AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange={false}
+        >
+          <AuthProvider>
+            <TRPCReactProvider>{children}</TRPCReactProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

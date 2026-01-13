@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export function LandingFooter() {
   return (
-    <footer className="bg-linear-to-b from-zinc-50 to-zinc-100 px-4 py-24">
+    <footer className="bg-linear-to-b from-zinc-50 to-zinc-100 px-4 py-24 dark:from-zinc-950 dark:to-black">
       <div className="mx-auto max-w-4xl text-center">
         {/* Logo */}
         <motion.div
@@ -36,7 +36,7 @@ export function LandingFooter() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
-          className="mb-4 text-4xl font-bold text-black sm:text-5xl"
+          className="mb-4 text-4xl font-bold text-black dark:text-white sm:text-5xl"
         >
           Habits that set you
           <br />
@@ -53,18 +53,18 @@ export function LandingFooter() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
-          className="mt-10 mb-16 inline-flex items-center gap-3 rounded-2xl border border-zinc-200 bg-white px-2 py-2 shadow-lg"
+          className="mt-10 mb-16 inline-flex items-center gap-3 rounded-2xl border border-zinc-200 bg-white px-2 py-2 shadow-lg dark:border-white/10 dark:bg-zinc-900"
         >
           <Link
             href="/signup"
-            className="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition-all hover:bg-blue-700"
+            className="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition-all hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
           >
             Get Started
           </Link>
-          <span className="text-zinc-400">or</span>
+          <span className="text-zinc-400 dark:text-zinc-500">or</span>
           <Link
             href="/signin"
-            className="px-4 py-3 font-medium text-blue-600 transition-colors hover:text-blue-700"
+            className="px-4 py-3 font-medium text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
           >
             Log In
           </Link>
@@ -76,7 +76,7 @@ export function LandingFooter() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.3 }}
-          className="flex flex-col items-center justify-center gap-4 border-t border-zinc-200 pt-8 sm:flex-row sm:justify-between"
+          className="flex flex-col items-center justify-center gap-4 border-t border-zinc-200 pt-8 sm:flex-row sm:justify-between dark:border-white/10"
         >
           <div className="flex items-center gap-2">
             <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-linear-to-br from-blue-500 via-red-500 to-purple-500">
@@ -93,10 +93,10 @@ export function LandingFooter() {
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
               </svg>
             </div>
-            <span className="text-sm font-semibold text-black">Northstar</span>
+            <span className="text-sm font-semibold text-black dark:text-white">Northstar</span>
           </div>
 
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
             © 2026 Northstar. Built for consistency.
           </p>
         </motion.div>

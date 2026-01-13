@@ -54,7 +54,7 @@ function MindContent() {
   const [progress, setProgress] = useState(0);
 
   return (
-    <div className="relative h-48 rounded-xl border border-blue-200 bg-linear-to-br from-blue-50 to-cyan-50 p-4">
+    <div className="relative h-48 rounded-xl border border-blue-200 bg-linear-to-br from-blue-50 to-cyan-50 p-4 dark:border-blue-900/50 dark:from-blue-950/30 dark:to-cyan-950/30">
       <div className="flex h-full flex-col justify-between">
         <div className="flex items-start gap-3">
           <div className="rounded-lg bg-blue-500 p-2">
@@ -62,13 +62,15 @@ function MindContent() {
           </div>
           <div className="flex-1">
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-sm font-semibold text-blue-900">
+              <span className="text-sm font-semibold text-blue-900 dark:text-blue-100">
                 Atomic Habits
               </span>
-              <span className="text-xs text-blue-600">{progress}%</span>
+              <span className="text-xs text-blue-600 dark:text-blue-400">
+                {progress}%
+              </span>
             </div>
             <motion.div
-              className="h-2 overflow-hidden rounded-full bg-blue-200"
+              className="h-2 overflow-hidden rounded-full bg-blue-200 dark:bg-blue-900/50"
               onViewportEnter={() => {
                 const interval = setInterval(() => {
                   setProgress((p) => {
@@ -116,7 +118,7 @@ function BodyContent() {
   const workouts = ["Push-ups", "Squats", "Plank", "Cardio"];
 
   return (
-    <div className="relative h-48 rounded-xl border border-red-200 bg-linear-to-br from-red-50 to-orange-50 p-4">
+    <div className="relative h-48 rounded-xl border border-red-200 bg-linear-to-br from-red-50 to-orange-50 p-4 dark:border-red-900/50 dark:from-red-950/30 dark:to-orange-950/30">
       <div className="space-y-2">
         {workouts.map((workout, i) => (
           <motion.button
@@ -154,7 +156,9 @@ function BodyContent() {
                 </motion.svg>
               )}
             </div>
-            <span className="text-sm font-medium text-red-900">{workout}</span>
+            <span className="text-sm font-medium text-red-900 dark:text-red-100">
+              {workout}
+            </span>
             {checked.includes(i) && <span className="ml-auto">💪</span>}
           </motion.button>
         ))}
@@ -186,7 +190,7 @@ function BodyContent() {
 // Soul card with breathing meditation
 function SoulContent() {
   return (
-    <div className="relative h-48 overflow-hidden rounded-xl border border-purple-200 bg-linear-to-br from-purple-50 to-pink-50 p-4">
+    <div className="relative h-48 overflow-hidden rounded-xl border border-purple-200 bg-linear-to-br from-purple-50 to-pink-50 p-4 dark:border-purple-900/50 dark:from-purple-950/30 dark:to-pink-950/30">
       <div className="flex h-full flex-col items-center justify-center">
         <motion.div
           className="relative"
@@ -219,7 +223,7 @@ function SoulContent() {
           animate={{ opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 4, repeat: Infinity }}
         >
-          <p className="text-sm font-medium text-purple-900">
+          <p className="text-sm font-medium text-purple-900 dark:text-purple-100">
             Breathe in... Breathe out...
           </p>
           <div className="mt-2 flex justify-center gap-2">
@@ -263,7 +267,7 @@ function CategoryCard({
       transition={{ delay: index * 0.15, duration: 0.5 }}
     >
       <motion.div
-        className="group relative h-[520px] w-[380px] overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-lg transition-all hover:shadow-xl"
+        className="group relative h-[520px] w-[380px] overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-lg transition-all hover:shadow-xl dark:border-white/10 dark:bg-zinc-900"
         whileHover={{ y: -4 }}
       >
         {/* Gradient title with icon (like feature badge) */}
@@ -293,21 +297,21 @@ function CategoryCard({
 
         {/* Content */}
         <div className="mb-6">
-          <h3 className="mb-2 text-xl font-bold text-zinc-900">
+          <h3 className="mb-2 text-xl font-bold text-zinc-900 dark:text-white">
             Track {category.name}
           </h3>
-          <p className="text-sm leading-relaxed text-zinc-600">
+          <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
             {category.description}
           </p>
         </div>
 
         {/* Arrow button */}
         <button
-          className="absolute right-6 bottom-6 flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white transition-all hover:border-zinc-300 hover:bg-zinc-50"
+          className="absolute right-6 bottom-6 flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white transition-all hover:border-zinc-300 hover:bg-zinc-50 dark:border-white/10 dark:bg-zinc-800 dark:hover:border-white/20 dark:hover:bg-zinc-700"
           aria-label={`Learn more about ${category.name}`}
         >
           <svg
-            className="h-4 w-4 text-zinc-600"
+            className="h-4 w-4 text-zinc-600 dark:text-zinc-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -327,13 +331,13 @@ function CategoryCard({
 
 export function CategoryCarousel() {
   return (
-    <section className="bg-white px-4 py-24">
+    <section className="bg-white px-4 py-24 dark:bg-black">
       <div className="mx-auto max-w-7xl">
         <div className="mb-16 text-center">
-          <h2 className="mb-4 text-5xl font-bold text-black">
+          <h2 className="mb-4 text-5xl font-bold text-black dark:text-white">
             Three dimensions of growth
           </h2>
-          <p className="mx-auto max-w-2xl text-xl text-zinc-600">
+          <p className="mx-auto max-w-2xl text-xl text-zinc-600 dark:text-zinc-400">
             Track habits across mind, body, and soul.
           </p>
         </div>

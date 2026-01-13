@@ -93,33 +93,39 @@ export function UnifiedDemo() {
   return (
     <div className="mx-auto max-w-5xl">
       {/* Glass container */}
-      <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-2xl shadow-black/5">
+      <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-2xl shadow-black/5 dark:border-white/10 dark:bg-zinc-900">
         {/* Browser chrome */}
-        <div className="flex items-center gap-2 border-b border-zinc-100 bg-zinc-50/80 px-4 py-3">
+        <div className="flex items-center gap-2 border-b border-zinc-100 bg-zinc-50/80 px-4 py-3 dark:border-white/10 dark:bg-zinc-950/50">
           <div className="flex gap-1.5">
             <div className="h-3 w-3 rounded-full bg-red-400" />
             <div className="h-3 w-3 rounded-full bg-yellow-400" />
             <div className="h-3 w-3 rounded-full bg-green-400" />
           </div>
           <div className="ml-3 flex-1 rounded-lg bg-zinc-100 px-4 py-1.5">
-            <span className="text-xs text-zinc-500">northstar.app/home</span>
+            <span className="text-xs text-zinc-500 dark:text-zinc-400">
+              northstar.app/home
+            </span>
           </div>
         </div>
 
         {/* Content */}
         <div className="grid gap-0 lg:grid-cols-2">
           {/* Left: Activity Graph */}
-          <div className="border-b border-zinc-100 p-8 lg:border-r lg:border-b-0">
+          <div className="border-b border-zinc-100 p-8 lg:border-r lg:border-b-0 dark:border-white/10">
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-black">This Week</h3>
-              <p className="text-sm text-zinc-500">Your activity at a glance</p>
+              <h3 className="text-lg font-semibold text-black dark:text-white">
+                This Week
+              </h3>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                Your activity at a glance
+              </p>
             </div>
 
             {/* Mini Graph */}
             <div className="space-y-3">
               {(["mind", "body", "soul"] as const).map((category) => (
                 <div key={category} className="flex items-center gap-4">
-                  <span className="w-12 text-xs font-medium text-zinc-500 capitalize">
+                  <span className="w-12 text-xs font-medium text-zinc-500 capitalize dark:text-zinc-400">
                     {category}
                   </span>
                   <div className="flex gap-1.5">
@@ -160,7 +166,7 @@ export function UnifiedDemo() {
                           transition={{ duration: 0.5 }}
                         >
                           {isToday && !isFilled && (
-                            <span className="absolute inset-0 flex items-center justify-center text-xs text-zinc-400">
+                            <span className="absolute inset-0 flex items-center justify-center text-xs text-zinc-400 dark:text-zinc-500">
                               ?
                             </span>
                           )}
@@ -205,12 +211,14 @@ export function UnifiedDemo() {
           <div className="p-8">
             <div className="mb-6">
               <div className="flex items-center gap-2">
-                <h3 className="text-lg font-semibold text-black">Today</h3>
+                <h3 className="text-lg font-semibold text-black dark:text-white">
+                  Today
+                </h3>
                 <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-600">
                   Sunday
                 </span>
               </div>
-              <p className="text-sm text-zinc-500">
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 Complete habits to light up your graph
               </p>
             </div>
@@ -269,7 +277,7 @@ export function UnifiedDemo() {
                         <div className="flex items-center gap-2">
                           <span className="text-xl">{habit.emoji}</span>
                           <span
-                            className={`font-medium ${isCompleted ? "text-zinc-700" : "text-black"}`}
+                            className={`font-medium ${isCompleted ? "text-zinc-700 dark:text-zinc-400" : "text-black dark:text-white"}`}
                           >
                             {habit.name}
                           </span>
@@ -317,7 +325,7 @@ export function UnifiedDemo() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="mt-6 text-center text-sm text-zinc-500"
+        className="mt-6 text-center text-sm text-zinc-500 dark:text-zinc-400"
       >
         👆 Try it out!
       </motion.p>
