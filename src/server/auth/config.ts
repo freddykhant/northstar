@@ -102,7 +102,7 @@ export const authConfig = {
       if (user) {
         token.id = user.id;
         token.email = user.email;
-        
+
         // For Google OAuth, create/update user in database
         if (account?.provider === "google" && user.email) {
           const { schema } = await import("~/server/db");
@@ -110,7 +110,7 @@ export const authConfig = {
           const existingUser = await db.query.users.findFirst({
             where: (users, { eq }) => eq(users.email, user.email!),
           });
-          
+
           if (!existingUser) {
             // Create new user
             const [newUser] = await db
