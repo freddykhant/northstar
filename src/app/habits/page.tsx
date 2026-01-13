@@ -1,27 +1,19 @@
 "use client";
 
-import {
-  ArrowLeft,
-  Grid3x3,
-  LayoutList,
-  Plus,
-  Sparkles,
-  X,
-} from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { GradientBackground } from "~/_components/ui/gradient-background";
+import { HabitsList } from "~/_components/ui/habits-list";
+import { NorthstarHeader } from "~/_components/ui/northstar-header";
 import { api } from "~/trpc/react";
-
-type ViewMode = "grid" | "list";
 
 export default function HabitsPage() {
   const { status } = useSession();
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [editingHabit, setEditingHabit] = useState<number | null>(null);
 
   // Form state
@@ -55,23 +47,8 @@ export default function HabitsPage() {
   });
 
   const deleteMutation = api.habit.delete.useMutation({
-    onSuccess: () => void void refetch(),
+    onSuccess: () => void refetch(),
   });
-
-  const habitsByCategory = useMemo(() => {
-    if (!habits) return { mind: [], body: [], soul: [] };
-    return habits.reduce(
-      (acc, habit) => {
-        const catId = habit.categoryId as "mind" | "body" | "soul";
-        acc[catId].push(habit);
-        return acc;
-      },
-      { mind: [], body: [], soul: [] } as Record<
-        "mind" | "body" | "soul",
-        NonNullable<typeof habits>
-      >,
-    );
-  }, [habits]);
 
   if (status === "loading") {
     return (
@@ -116,118 +93,43 @@ export default function HabitsPage() {
     setFormData({ name: "", description: "", categoryId: "mind" });
   };
 
-  const categoryEmojis = {
-    mind: "🧠",
-    body: "💪",
-    soul: "✨",
-  };
-
-  const categoryColors = {
-    mind: {
-      bg: "from-blue-500/10 to-blue-600/5",
-      border: "border-blue-500/20",
-      text: "text-blue-400",
-      badge: "bg-blue-500/20 text-blue-300",
-    },
-    body: {
-      bg: "from-red-500/10 to-red-600/5",
-      border: "border-red-500/20",
-      text: "text-red-400",
-      badge: "bg-red-500/20 text-red-300",
-    },
-    soul: {
-      bg: "from-purple-500/10 to-purple-600/5",
-      border: "border-purple-500/20",
-      text: "text-purple-400",
-      badge: "bg-purple-500/20 text-purple-300",
-    },
-  };
-
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#0a0a0a] text-white">
-      {/* Enhanced Background */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: `
-            radial-gradient(ellipse 80% 60% at 50% -20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
-            radial-gradient(ellipse 80% 50% at 20% 50%, rgba(239, 68, 68, 0.1) 0%, transparent 50%),
-            radial-gradient(ellipse 80% 50% at 80% 50%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
-            radial-gradient(ellipse 100% 80% at 50% 50%, rgba(25, 23, 22, 0.4) 0%, transparent 60%)
-          `,
-        }}
-      />
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.015]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-        }}
-      />
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#0c0c0c]">
+      {/* Background */}
+      <GradientBackground />
+
+      {/* Header */}
+      <NorthstarHeader />
 
       {/* Content */}
-      <div className="relative z-10 mx-auto max-w-7xl px-6 py-8">
-        {/* Header */}
-        <div className="mb-10">
-          <Link
-            href="/home"
-            className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-400 transition-colors hover:text-white"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Dashboard
-          </Link>
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="mb-3 flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500">
-                  <Sparkles className="h-7 w-7 text-white" />
-                </div>
-                <span className="bg-gradient-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-5xl font-bold text-transparent">
-                  Your Habits
-                </span>
-              </h1>
-              <p className="pl-[60px] text-lg text-zinc-400">
-                {habits?.length ?? 0} habit{habits?.length !== 1 ? "s" : ""} ·
-                Build the life you want
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              {/* View Toggle */}
-              <div className="flex rounded-xl border border-zinc-800 bg-zinc-900/70 p-1 backdrop-blur-xl">
-                <button
-                  onClick={() => setViewMode("grid")}
-                  className={`rounded-lg px-3 py-2 text-sm font-medium transition-all ${
-                    viewMode === "grid"
-                      ? "bg-zinc-800 text-white shadow-sm"
-                      : "text-zinc-400 hover:text-white"
-                  }`}
-                >
-                  <Grid3x3 className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => setViewMode("list")}
-                  className={`rounded-lg px-3 py-2 text-sm font-medium transition-all ${
-                    viewMode === "list"
-                      ? "bg-zinc-800 text-white shadow-sm"
-                      : "text-zinc-400 hover:text-white"
-                  }`}
-                >
-                  <LayoutList className="h-4 w-4" />
-                </button>
-              </div>
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="group flex items-center gap-2 rounded-xl bg-white px-6 py-2.5 font-semibold text-black shadow-lg shadow-white/10 transition-all hover:scale-105 hover:bg-zinc-100"
-              >
-                <Plus className="h-5 w-5 transition-transform group-hover:rotate-90" />
-                New Habit
-              </button>
-            </div>
+      <main className="relative z-10 mx-auto w-full max-w-4xl flex-1 px-6 py-8">
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="mb-1 text-2xl font-semibold text-white">
+              Your Habits
+            </h1>
+            <p className="text-sm text-zinc-400">
+              Manage your daily practices across all dimensions
+            </p>
           </div>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.08] px-4 py-2 text-sm text-white transition-all hover:bg-white/[0.12]"
+          >
+            <Plus className="h-4 w-4" />
+            Add Habit
+          </button>
         </div>
 
-        {/* Habits Display */}
-        {habits?.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-3xl border border-zinc-800 bg-zinc-900/70 p-20 backdrop-blur-xl">
+        {habits && habits.length > 0 ? (
+          <HabitsList
+            habits={habits}
+            onEdit={openEditModal}
+            onToggle={(id) => toggleMutation.mutate({ id })}
+            onDelete={(id) => deleteMutation.mutate({ id })}
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center rounded-3xl border border-white/[0.06] bg-white/[0.03] p-20 backdrop-blur-sm">
             <div className="mb-6 text-7xl">🌟</div>
             <h2 className="mb-3 bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-3xl font-bold text-transparent">
               Start Your Journey
@@ -243,114 +145,8 @@ export default function HabitsPage() {
               Create Your First Habit
             </button>
           </div>
-        ) : viewMode === "grid" ? (
-          <div className="space-y-8">
-            {(["mind", "body", "soul"] as const).map((categoryId) => {
-              const categoryHabits = habitsByCategory[categoryId];
-              if (categoryHabits.length === 0) return null;
-
-              const colors = categoryColors[categoryId];
-
-              return (
-                <div key={categoryId}>
-                  <h2 className="mb-4 flex items-center gap-2 text-xl font-bold capitalize">
-                    <span className="text-3xl">
-                      {categoryEmojis[categoryId]}
-                    </span>
-                    <span className={colors.text}>
-                      {categoryId} ({categoryHabits.length})
-                    </span>
-                  </h2>
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {categoryHabits.map((habit) => (
-                      <div
-                        key={habit.id}
-                        onClick={() => openEditModal(habit)}
-                        className={`group relative cursor-pointer overflow-hidden rounded-2xl border bg-gradient-to-br p-6 backdrop-blur-xl transition-all hover:scale-[1.02] hover:shadow-lg ${
-                          colors.bg
-                        } ${colors.border} ${
-                          habit.isActive ? "" : "opacity-50"
-                        }`}
-                      >
-                        <div
-                          className={`absolute top-0 right-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full opacity-0 blur-3xl transition-opacity group-hover:opacity-100 ${
-                            categoryId === "mind"
-                              ? "bg-blue-500/20"
-                              : categoryId === "body"
-                                ? "bg-red-500/20"
-                                : "bg-purple-500/20"
-                          }`}
-                        />
-                        <div className="mb-3 flex items-start justify-between">
-                          <h3 className="flex-1 text-lg font-semibold text-white">
-                            {habit.name}
-                          </h3>
-                          {!habit.isActive && (
-                            <span className="rounded-full bg-zinc-700 px-2 py-0.5 text-xs text-zinc-400">
-                              Paused
-                            </span>
-                          )}
-                        </div>
-                        {habit.description && (
-                          <p className="text-sm text-zinc-400">
-                            {habit.description}
-                          </p>
-                        )}
-                        <div className="mt-4 flex items-center gap-2">
-                          <span
-                            className={`rounded-full px-2.5 py-1 text-xs font-medium ${colors.badge}`}
-                          >
-                            {categoryEmojis[categoryId]} {categoryId}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {habits?.map((habit) => {
-              const categoryId = habit.categoryId as "mind" | "body" | "soul";
-              const colors = categoryColors[categoryId];
-
-              return (
-                <div
-                  key={habit.id}
-                  onClick={() => openEditModal(habit)}
-                  className={`group flex cursor-pointer items-center gap-4 rounded-xl border bg-zinc-900/70 p-5 backdrop-blur-xl transition-all hover:bg-zinc-800/70 hover:shadow-lg ${
-                    colors.border
-                  } ${habit.isActive ? "" : "opacity-50"}`}
-                >
-                  <div className="text-3xl">{categoryEmojis[categoryId]}</div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-white">{habit.name}</h3>
-                    {habit.description && (
-                      <p className="text-sm text-zinc-400">
-                        {habit.description}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={`rounded-full px-3 py-1 text-xs font-medium ${colors.badge}`}
-                    >
-                      {categoryId}
-                    </span>
-                    {!habit.isActive && (
-                      <span className="rounded-full bg-zinc-700 px-3 py-1 text-xs text-zinc-400">
-                        Paused
-                      </span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
         )}
-      </div>
+      </main>
 
       {/* Modal */}
       {isModalOpen && (

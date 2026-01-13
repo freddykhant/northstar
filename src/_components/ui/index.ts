@@ -8,6 +8,7 @@ export { CategoryStatCard } from "./category-stat-card";
 export { CheckinList } from "./checkin-list";
 export { GlassCard, GlassCardBody, GlassCardHeader } from "./glass-card";
 export { GradientBackground } from "./gradient-background";
+export { HabitsList } from "./habits-list";
 export { NorthstarHeader } from "./northstar-header";
 export { ProgressBar, ProgressBarWithLabel } from "./progress-bar";
 export { StatsCards } from "./stats-cards";
