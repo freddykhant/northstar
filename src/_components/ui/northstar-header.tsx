@@ -1,11 +1,18 @@
 "use client";
 
-import { Settings } from "lucide-react";
-import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { UserButton } from "./user-button";
 
-export function NorthstarHeader() {
+interface NorthstarHeaderProps {
+  user?: {
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+  } | null;
+}
+
+export function NorthstarHeader({ user }: NorthstarHeaderProps) {
   const pathname = usePathname();
 
   return (
@@ -54,19 +61,7 @@ export function NorthstarHeader() {
       </div>
 
       <div className="flex items-center gap-3">
-        <Link
-          href="/habits"
-          className="flex items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900/70 px-4 py-2.5 text-sm font-medium text-zinc-300 backdrop-blur-xl transition-all hover:border-zinc-700 hover:bg-zinc-800/70"
-        >
-          <Settings className="h-4 w-4" />
-          Manage Habits
-        </Link>
-        <button
-          onClick={() => signOut({ callbackUrl: "/signin" })}
-          className="rounded-xl border border-zinc-800 bg-zinc-900/70 px-4 py-2.5 text-sm font-medium text-zinc-400 backdrop-blur-xl transition-all hover:border-zinc-700 hover:bg-zinc-800/70 hover:text-zinc-300"
-        >
-          Sign Out
-        </button>
+        {user && <UserButton user={user} />}
       </div>
     </header>
   );

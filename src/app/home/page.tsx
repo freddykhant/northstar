@@ -90,7 +90,7 @@ export default function HomePage() {
       <GradientBackground />
 
       {/* Header */}
-      <NorthstarHeader />
+      <NorthstarHeader user={session.user} />
 
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-8">
