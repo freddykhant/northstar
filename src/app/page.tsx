@@ -19,8 +19,8 @@ export default async function LandingPage() {
     <div className="relative min-h-screen overflow-hidden bg-linear-to-b from-zinc-50 via-white to-zinc-50">
       {/* Subtle Background Gradient Orbs */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/4 top-0 h-[600px] w-[600px] rounded-full bg-blue-400/10 blur-[120px]" />
-        <div className="absolute right-1/4 top-20 h-[500px] w-[500px] rounded-full bg-purple-400/10 blur-[100px]" />
+        <div className="absolute top-0 left-1/4 h-[600px] w-[600px] rounded-full bg-blue-400/10 blur-[120px]" />
+        <div className="absolute top-20 right-1/4 h-[500px] w-[500px] rounded-full bg-purple-400/10 blur-[100px]" />
       </div>
 
       {/* Floating Navigation */}
@@ -29,11 +29,11 @@ export default async function LandingPage() {
       {/* Main Content */}
       <main className="relative z-10">
         {/* Hero Section */}
-        <section className="px-4 pb-32 pt-32">
+        <section className="px-4 pt-32 pb-32">
           <div className="mx-auto max-w-7xl">
             {/* Headline */}
             <div className="mb-16 text-center">
-              <h1 className="animate-fade-in-up mb-8 text-6xl font-bold leading-[1.05] text-black sm:text-7xl lg:text-[5.5rem]">
+              <h1 className="animate-fade-in-up mb-8 text-6xl leading-[1.05] font-bold text-black sm:text-7xl lg:text-[5.5rem]">
                 Build habits to reach
                 <br />
                 your{" "}
