@@ -1,13 +1,14 @@
 "use client";
 
-import { Plus, X } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Brain, Dumbbell, Sparkles, X } from "lucide-react";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { GradientBackground } from "~/_components/ui/gradient-background";
-import { HabitsList } from "~/_components/ui/habits-list";
 import { NorthstarHeader } from "~/_components/ui/northstar-header";
+import { CATEGORY_EMOJIS } from "~/lib/constants";
+import type { CategoryId } from "~/lib/types";
 import { api } from "~/trpc/react";
 
 export default function HabitsPage() {
@@ -61,7 +62,7 @@ export default function HabitsPage() {
                 ...habit,
                 name: variables.name,
                 description: variables.description || null,
-                categoryId: variables.categoryId || null,
+                categoryId: variables.categoryId || habit.categoryId,
               }
             : habit,
         );
@@ -194,6 +195,56 @@ export default function HabitsPage() {
     setFormData({ name: "", description: "", categoryId: "mind" });
   };
 
+  const categoryConfig = {
+    mind: {
+      label: "Mind",
+      icon: Brain,
+      description: "Mental & intellectual growth",
+      color: "bg-blue-500",
+      textColor: "text-blue-500",
+      lightBg: "bg-blue-50 dark:bg-blue-500/10",
+      borderColor: "border-blue-200 dark:border-blue-500/20",
+      glowColor: "shadow-blue-500/30",
+      examples: [
+        "Read for 30 minutes",
+        "Practice a new language",
+        "Journal thoughts",
+      ],
+    },
+    body: {
+      label: "Body",
+      icon: Dumbbell,
+      description: "Physical health & fitness",
+      color: "bg-red-500",
+      textColor: "text-red-500",
+      lightBg: "bg-red-50 dark:bg-red-500/10",
+      borderColor: "border-red-200 dark:border-red-500/20",
+      glowColor: "shadow-red-500/30",
+      examples: ["Morning workout", "10,000 steps", "Healthy breakfast"],
+    },
+    soul: {
+      label: "Soul",
+      icon: Sparkles,
+      description: "Emotional & spiritual wellbeing",
+      color: "bg-purple-500",
+      textColor: "text-purple-500",
+      lightBg: "bg-purple-50 dark:bg-purple-500/10",
+      borderColor: "border-purple-200 dark:border-purple-500/20",
+      glowColor: "shadow-purple-500/30",
+      examples: [
+        "Meditation session",
+        "Gratitude practice",
+        "Connect with loved ones",
+      ],
+    },
+  } as const;
+
+  const groupedHabits = {
+    mind: habits?.filter((h) => h.categoryId === "mind") ?? [],
+    body: habits?.filter((h) => h.categoryId === "body") ?? [],
+    soul: habits?.filter((h) => h.categoryId === "soul") ?? [],
+  };
+
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-white dark:bg-[#0c0c0c]">
       {/* Background */}
@@ -204,199 +255,593 @@ export default function HabitsPage() {
 
       {/* Content */}
       <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 px-6 py-8">
-        <div className="mb-10 flex items-center justify-between">
-          <div>
-            <h1 className="mb-2 bg-gradient-to-r from-black via-zinc-700 to-zinc-400 bg-clip-text text-5xl font-bold text-transparent dark:from-white dark:via-zinc-100 dark:to-zinc-400">
-              Your Habits
-            </h1>
-            <p className="text-lg text-zinc-600 dark:text-zinc-400">
-              Manage your daily practices across all dimensions
-            </p>
-          </div>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-100 px-4 py-2 text-sm text-black transition-all hover:bg-zinc-200 dark:border-white/8 dark:bg-white/8 dark:text-white dark:hover:bg-white/12"
-          >
-            <Plus className="h-4 w-4" />
-            Add Habit
-          </button>
-        </div>
+        {/* Page Header */}
+        <motion.div
+          className="mb-10"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <h1 className="mb-2 bg-linear-to-r from-black via-zinc-700 to-zinc-400 bg-clip-text text-5xl font-bold text-transparent dark:from-white dark:via-zinc-100 dark:to-zinc-400">
+            Your Habits
+          </h1>
+          <p className="text-lg text-zinc-600 dark:text-zinc-400">
+            Build your life across{" "}
+            <span className="font-semibold text-blue-500">Mind</span>,{" "}
+            <span className="font-semibold text-red-500">Body</span>, and{" "}
+            <span className="font-semibold text-purple-500">Soul</span>
+          </p>
+        </motion.div>
 
+        {/* Category Sections */}
         {habits && habits.length > 0 ? (
-          <HabitsList
-            habits={habits}
-            onEdit={openEditModal}
-            onToggle={(id) => toggleMutation.mutate({ id })}
-            onDelete={(id) => deleteMutation.mutate({ id })}
-            isToggling={toggleMutation.isPending}
-            isDeleting={deleteMutation.isPending}
-          />
-        ) : (
-          <div className="flex flex-col items-center justify-center rounded-3xl border border-zinc-200 bg-white p-20 backdrop-blur-sm dark:border-white/6 dark:bg-white/3">
-            <div className="mb-6 text-7xl">🌟</div>
-            <h2 className="mb-3 bg-gradient-to-r from-black to-zinc-600 bg-clip-text text-3xl font-bold text-transparent dark:from-white dark:to-zinc-400">
-              Start Your Journey
-            </h2>
-            <p className="mb-8 text-center text-lg text-zinc-600 dark:text-zinc-400">
-              Create your first habit and begin building momentum
-            </p>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="inline-flex items-center gap-2 rounded-xl bg-black px-8 py-4 font-semibold text-white shadow-lg shadow-black/10 transition-transform hover:scale-105 dark:bg-white dark:text-black dark:shadow-white/10"
-            >
-              <Plus className="h-5 w-5" />
-              Create Your First Habit
-            </button>
+          <div className="space-y-8">
+            {(["mind", "body", "soul"] as const).map((category, idx) => {
+              const config = categoryConfig[category];
+              const categoryHabits = groupedHabits[category];
+              const Icon = config.icon;
+
+              return (
+                <motion.div
+                  key={category}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="group"
+                >
+                  {/* Category Header */}
+                  <div className="mb-4 flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <motion.div
+                        className={`flex h-12 w-12 items-center justify-center rounded-xl ${config.color} shadow-lg ${config.glowColor}`}
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                      >
+                        <Icon
+                          className="h-6 w-6 text-white"
+                          strokeWidth={2.5}
+                        />
+                      </motion.div>
+                      <div>
+                        <h2
+                          className={`text-2xl font-bold ${config.textColor}`}
+                        >
+                          {config.label}
+                        </h2>
+                        <p className="text-sm text-zinc-500 dark:text-zinc-500">
+                          {config.description} • {categoryHabits.length}{" "}
+                          {categoryHabits.length === 1 ? "habit" : "habits"}
+                        </p>
+                      </div>
+                    </div>
+                    <motion.button
+                      onClick={() => {
+                        setFormData({ ...formData, categoryId: category });
+                        setIsModalOpen(true);
+                      }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`flex items-center gap-2 rounded-xl ${config.lightBg} ${config.textColor} border ${config.borderColor} px-4 py-2 text-sm font-medium transition-all hover:shadow-md`}
+                    >
+                      <span>+</span>
+                      <span>Add {config.label} Habit</span>
+                    </motion.button>
+                  </div>
+
+                  {/* Habits Grid */}
+                  {categoryHabits.length > 0 ? (
+                    <div className="grid gap-3 md:grid-cols-2">
+                      <AnimatePresence mode="popLayout">
+                        {categoryHabits.map((habit) => (
+                          <HabitCard
+                            key={habit.id}
+                            habit={habit}
+                            config={config}
+                            onEdit={openEditModal}
+                            onToggle={(id) => toggleMutation.mutate({ id })}
+                            onDelete={(id) => deleteMutation.mutate({ id })}
+                            isToggling={toggleMutation.isPending}
+                            isDeleting={deleteMutation.isPending}
+                          />
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                  ) : (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className={`rounded-2xl border ${config.borderColor} ${config.lightBg} p-6 text-center`}
+                    >
+                      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                        No {config.label.toLowerCase()} habits yet. Click the
+                        button above to create one!
+                      </p>
+                    </motion.div>
+                  )}
+                </motion.div>
+              );
+            })}
           </div>
+        ) : (
+          <EmptyState onCreateHabit={() => setIsModalOpen(true)} />
         )}
       </main>
 
       {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <CreateHabitModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        formData={formData}
+        setFormData={setFormData}
+        onSubmit={handleSubmit}
+        editingHabit={editingHabit}
+        habits={habits}
+        createMutation={createMutation}
+        updateMutation={updateMutation}
+        deleteMutation={deleteMutation}
+        toggleMutation={toggleMutation}
+        categoryConfig={categoryConfig}
+      />
+    </div>
+  );
+}
+
+// HabitCard Component
+function HabitCard({
+  habit,
+  config,
+  onEdit,
+  onToggle,
+  onDelete,
+  isToggling,
+  isDeleting,
+}: {
+  habit: any;
+  config: any;
+  onEdit: (habit: any) => void;
+  onToggle: (id: number) => void;
+  onDelete: (id: number) => void;
+  isToggling: boolean;
+  isDeleting: boolean;
+}) {
+  const [showMenu, setShowMenu] = useState(false);
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      whileHover={{ y: -2 }}
+      className={`group relative overflow-hidden rounded-2xl border ${config.borderColor} bg-white p-4 shadow-sm transition-all hover:shadow-md dark:bg-white/3`}
+    >
+      {/* Content */}
+      <div className="flex items-start justify-between">
+        <div className="flex min-w-0 flex-1 items-start gap-3">
+          <motion.div
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${config.lightBg}`}
+            whileHover={{ rotate: 360 }}
+            transition={{ duration: 0.6 }}
+          >
+            <span className="text-xl">
+              {CATEGORY_EMOJIS[habit.categoryId as CategoryId]}
+            </span>
+          </motion.div>
+          <div className="min-w-0 flex-1">
+            <h3 className="mb-1 truncate font-semibold text-black dark:text-white">
+              {habit.name}
+            </h3>
+            {habit.description && (
+              <p className="line-clamp-2 text-xs text-zinc-600 dark:text-zinc-400">
+                {habit.description}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Status & Menu */}
+        <div className="ml-2 flex items-center gap-2">
+          <AnimatePresence>
+            {habit.isActive && (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0 }}
+                className={`flex h-7 w-7 items-center justify-center rounded-full ${config.color}`}
+              >
+                <svg
+                  className="h-4 w-4 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={3}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Menu Button */}
+          <div className="relative">
+            <motion.button
+              onClick={() => setShowMenu(!showMenu)}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="rounded-lg p-1.5 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-zinc-100 dark:hover:bg-white/10"
+            >
+              <svg
+                className="h-4 w-4 text-zinc-600 dark:text-zinc-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 6v.01M12 12v.01M12 18v.01"
+                />
+              </svg>
+            </motion.button>
+
+            <AnimatePresence>
+              {showMenu && (
+                <>
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setShowMenu(false)}
+                  />
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    className="absolute top-full right-0 z-20 mt-2 w-40 rounded-xl border border-zinc-200 bg-white py-1.5 shadow-xl dark:border-white/10 dark:bg-zinc-900"
+                  >
+                    <button
+                      onClick={() => {
+                        onEdit(habit);
+                        setShowMenu(false);
+                      }}
+                      className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-white/5"
+                    >
+                      <span>Edit</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        onToggle(habit.id);
+                        setShowMenu(false);
+                      }}
+                      disabled={isToggling}
+                      className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-zinc-700 transition-colors hover:bg-zinc-100 disabled:opacity-50 dark:text-zinc-300 dark:hover:bg-white/5"
+                    >
+                      {habit.isActive ? "Pause" : "Activate"}
+                    </button>
+                    <div className="my-1 h-px bg-zinc-200 dark:bg-white/10" />
+                    <button
+                      onClick={() => {
+                        if (confirm(`Delete "${habit.name}"?`)) {
+                          onDelete(habit.id);
+                        }
+                        setShowMenu(false);
+                      }}
+                      disabled={isDeleting}
+                      className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50 dark:text-red-400 dark:hover:bg-red-500/10"
+                    >
+                      Delete
+                    </button>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// EmptyState Component
+function EmptyState({ onCreateHabit }: { onCreateHabit: () => void }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="flex flex-col items-center justify-center rounded-3xl border border-zinc-200 bg-white p-20 backdrop-blur-sm dark:border-white/6 dark:bg-white/3"
+    >
+      <motion.div
+        className="mb-6 text-7xl"
+        animate={{ rotate: [0, 10, -10, 0] }}
+        transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+      >
+        🌟
+      </motion.div>
+      <h2 className="mb-3 bg-linear-to-r from-black to-zinc-600 bg-clip-text text-3xl font-bold text-transparent dark:from-white dark:to-zinc-400">
+        Start Your Journey
+      </h2>
+      <p className="mb-8 max-w-md text-center text-lg text-zinc-600 dark:text-zinc-400">
+        Build better habits across Mind, Body, and Soul. Every journey begins
+        with a single step.
+      </p>
+      <motion.button
+        onClick={onCreateHabit}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className="inline-flex items-center gap-2 rounded-xl bg-linear-to-br from-blue-600 via-red-600 to-purple-600 px-8 py-4 font-semibold text-white shadow-lg shadow-black/10 transition-shadow hover:shadow-xl dark:shadow-white/10"
+      >
+        <Sparkles className="h-5 w-5" />
+        Create Your First Habit
+      </motion.button>
+    </motion.div>
+  );
+}
+
+// CreateHabitModal Component
+function CreateHabitModal({
+  isOpen,
+  onClose,
+  formData,
+  setFormData,
+  onSubmit,
+  editingHabit,
+  habits,
+  createMutation,
+  updateMutation,
+  deleteMutation,
+  toggleMutation,
+  categoryConfig,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  formData: any;
+  setFormData: any;
+  onSubmit: (e: React.FormEvent) => void;
+  editingHabit: number | null;
+  habits: any;
+  createMutation: any;
+  updateMutation: any;
+  deleteMutation: any;
+  toggleMutation: any;
+  categoryConfig: any;
+}) {
+  if (!isOpen) return null;
+
+  const selectedConfig = categoryConfig[formData.categoryId];
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        >
           {/* Backdrop */}
-          <div
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="absolute inset-0 bg-black/50 backdrop-blur-md dark:bg-black/90"
-            onClick={closeModal}
+            onClick={onClose}
           />
 
           {/* Modal Content */}
-          <div className="relative w-full max-w-lg">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ type: "spring", bounce: 0.3 }}
+            className="relative w-full max-w-2xl"
+          >
             <div className="rounded-3xl border border-zinc-200 bg-white/95 p-8 shadow-2xl shadow-black/20 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-900/95 dark:shadow-black/50">
               {/* Close Button */}
-              <button
-                onClick={closeModal}
-                className="absolute right-4 top-4 rounded-lg p-2 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-black dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+              <motion.button
+                onClick={onClose}
+                whileHover={{ scale: 1.1, rotate: 90 }}
+                whileTap={{ scale: 0.9 }}
+                className="absolute top-4 right-4 rounded-lg p-2 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-black dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
               >
                 <X className="h-5 w-5" />
-              </button>
+              </motion.button>
 
               {/* Header */}
               <div className="mb-6">
-                <h2 className="mb-1 text-2xl font-bold text-black dark:text-white">
-                  {editingHabit ? "Edit Habit" : "Create New Habit"}
+                <h2 className="mb-2 text-3xl font-bold text-black dark:text-white">
+                  {editingHabit ? "Edit Habit" : "Create a New Habit"}
                 </h2>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                <p className="text-zinc-600 dark:text-zinc-400">
                   {editingHabit
-                    ? "Update your habit details"
-                    : "Start building a new routine"}
+                    ? "Update your habit details below"
+                    : "Choose your dimension and define your practice"}
                 </p>
               </div>
 
               {/* Form */}
-              <form onSubmit={handleSubmit} className="space-y-5">
-                {/* Category Selection - First */}
+              <form onSubmit={onSubmit} className="space-y-6">
+                {/* Category Selection - Enhanced */}
                 <div>
-                  <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                    Choose Category
+                  <label className="mb-4 block text-sm font-semibold text-black dark:text-white">
+                    1. Choose Your Dimension
                   </label>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-3 gap-4">
                     {(["mind", "body", "soul"] as const).map((cat) => {
+                      const config = categoryConfig[cat];
+                      const Icon = config.icon;
                       const isSelected = formData.categoryId === cat;
-                      const glowColors = {
-                        mind: "shadow-blue-500/50",
-                        body: "shadow-red-500/50",
-                        soul: "shadow-purple-500/50",
-                      };
-                      const hoverGlow = {
-                        mind: "hover:shadow-blue-500/30",
-                        body: "hover:shadow-red-500/30",
-                        soul: "hover:shadow-purple-500/30",
-                      };
-                      const hoverBorder = {
-                        mind: "hover:border-blue-500/50",
-                        body: "hover:border-red-500/50",
-                        soul: "hover:border-purple-500/50",
-                      };
-                      const radialGradient = {
-                        mind: "radial-gradient(circle at center, rgba(59, 130, 246, 0.08) 0%, transparent 70%)",
-                        body: "radial-gradient(circle at center, rgba(239, 68, 68, 0.08) 0%, transparent 70%)",
-                        soul: "radial-gradient(circle at center, rgba(168, 85, 247, 0.08) 0%, transparent 70%)",
-                      };
 
                       return (
-                        <button
+                        <motion.button
                           key={cat}
                           type="button"
                           onClick={() =>
                             setFormData({ ...formData, categoryId: cat })
                           }
-                          className={`group relative flex flex-col items-center gap-3 overflow-hidden rounded-2xl border-2 py-5 transition-all ${
+                          whileHover={{ scale: 1.05, y: -4 }}
+                          whileTap={{ scale: 0.95 }}
+                          className={`group relative flex flex-col items-center gap-3 overflow-hidden rounded-2xl border-2 p-5 transition-all ${
                             isSelected
-                              ? `border-white shadow-lg ${glowColors[cat]}`
-                              : `border-zinc-700 bg-zinc-900 hover:shadow-md ${hoverBorder[cat]} ${hoverGlow[cat]}`
+                              ? `${config.borderColor} ${config.lightBg} shadow-lg ${config.glowColor}`
+                              : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-md dark:border-zinc-700 dark:bg-zinc-800/50"
                           }`}
-                          style={
-                            !isSelected
-                              ? {
-                                  background: `${radialGradient[cat]}, rgb(24 24 27)`,
-                                }
-                              : undefined
-                          }
                         >
-                          {/* Icon */}
-                          <div className="flex h-12 w-12 items-center justify-center drop-shadow-lg">
-                            <Image
-                              src={`/${cat}.svg`}
-                              alt={cat}
-                              width={48}
-                              height={48}
-                              className="transition-all group-hover:scale-110"
+                          {/* Icon Badge */}
+                          <motion.div
+                            animate={
+                              isSelected ? { rotate: [0, 10, -10, 0] } : {}
+                            }
+                            transition={{ duration: 0.5 }}
+                            className={`flex h-14 w-14 items-center justify-center rounded-xl ${
+                              isSelected
+                                ? config.color
+                                : "bg-zinc-100 dark:bg-zinc-700"
+                            } shadow-lg`}
+                          >
+                            <Icon
+                              className={`h-7 w-7 ${isSelected ? "text-white" : "text-zinc-400"}`}
+                              strokeWidth={2.5}
                             />
-                          </div>
+                          </motion.div>
 
                           {/* Label */}
-                          <span
-                            className={`text-sm font-semibold capitalize transition-all ${
-                              isSelected ? "text-white" : "text-zinc-300"
-                            }`}
-                          >
-                            {cat}
-                          </span>
-                        </button>
+                          <div className="text-center">
+                            <span
+                              className={`block text-sm font-semibold ${
+                                isSelected
+                                  ? config.textColor
+                                  : "text-zinc-600 dark:text-zinc-400"
+                              }`}
+                            >
+                              {config.label}
+                            </span>
+                            <span className="text-xs text-zinc-500 dark:text-zinc-600">
+                              {config.description.split("&")[0]?.trim()}
+                            </span>
+                          </div>
+
+                          {/* Selected indicator */}
+                          <AnimatePresence>
+                            {isSelected && (
+                              <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                exit={{ scale: 0 }}
+                                className={`absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full ${config.color}`}
+                              >
+                                <svg
+                                  className="h-3.5 w-3.5 text-white"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                  strokeWidth={3}
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M5 13l4 4L19 7"
+                                  />
+                                </svg>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </motion.button>
                       );
                     })}
                   </div>
+
+                  {/* Category-specific examples */}
+                  {selectedConfig && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      className={`mt-4 rounded-xl ${selectedConfig.lightBg} ${selectedConfig.borderColor} border p-4`}
+                    >
+                      <p className="mb-2 text-xs font-medium text-zinc-600 dark:text-zinc-400">
+                        Popular {selectedConfig.label} habits:
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedConfig.examples.map((example: string) => (
+                          <button
+                            key={example}
+                            type="button"
+                            onClick={() =>
+                              setFormData({ ...formData, name: example })
+                            }
+                            className={`rounded-full border ${selectedConfig.borderColor} ${selectedConfig.lightBg} px-3 py-1 text-xs font-medium ${selectedConfig.textColor} transition-all hover:shadow-sm`}
+                          >
+                            {example}
+                          </button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
                 </div>
 
                 {/* Habit Name */}
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-black dark:text-white">
-                    Habit Name
+                  <label className="mb-2 block text-sm font-semibold text-black dark:text-white">
+                    2. Name Your Habit
                   </label>
-                  <input
+                  <motion.input
                     type="text"
                     value={formData.name}
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
                     }
-                    placeholder="e.g., Morning Meditation"
-                    className="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-4 py-3 text-black placeholder-zinc-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-white dark:placeholder-zinc-500 dark:focus:ring-zinc-600"
+                    placeholder={`e.g., ${selectedConfig.examples[0]}`}
+                    className={`w-full rounded-xl border-2 ${
+                      formData.name
+                        ? `${selectedConfig.borderColor} ${selectedConfig.lightBg}`
+                        : "border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800/50"
+                    } px-4 py-3.5 text-black placeholder-zinc-400 transition-all focus:border-transparent focus:ring-2 focus:outline-none ${
+                      formData.name
+                        ? `focus:ring-${selectedConfig.textColor.split("-")[1]}-500/50`
+                        : "focus:ring-zinc-300 dark:focus:ring-zinc-600"
+                    } dark:text-white dark:placeholder-zinc-500`}
                     autoFocus
+                    whileFocus={{ scale: 1.01 }}
                   />
+                  <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-500">
+                    Make it specific and actionable
+                  </p>
                 </div>
 
                 {/* Description */}
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-black dark:text-white">
-                    Description (optional)
+                  <label className="mb-2 block text-sm font-semibold text-black dark:text-white">
+                    3. Add Context{" "}
+                    <span className="font-normal text-zinc-500">
+                      (optional)
+                    </span>
                   </label>
-                  <textarea
+                  <motion.textarea
                     value={formData.description}
                     onChange={(e) =>
                       setFormData({ ...formData, description: e.target.value })
                     }
-                    placeholder="Why does this matter to you?"
+                    placeholder="Why is this habit important to you? What will it help you achieve?"
                     rows={3}
-                    className="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-4 py-3 text-black placeholder-zinc-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-white dark:placeholder-zinc-500 dark:focus:ring-zinc-600"
+                    className={`w-full rounded-xl border-2 ${
+                      formData.description
+                        ? `${selectedConfig.borderColor} ${selectedConfig.lightBg}`
+                        : "border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800/50"
+                    } px-4 py-3 text-black placeholder-zinc-400 transition-all focus:border-transparent focus:ring-2 focus:outline-none ${
+                      formData.description
+                        ? `focus:ring-${selectedConfig.textColor.split("-")[1]}-500/50`
+                        : "focus:ring-zinc-300 dark:focus:ring-zinc-600"
+                    } dark:text-white dark:placeholder-zinc-500`}
+                    whileFocus={{ scale: 1.01 }}
                   />
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-3 pt-2">
-                  {editingHabit && (
+                <div className="flex gap-3 pt-4">
+                  {editingHabit ? (
                     <>
-                      <button
+                      {/* Edit mode buttons */}
+                      <motion.button
                         type="button"
                         onClick={() => {
                           if (
@@ -405,55 +850,77 @@ export default function HabitsPage() {
                             )
                           ) {
                             deleteMutation.mutate({ id: editingHabit });
-                            closeModal();
+                            onClose();
                           }
                         }}
                         disabled={deleteMutation.isPending}
-                        className="flex items-center gap-2 rounded-xl border border-red-800 bg-red-950/50 px-4 py-3 font-semibold text-red-400 transition-all hover:bg-red-950 disabled:cursor-not-allowed disabled:opacity-50"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="flex items-center justify-center gap-2 rounded-xl border-2 border-red-200 bg-red-50 px-4 py-3 font-semibold text-red-600 transition-all hover:border-red-300 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-red-900/50 dark:bg-red-950/50 dark:text-red-400 dark:hover:bg-red-900/50"
                       >
                         {deleteMutation.isPending && (
                           <div className="h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-red-300" />
                         )}
                         Delete
-                      </button>
-                      <button
+                      </motion.button>
+                      <motion.button
                         type="button"
                         onClick={() => {
                           toggleMutation.mutate({ id: editingHabit });
-                          closeModal();
+                          onClose();
                         }}
                         disabled={toggleMutation.isPending}
-                        className="flex items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-800/50 px-4 py-3 font-semibold text-zinc-300 transition-all hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-50"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="flex items-center justify-center gap-2 rounded-xl border-2 border-zinc-200 bg-zinc-50 px-4 py-3 font-semibold text-zinc-700 transition-all hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-300 dark:hover:bg-zinc-700"
                       >
                         {toggleMutation.isPending && (
                           <div className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-600 border-t-white" />
                         )}
-                        {habits?.find((h) => h.id === editingHabit)?.isActive
+                        {habits?.find((h: any) => h.id === editingHabit)
+                          ?.isActive
                           ? "Pause"
                           : "Activate"}
-                      </button>
+                      </motion.button>
+                      <motion.button
+                        type="submit"
+                        disabled={
+                          !formData.name.trim() || updateMutation.isPending
+                        }
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className={`flex flex-1 items-center justify-center gap-2 rounded-xl ${selectedConfig.color} py-3.5 font-semibold text-white shadow-lg transition-all hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50`}
+                      >
+                        {updateMutation.isPending && (
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                        )}
+                        Update Habit
+                      </motion.button>
                     </>
+                  ) : (
+                    /* Create mode button */
+                    <motion.button
+                      type="submit"
+                      disabled={
+                        !formData.name.trim() || createMutation.isPending
+                      }
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className={`flex w-full items-center justify-center gap-2 rounded-xl ${selectedConfig.color} py-4 text-lg font-semibold text-white shadow-lg transition-all hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50`}
+                    >
+                      {createMutation.isPending && (
+                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                      )}
+                      <Sparkles className="h-5 w-5" />
+                      Create {selectedConfig.label} Habit
+                    </motion.button>
                   )}
-                  <button
-                    type="submit"
-                    disabled={
-                      !formData.name.trim() ||
-                      createMutation.isPending ||
-                      updateMutation.isPending
-                    }
-                    className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-white py-3 font-semibold text-black transition-all hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {(createMutation.isPending || updateMutation.isPending) && (
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-300 border-t-black" />
-                    )}
-                    {editingHabit ? "Update Habit" : "Create Habit"}
-                  </button>
                 </div>
               </form>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
-    </div>
+    </AnimatePresence>
   );
 }
