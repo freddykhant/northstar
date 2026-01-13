@@ -1,16 +1,9 @@
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import bcrypt from "bcryptjs";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 
 import { db } from "~/server/db";
-import {
-  accounts,
-  sessions,
-  users,
-  verificationTokens,
-} from "~/server/db/schema";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -97,21 +90,42 @@ export const authConfig = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
-  adapter: DrizzleAdapter(db, {
-    usersTable: users,
-    accountsTable: accounts,
-    sessionsTable: sessions,
-    verificationTokensTable: verificationTokens,
-  }),
+  // Note: No adapter needed for JWT sessions
+  // Database is only queried during login (in authorize function)
+  // Google OAuth will store account in database via callbacks
   session: {
-    strategy: "jwt", // required for CredentialsProvider
+    strategy: "jwt", // JWT tokens instead of database sessions
   },
   callbacks: {
-    jwt: async ({ token, user }) => {
+    jwt: async ({ token, user, account }) => {
       // Initial sign in
       if (user) {
         token.id = user.id;
         token.email = user.email;
+        
+        // For Google OAuth, create/update user in database
+        if (account?.provider === "google" && user.email) {
+          const { schema } = await import("~/server/db");
+          // Check if user exists
+          const existingUser = await db.query.users.findFirst({
+            where: (users, { eq }) => eq(users.email, user.email!),
+          });
+          
+          if (!existingUser) {
+            // Create new user
+            const [newUser] = await db
+              .insert(schema.users)
+              .values({
+                email: user.email!,
+                name: user.name ?? null,
+                image: user.image ?? null,
+              })
+              .returning();
+            token.id = newUser!.id;
+          } else {
+            token.id = existingUser.id;
+          }
+        }
       }
       return token;
     },
