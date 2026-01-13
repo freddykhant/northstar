@@ -43,15 +43,26 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#0a0a0a] text-white">
-      {/* Base dark gradient layer */}
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-white dark:bg-[#0a0a0a]">
+      {/* Base gradient layer */}
       <div
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 dark:opacity-100"
         style={{
           background: `
             radial-gradient(ellipse 80% 50% at 50% 50%, rgba(38, 35, 32, 0.4) 0%, transparent 50%),
             radial-gradient(ellipse 60% 40% at 50% 45%, rgba(45, 40, 35, 0.3) 0%, transparent 40%),
             radial-gradient(ellipse 100% 80% at 50% 50%, rgba(25, 23, 22, 0.5) 0%, transparent 60%)
+          `,
+        }}
+      />
+      {/* Light mode gradient */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-100 transition-opacity duration-500 dark:opacity-0"
+        style={{
+          background: `
+            radial-gradient(ellipse 80% 50% at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+            radial-gradient(ellipse 60% 40% at 50% 45%, rgba(239, 68, 68, 0.03) 0%, transparent 40%),
+            radial-gradient(ellipse 100% 80% at 50% 50%, rgba(168, 85, 247, 0.04) 0%, transparent 60%)
           `,
         }}
       />
@@ -63,16 +74,16 @@ export default function SignInPage() {
         }}
       />
       <main className="relative z-10 flex flex-1 items-center justify-center px-4">
-        <div className="w-full max-w-100 rounded-3xl border border-zinc-800 bg-zinc-900/50 p-8">
+        <div className="w-full max-w-100 rounded-3xl border border-zinc-200 bg-white/80 p-8 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-900/50">
           {/* Logo */}
           <div className="mb-6">
-            <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-zinc-800">
-              <PanelLeftOpen className="h-7 w-7 text-zinc-400" />
+            <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-800">
+              <PanelLeftOpen className="h-7 w-7 text-zinc-600 dark:text-zinc-400" />
             </div>
-            <h1 className="mb-1 text-xl font-semibold text-white">
+            <h1 className="mb-1 text-xl font-semibold text-black dark:text-white">
               Welcome back
             </h1>
-            <p className="text-sm text-zinc-400">
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">
               Sign in to continue to Northstar.
             </p>
           </div>
@@ -81,7 +92,7 @@ export default function SignInPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Email Input */}
               <div>
-                <label className="mb-2 block text-sm font-medium text-white">
+                <label className="mb-2 block text-sm font-medium text-black dark:text-white">
                   Email
                 </label>
                 <input
@@ -90,13 +101,13 @@ export default function SignInPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@email.com"
                   required
-                  className="w-full rounded-xl border border-zinc-700 bg-zinc-800/50 px-4 py-3 text-white placeholder-zinc-500 transition-all focus:border-transparent focus:ring-2 focus:ring-zinc-600 focus:outline-none"
+                  className="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-4 py-3 text-black placeholder-zinc-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-white dark:placeholder-zinc-500 dark:focus:ring-zinc-600"
                 />
               </div>
 
               {/* Password Input */}
               <div>
-                <label className="mb-2 block text-sm font-medium text-white">
+                <label className="mb-2 block text-sm font-medium text-black dark:text-white">
                   Password
                 </label>
                 <input
@@ -105,7 +116,7 @@ export default function SignInPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
                   required
-                  className="w-full rounded-xl border border-zinc-700 bg-zinc-800/50 px-4 py-3 text-white placeholder-zinc-500 transition-all focus:border-transparent focus:ring-2 focus:ring-zinc-600 focus:outline-none"
+                  className="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-4 py-3 text-black placeholder-zinc-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-white dark:placeholder-zinc-500 dark:focus:ring-zinc-600"
                 />
               </div>
 
@@ -119,7 +130,7 @@ export default function SignInPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full rounded-xl bg-white py-3 font-medium text-black transition-colors hover:bg-zinc-200 disabled:opacity-50"
+                className="w-full rounded-xl bg-black py-3 font-medium text-white transition-colors hover:bg-zinc-800 disabled:opacity-50 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
               >
                 {isLoading ? "Signing in..." : "Sign In"}
               </button>
@@ -131,7 +142,7 @@ export default function SignInPage() {
             <button
               type="button"
               onClick={handleGoogleSignIn}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-800 py-3 font-medium text-white transition-colors hover:bg-zinc-700"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-300 bg-zinc-100 py-3 font-medium text-black transition-colors hover:bg-zinc-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:hover:bg-zinc-700"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path
@@ -156,9 +167,12 @@ export default function SignInPage() {
           </div>
 
           {/* Sign Up Link */}
-          <p className="mt-6 text-center text-sm text-zinc-400">
+          <p className="mt-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
             Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-white hover:underline">
+            <Link
+              href="/signup"
+              className="font-medium text-black hover:underline dark:text-white"
+            >
               Sign up
             </Link>
           </p>
