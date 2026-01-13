@@ -2,8 +2,8 @@ import "~/styles/globals.css";
 
 import { type Metadata } from "next";
 
+import { AuthProvider } from "~/_components/auth-provider";
 import { TRPCReactProvider } from "~/trpc/react";
-import { AuthProvider } from "~/components/auth-provider";
 
 export const metadata: Metadata = {
   title: "northstar",
