@@ -23,7 +23,7 @@ export function Sidebar({ user, onCreateHabit }: SidebarProps) {
   ];
 
   return (
-    <aside className="fixed left-0 top-6 z-40 flex h-[calc(100vh-3rem)] w-64 flex-col overflow-hidden rounded-r-2xl border-r border-t border-b border-zinc-200/60 bg-white/70 shadow-2xl shadow-black/5 backdrop-blur-2xl dark:border-white/10 dark:bg-zinc-900/50">
+    <aside className="fixed top-6 left-0 z-40 flex h-[calc(100vh-3rem)] w-64 flex-col overflow-hidden rounded-r-2xl border-t border-r border-b border-zinc-200/60 bg-white/70 shadow-2xl shadow-black/5 backdrop-blur-2xl dark:border-white/10 dark:bg-zinc-900/50">
       {/* Logo */}
       <div className="flex items-center gap-3 border-b border-zinc-200/60 px-6 py-5 dark:border-white/10">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 via-red-500 to-purple-500 shadow-lg">
