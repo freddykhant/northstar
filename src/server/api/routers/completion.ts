@@ -3,6 +3,17 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { completions, habits } from "~/server/db/schema";
 
+// Helper function to normalize date to YYYY-MM-DD string
+function normalizeDateString(date: string | Date | unknown): string {
+  if (typeof date === "string") {
+    return date.split("T")[0]!;
+  }
+  if (date instanceof Date) {
+    return date.toISOString().split("T")[0]!;
+  }
+  return String(date).split("T")[0]!;
+}
+
 export const completionRouter = createTRPCRouter({
   // toggle completion for a habit on a specific date
   toggle: protectedProcedure
@@ -86,17 +97,9 @@ export const completionRouter = createTRPCRouter({
 
       // Format dates to ensure they're strings in YYYY-MM-DD format
       return result.map((completion) => {
-        const date = completion.completedDate as unknown;
-        const dateStr =
-          typeof date === "string"
-            ? date
-            : date instanceof Date
-              ? date.toISOString().split("T")[0]!
-              : String(date).split("T")[0]!;
-
         return {
           ...completion,
-          completedDate: dateStr,
+          completedDate: normalizeDateString(completion.completedDate),
         };
       });
     }),
@@ -196,4 +199,109 @@ export const completionRouter = createTRPCRouter({
         isCompleted: completedHabitIds.has(habit.id),
       }));
     }),
+
+  // get overall statistics (streaks, totals, percentages)
+  getOverallStats: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+
+    // Get all completions for this user, ordered by date
+    const allCompletions = await ctx.db.query.completions.findMany({
+      where: eq(completions.userId, userId),
+      orderBy: (completions, { asc }) => [asc(completions.completedDate)],
+    });
+
+    // Get all active habits count
+    const activeHabits = await ctx.db.query.habits.findMany({
+      where: and(eq(habits.userId, userId), eq(habits.isActive, true)),
+    });
+
+    const activeHabitsCount = activeHabits.length;
+
+    // Total completed
+    const totalCompleted = allCompletions.length;
+
+    if (allCompletions.length === 0) {
+      return {
+        currentStreak: 0,
+        bestStreak: 0,
+        totalCompleted: 0,
+        weekPercentage: 0,
+      };
+    }
+
+    // Group completions by date
+    const completionsByDate = new Map<string, number>();
+    allCompletions.forEach((completion) => {
+      const dateStr = normalizeDateString(completion.completedDate);
+
+      completionsByDate.set(dateStr, (completionsByDate.get(dateStr) ?? 0) + 1);
+    });
+
+    // Get unique dates with completions, sorted
+    const uniqueDates = Array.from(completionsByDate.keys()).sort();
+
+    // Calculate current streak (working backwards from today)
+    const today = new Date().toISOString().split("T")[0]!;
+    let currentStreak = 0;
+    let checkDate = new Date(today);
+
+    while (true) {
+      const dateStr = checkDate.toISOString().split("T")[0]!;
+      if (completionsByDate.has(dateStr)) {
+        currentStreak++;
+        checkDate.setDate(checkDate.getDate() - 1);
+      } else {
+        // If today has no completions, we check yesterday to allow for ongoing streaks
+        if (currentStreak === 0 && dateStr === today) {
+          checkDate.setDate(checkDate.getDate() - 1);
+          continue;
+        }
+        break;
+      }
+    }
+
+    // Calculate best streak (longest consecutive days with completions)
+    let bestStreak = 0;
+    let tempStreak = 1;
+
+    for (let i = 1; i < uniqueDates.length; i++) {
+      const prevDate = new Date(uniqueDates[i - 1]!);
+      const currDate = new Date(uniqueDates[i]!);
+
+      const diffTime = currDate.getTime() - prevDate.getTime();
+      const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+      if (diffDays === 1) {
+        tempStreak++;
+      } else {
+        bestStreak = Math.max(bestStreak, tempStreak);
+        tempStreak = 1;
+      }
+    }
+    bestStreak = Math.max(bestStreak, tempStreak);
+
+    // Calculate week percentage (last 7 days)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const sevenDaysAgoStr = sevenDaysAgo.toISOString().split("T")[0]!;
+
+    const weekCompletions = allCompletions.filter((completion) => {
+      const dateStr = normalizeDateString(completion.completedDate);
+      return dateStr >= sevenDaysAgoStr && dateStr <= today;
+    });
+
+    // Week percentage = (completions in last 7 days) / (7 days * active habits) * 100
+    const possibleCompletions = 7 * activeHabitsCount;
+    const weekPercentage =
+      possibleCompletions > 0
+        ? Math.round((weekCompletions.length / possibleCompletions) * 100)
+        : 0;
+
+    return {
+      currentStreak,
+      bestStreak,
+      totalCompleted,
+      weekPercentage,
+    };
+  }),
 });

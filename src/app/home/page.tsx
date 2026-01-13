@@ -48,6 +48,8 @@ export default function HomePage() {
     endDate: dateRange.endDate,
   });
 
+  const { data: overallStats } = api.completion.getOverallStats.useQuery();
+
   // Transform completions data for the graph
   const graphData = useGraphData(completionsData);
 
@@ -78,11 +80,11 @@ export default function HomePage() {
     return null;
   }
 
-  // TODO: Calculate these values from real data
-  const currentStreak = 0; // Placeholder
-  const weekPercentage = 0; // Placeholder
-  const totalCompleted = 0; // Placeholder
-  const bestStreak = 0; // Placeholder
+  // Extract real stats from the query (with fallbacks)
+  const currentStreak = overallStats?.currentStreak ?? 0;
+  const weekPercentage = overallStats?.weekPercentage ?? 0;
+  const totalCompleted = overallStats?.totalCompleted ?? 0;
+  const bestStreak = overallStats?.bestStreak ?? 0;
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#0a0a0a] text-white">
@@ -96,7 +98,7 @@ export default function HomePage() {
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-8">
         {/* Greeting Header */}
         <div className="mb-10">
-          <h1 className="mb-2 bg-gradient-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-5xl font-bold text-transparent">
+          <h1 className="mb-2 bg-linear-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-5xl font-bold text-transparent">
             {getGreeting()}, {session.user.name?.split(" ")[0] ?? "there"}
           </h1>
           <p className="text-lg text-zinc-400">{formatDate(today)}</p>
@@ -140,7 +142,7 @@ export default function HomePage() {
           <div className="lg:col-span-1">
             <div className="sticky top-8">
               {habitsWithStatus && habitsWithStatus.length > 0 ? (
-                <GlassCard className="border border-white/[0.06] bg-white/[0.03] p-6 backdrop-blur-sm">
+                <GlassCard className="border border-white/6 bg-white/3 p-6 backdrop-blur-sm">
                   <h2 className="mb-6 text-xl font-bold text-white">
                     Today&apos;s Focus
                   </h2>
