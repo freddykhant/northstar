@@ -93,7 +93,7 @@ export function HabitsList({
                 <h2 className={`text-lg font-medium ${config.textColor}`}>
                   {config.label}
                 </h2>
-                <p className="text-xs text-zinc-500">{config.description}</p>
+                <p className="text-xs text-zinc-500 dark:text-zinc-500">{config.description}</p>
               </div>
             </div>
 
@@ -101,7 +101,7 @@ export function HabitsList({
               {categoryHabits.map((habit) => (
                 <div
                   key={habit.id}
-                  className={`group relative flex items-center justify-between rounded-xl border border-white/[0.06] bg-white/[0.03] p-4 backdrop-blur-sm transition-all duration-200 hover:border-white/[0.1] hover:bg-white/[0.05] ${
+                  className={`group relative flex items-center justify-between rounded-xl border border-zinc-200 bg-white p-4 backdrop-blur-sm transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-50 dark:border-white/6 dark:bg-white/3 dark:hover:border-white/10 dark:hover:bg-white/5 ${
                     hoveredHabit === habit.id
                       ? `shadow-lg ${config.glowColor}`
                       : ""
@@ -111,16 +111,16 @@ export function HabitsList({
                 >
                   <div className="flex items-center gap-4">
                     <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-lg bg-white/[0.05] ${config.textColor}`}
+                      className={`flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-100 dark:bg-white/5 ${config.textColor}`}
                     >
                       <span className="text-xl">
                         {CATEGORY_EMOJIS[category as CategoryId]}
                       </span>
                     </div>
                     <div>
-                      <h3 className="font-medium text-white">{habit.name}</h3>
+                      <h3 className="font-medium text-black dark:text-white">{habit.name}</h3>
                       {habit.description && (
-                        <p className="text-xs text-zinc-500">
+                        <p className="text-xs text-zinc-500 dark:text-zinc-500">
                           {habit.description}
                         </p>
                       )}
@@ -133,7 +133,7 @@ export function HabitsList({
                       className={`flex h-6 w-6 items-center justify-center rounded-full border-2 transition-all ${
                         habit.isActive
                           ? `${config.color} border-transparent`
-                          : "border-zinc-600 bg-transparent"
+                          : "border-zinc-300 bg-transparent dark:border-zinc-600"
                       }`}
                     >
                       {habit.isActive && (
@@ -162,9 +162,9 @@ export function HabitsList({
                           )
                         }
                         disabled={isToggling || isDeleting}
-                        className="rounded-lg p-1.5 opacity-0 transition-all group-hover:opacity-100 hover:bg-white/[0.1] disabled:cursor-not-allowed disabled:opacity-50"
+                        className="rounded-lg p-1.5 opacity-0 transition-all group-hover:opacity-100 hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-white/10"
                       >
-                        <MoreHorizontal className="h-4 w-4 text-zinc-400" />
+                        <MoreHorizontal className="h-4 w-4 text-zinc-600 dark:text-zinc-400" />
                       </button>
 
                       {openMenuId === habit.id && (
@@ -175,14 +175,14 @@ export function HabitsList({
                             onClick={() => setOpenMenuId(null)}
                           />
                           {/* Menu */}
-                          <div className="absolute top-full right-0 z-20 mt-1 w-40 rounded-lg border border-white/[0.1] bg-zinc-900 py-1 shadow-xl">
+                          <div className="absolute right-0 top-full z-20 mt-1 w-40 rounded-lg border border-zinc-200 bg-white py-1 shadow-xl dark:border-white/10 dark:bg-zinc-900">
                             <button
                               onClick={() => {
                                 onEdit(habit);
                                 setOpenMenuId(null);
                               }}
                               disabled={isToggling || isDeleting}
-                              className="w-full px-4 py-2 text-left text-sm text-zinc-300 transition-colors hover:bg-white/[0.05] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                              className="w-full px-4 py-2 text-left text-sm text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-black disabled:cursor-not-allowed disabled:opacity-50 dark:text-zinc-300 dark:hover:bg-white/5 dark:hover:text-white"
                             >
                               Edit
                             </button>
@@ -192,7 +192,7 @@ export function HabitsList({
                                 setOpenMenuId(null);
                               }}
                               disabled={isToggling || isDeleting}
-                              className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-zinc-300 transition-colors hover:bg-white/[0.05] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                              className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-black disabled:cursor-not-allowed disabled:opacity-50 dark:text-zinc-300 dark:hover:bg-white/5 dark:hover:text-white"
                             >
                               {isToggling && (
                                 <div className="h-3 w-3 animate-spin rounded-full border border-zinc-600 border-t-white" />
@@ -211,7 +211,7 @@ export function HabitsList({
                                 setOpenMenuId(null);
                               }}
                               disabled={isToggling || isDeleting}
-                              className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-400 transition-colors hover:bg-red-500/[0.1] hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
+                              className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 transition-colors hover:bg-red-50 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50 dark:text-red-400 dark:hover:bg-red-500/10 dark:hover:text-red-300"
                             >
                               {isDeleting && (
                                 <div className="h-3 w-3 animate-spin rounded-full border border-red-600 border-t-red-300" />

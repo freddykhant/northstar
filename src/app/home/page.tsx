@@ -69,8 +69,8 @@ export default function HomePage() {
   // Loading state
   if (status === "loading") {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center bg-[#0a0a0a] text-white">
-        <div className="text-zinc-400">Loading...</div>
+      <main className="flex min-h-screen flex-col items-center justify-center bg-white text-black dark:bg-[#0a0a0a] dark:text-white">
+        <div className="text-zinc-600 dark:text-zinc-400">Loading...</div>
       </main>
     );
   }
@@ -87,7 +87,7 @@ export default function HomePage() {
   const bestStreak = overallStats?.bestStreak ?? 0;
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#0a0a0a] text-white">
+    <div className="relative min-h-screen overflow-hidden bg-white text-black dark:bg-[#0a0a0a] dark:text-white">
       {/* Background */}
       <GradientBackground />
 
@@ -98,10 +98,10 @@ export default function HomePage() {
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-8">
         {/* Greeting Header */}
         <div className="mb-10">
-          <h1 className="mb-2 bg-linear-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-5xl font-bold text-transparent">
+          <h1 className="mb-2 bg-linear-to-r from-black via-zinc-700 to-zinc-400 bg-clip-text text-5xl font-bold text-transparent dark:from-white dark:via-zinc-100 dark:to-zinc-400">
             {getGreeting()}, {session.user.name?.split(" ")[0] ?? "there"}
           </h1>
-          <p className="text-lg text-zinc-400">{formatDate(today)}</p>
+          <p className="text-lg text-zinc-600 dark:text-zinc-400">{formatDate(today)}</p>
         </div>
 
         {/* Main Grid Layout */}
@@ -142,8 +142,8 @@ export default function HomePage() {
           <div className="lg:col-span-1">
             <div className="sticky top-8">
               {habitsWithStatus && habitsWithStatus.length > 0 ? (
-                <GlassCard className="border border-white/6 bg-white/3 p-6 backdrop-blur-sm">
-                  <h2 className="mb-6 text-xl font-bold text-white">
+                <GlassCard className="border border-zinc-200 bg-white p-6 backdrop-blur-sm dark:border-white/6 dark:bg-white/3">
+                  <h2 className="mb-6 text-xl font-bold text-black dark:text-white">
                     Today&apos;s Focus
                   </h2>
                   <CheckinList
@@ -154,17 +154,17 @@ export default function HomePage() {
                   />
                 </GlassCard>
               ) : (
-                <GlassCard className="flex flex-col items-center justify-center p-12 text-center">
+                <GlassCard className="flex flex-col items-center justify-center border border-zinc-200 bg-white p-12 text-center dark:border-white/6 dark:bg-white/3">
                   <div className="mb-4 text-6xl">🌟</div>
-                  <h2 className="mb-2 text-xl font-bold text-white">
+                  <h2 className="mb-2 text-xl font-bold text-black dark:text-white">
                     No habits yet
                   </h2>
-                  <p className="mb-6 text-sm text-zinc-400">
+                  <p className="mb-6 text-sm text-zinc-600 dark:text-zinc-400">
                     Create your first habit to start building consistency
                   </p>
                   <Link
                     href="/habits"
-                    className="inline-block rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black transition-transform hover:scale-105"
+                    className="inline-block rounded-xl bg-black px-6 py-3 text-sm font-semibold text-white transition-transform hover:scale-105 dark:bg-white dark:text-black"
                   >
                     Create Habit
                   </Link>

@@ -29,10 +29,10 @@ export function CategoryStatCard({ categoryId, count }: CategoryStatCardProps) {
       <div className="relative">
         <div className="mb-2 text-3xl">{emoji}</div>
         <div className={`mb-1 text-sm font-medium ${colors.text}`}>{label}</div>
-        <div className="text-2xl font-bold text-white transition-all duration-300">
+        <div className="text-2xl font-bold text-black transition-all duration-300 dark:text-white">
           {count}
         </div>
-        <div className="text-xs tracking-wider text-zinc-500 uppercase">
+        <div className="text-xs uppercase tracking-wider text-zinc-500 dark:text-zinc-500">
           completed today
         </div>
       </div>

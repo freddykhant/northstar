@@ -195,7 +195,7 @@ export default function HabitsPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#0c0c0c]">
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-white dark:bg-[#0c0c0c]">
       {/* Background */}
       <GradientBackground />
 
@@ -206,16 +206,16 @@ export default function HabitsPage() {
       <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 px-6 py-8">
         <div className="mb-10 flex items-center justify-between">
           <div>
-            <h1 className="mb-2 bg-gradient-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-5xl font-bold text-transparent">
+            <h1 className="mb-2 bg-gradient-to-r from-black via-zinc-700 to-zinc-400 bg-clip-text text-5xl font-bold text-transparent dark:from-white dark:via-zinc-100 dark:to-zinc-400">
               Your Habits
             </h1>
-            <p className="text-lg text-zinc-400">
+            <p className="text-lg text-zinc-600 dark:text-zinc-400">
               Manage your daily practices across all dimensions
             </p>
           </div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.08] px-4 py-2 text-sm text-white transition-all hover:bg-white/[0.12]"
+            className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-100 px-4 py-2 text-sm text-black transition-all hover:bg-zinc-200 dark:border-white/8 dark:bg-white/8 dark:text-white dark:hover:bg-white/12"
           >
             <Plus className="h-4 w-4" />
             Add Habit
@@ -232,17 +232,17 @@ export default function HabitsPage() {
             isDeleting={deleteMutation.isPending}
           />
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-3xl border border-white/[0.06] bg-white/[0.03] p-20 backdrop-blur-sm">
+          <div className="flex flex-col items-center justify-center rounded-3xl border border-zinc-200 bg-white p-20 backdrop-blur-sm dark:border-white/6 dark:bg-white/3">
             <div className="mb-6 text-7xl">🌟</div>
-            <h2 className="mb-3 bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-3xl font-bold text-transparent">
+            <h2 className="mb-3 bg-gradient-to-r from-black to-zinc-600 bg-clip-text text-3xl font-bold text-transparent dark:from-white dark:to-zinc-400">
               Start Your Journey
             </h2>
-            <p className="mb-8 text-center text-lg text-zinc-400">
+            <p className="mb-8 text-center text-lg text-zinc-600 dark:text-zinc-400">
               Create your first habit and begin building momentum
             </p>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-4 font-semibold text-black shadow-lg shadow-white/10 transition-transform hover:scale-105"
+              className="inline-flex items-center gap-2 rounded-xl bg-black px-8 py-4 font-semibold text-white shadow-lg shadow-black/10 transition-transform hover:scale-105 dark:bg-white dark:text-black dark:shadow-white/10"
             >
               <Plus className="h-5 w-5" />
               Create Your First Habit
@@ -256,27 +256,27 @@ export default function HabitsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-black/90 backdrop-blur-md"
+            className="absolute inset-0 bg-black/50 backdrop-blur-md dark:bg-black/90"
             onClick={closeModal}
           />
 
           {/* Modal Content */}
           <div className="relative w-full max-w-lg">
-            <div className="rounded-3xl border border-zinc-800 bg-zinc-900/95 p-8 shadow-2xl shadow-black/50 backdrop-blur-xl">
+            <div className="rounded-3xl border border-zinc-200 bg-white/95 p-8 shadow-2xl shadow-black/20 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-900/95 dark:shadow-black/50">
               {/* Close Button */}
               <button
                 onClick={closeModal}
-                className="absolute top-4 right-4 rounded-lg p-2 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+                className="absolute right-4 top-4 rounded-lg p-2 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-black dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
               >
                 <X className="h-5 w-5" />
               </button>
 
               {/* Header */}
               <div className="mb-6">
-                <h2 className="mb-1 text-2xl font-bold text-white">
+                <h2 className="mb-1 text-2xl font-bold text-black dark:text-white">
                   {editingHabit ? "Edit Habit" : "Create New Habit"}
                 </h2>
-                <p className="text-sm text-zinc-400">
+                <p className="text-sm text-zinc-600 dark:text-zinc-400">
                   {editingHabit
                     ? "Update your habit details"
                     : "Start building a new routine"}
@@ -287,7 +287,7 @@ export default function HabitsPage() {
               <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Category Selection - First */}
                 <div>
-                  <label className="mb-3 block text-sm font-medium text-white">
+                  <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                     Choose Category
                   </label>
                   <div className="grid grid-cols-3 gap-3">
@@ -361,7 +361,7 @@ export default function HabitsPage() {
 
                 {/* Habit Name */}
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-white">
+                  <label className="mb-2 block text-sm font-medium text-black dark:text-white">
                     Habit Name
                   </label>
                   <input
@@ -371,14 +371,14 @@ export default function HabitsPage() {
                       setFormData({ ...formData, name: e.target.value })
                     }
                     placeholder="e.g., Morning Meditation"
-                    className="w-full rounded-xl border border-zinc-700 bg-zinc-800/50 px-4 py-3 text-white placeholder-zinc-500 transition-all focus:border-transparent focus:ring-2 focus:ring-zinc-600 focus:outline-none"
+                    className="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-4 py-3 text-black placeholder-zinc-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-white dark:placeholder-zinc-500 dark:focus:ring-zinc-600"
                     autoFocus
                   />
                 </div>
 
                 {/* Description */}
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-white">
+                  <label className="mb-2 block text-sm font-medium text-black dark:text-white">
                     Description (optional)
                   </label>
                   <textarea
@@ -388,7 +388,7 @@ export default function HabitsPage() {
                     }
                     placeholder="Why does this matter to you?"
                     rows={3}
-                    className="w-full rounded-xl border border-zinc-700 bg-zinc-800/50 px-4 py-3 text-white placeholder-zinc-500 transition-all focus:border-transparent focus:ring-2 focus:ring-zinc-600 focus:outline-none"
+                    className="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-4 py-3 text-black placeholder-zinc-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-white dark:placeholder-zinc-500 dark:focus:ring-zinc-600"
                   />
                 </div>
 

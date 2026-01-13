@@ -159,17 +159,17 @@ export function ActivityGraph({ completions }: ActivityGraphProps) {
   }
 
   return (
-    <div className="relative rounded-xl border border-white/[0.06] bg-white/[0.03] p-6 backdrop-blur-sm">
+    <div className="relative rounded-xl border border-zinc-200 bg-white p-6 backdrop-blur-sm dark:border-white/6 dark:bg-white/3">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-lg font-medium text-white">Activity</h2>
-        <div className="flex items-center gap-4 text-xs text-zinc-500">
+        <h2 className="text-lg font-medium text-black dark:text-white">Activity</h2>
+        <div className="flex items-center gap-4 text-xs text-zinc-500 dark:text-zinc-500">
           <span>Less</span>
           <div className="flex gap-1">
-            <div className="h-3 w-3 rounded-sm bg-white/[0.03]" />
-            <div className="h-3 w-3 rounded-sm bg-white/[0.15]" />
-            <div className="h-3 w-3 rounded-sm bg-white/[0.3]" />
-            <div className="h-3 w-3 rounded-sm bg-white/[0.5]" />
-            <div className="h-3 w-3 rounded-sm bg-white/[0.7]" />
+            <div className="h-3 w-3 rounded-sm bg-zinc-100 dark:bg-white/3" />
+            <div className="h-3 w-3 rounded-sm bg-zinc-200 dark:bg-white/15" />
+            <div className="h-3 w-3 rounded-sm bg-zinc-300 dark:bg-white/30" />
+            <div className="h-3 w-3 rounded-sm bg-zinc-400 dark:bg-white/50" />
+            <div className="h-3 w-3 rounded-sm bg-zinc-500 dark:bg-white/70" />
           </div>
           <span>More</span>
         </div>
@@ -250,8 +250,8 @@ export function ActivityGraph({ completions }: ActivityGraphProps) {
             transform: "translate(-50%, -100%)",
           }}
         >
-          <div className="rounded-lg border border-white/10 bg-zinc-900 px-3 py-2 shadow-xl">
-            <p className="mb-1.5 text-xs font-medium text-white">
+          <div className="rounded-lg border border-zinc-200 bg-white px-3 py-2 shadow-xl dark:border-white/10 dark:bg-zinc-900">
+            <p className="mb-1.5 text-xs font-medium text-black dark:text-white">
               {hoveredDay.date.toLocaleDateString("en-US", {
                 weekday: "short",
                 month: "short",

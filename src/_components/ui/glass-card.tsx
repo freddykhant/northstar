@@ -11,7 +11,7 @@ interface GlassCardProps extends PropsWithChildren {
 export function GlassCard({ children, className = "" }: GlassCardProps) {
   return (
     <div
-      className={`overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900/70 backdrop-blur-xl ${className}`}
+      className={`overflow-hidden rounded-3xl border border-zinc-200 bg-white/70 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-900/70 ${className}`}
     >
       {children}
     </div>
@@ -27,7 +27,7 @@ export function GlassCardHeader({
   className = "",
 }: GlassCardHeaderProps) {
   return (
-    <div className={`border-b border-zinc-800 p-6 ${className}`}>
+    <div className={`border-b border-zinc-200 p-6 dark:border-zinc-800 ${className}`}>
       {children}
     </div>
   );

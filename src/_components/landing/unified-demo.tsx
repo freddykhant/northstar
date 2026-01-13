@@ -101,7 +101,7 @@ export function UnifiedDemo() {
             <div className="h-3 w-3 rounded-full bg-yellow-400" />
             <div className="h-3 w-3 rounded-full bg-green-400" />
           </div>
-          <div className="ml-3 flex-1 rounded-lg bg-zinc-100 px-4 py-1.5">
+          <div className="ml-3 flex-1 rounded-lg bg-zinc-100 px-4 py-1.5 dark:bg-zinc-800">
             <span className="text-xs text-zinc-500 dark:text-zinc-400">
               northstar.app/home
             </span>
@@ -148,8 +148,8 @@ export function UnifiedDemo() {
                             isFilled
                               ? `${colors.bg} ${colors.border}`
                               : isToday
-                                ? "border-dashed border-zinc-300 bg-zinc-50"
-                                : "border-zinc-200 bg-zinc-100"
+                                ? "border-dashed border-zinc-300 bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-800"
+                                : "border-zinc-200 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800"
                           }`}
                           animate={
                             wasJustCompleted
@@ -235,8 +235,8 @@ export function UnifiedDemo() {
                     onClick={() => toggleHabit(habit)}
                     className={`group relative w-full overflow-hidden rounded-xl border-2 p-4 text-left transition-all ${
                       isCompleted
-                        ? `${colors.border} bg-linear-to-r from-${habit.category === "mind" ? "blue" : habit.category === "body" ? "red" : "purple"}-50 to-white`
-                        : "border-zinc-200 bg-white hover:border-zinc-300 hover:bg-zinc-50"
+                        ? `${colors.border} bg-linear-to-r from-${habit.category === "mind" ? "blue" : habit.category === "body" ? "red" : "purple"}-50 to-white dark:from-${habit.category === "mind" ? "blue" : habit.category === "body" ? "red" : "purple"}-950/30 dark:to-zinc-900`
+                        : "dark:hover:bg-zinc-750 border-zinc-200 bg-white hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-zinc-600"
                     }`}
                     whileTap={{ scale: 0.98 }}
                   >
@@ -246,7 +246,7 @@ export function UnifiedDemo() {
                         className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border-2 transition-all ${
                           isCompleted
                             ? `${colors.bg} ${colors.border}`
-                            : "border-zinc-300 bg-white"
+                            : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-700"
                         }`}
                         animate={isCompleted ? { scale: [1, 1.2, 1] } : {}}
                       >
@@ -289,7 +289,7 @@ export function UnifiedDemo() {
                         className={`rounded-lg px-3 py-1 text-xs font-medium capitalize ${
                           isCompleted
                             ? `${colors.bg} text-white`
-                            : "bg-zinc-100 text-zinc-600"
+                            : "bg-zinc-100 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300"
                         }`}
                       >
                         {habit.category}

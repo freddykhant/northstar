@@ -48,13 +48,13 @@ export function CheckinList({
   return (
     <div className="space-y-6">
       {/* Progress indicator */}
-      <div className="flex items-center gap-3 rounded-full border border-white/[0.08] bg-white/[0.05] px-4 py-2.5">
-        <span className="text-xl font-semibold text-white">
+      <div className="flex items-center gap-3 rounded-full border border-zinc-200 bg-zinc-50 px-4 py-2.5 dark:border-white/8 dark:bg-white/5">
+        <span className="text-xl font-semibold text-black dark:text-white">
           {completedCount}
         </span>
-        <span className="text-zinc-500">/</span>
-        <span className="text-zinc-400">{totalCount}</span>
-        <div className="ml-2 h-1.5 flex-1 overflow-hidden rounded-full bg-white/[0.1]">
+        <span className="text-zinc-500 dark:text-zinc-500">/</span>
+        <span className="text-zinc-600 dark:text-zinc-400">{totalCount}</span>
+        <div className="ml-2 h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-200 dark:bg-white/10">
           <div
             className="h-full rounded-full bg-gradient-to-r from-blue-500 via-red-500 to-purple-500 transition-all duration-500 ease-out"
             style={{ width: `${progress}%` }}
@@ -77,8 +77,8 @@ export function CheckinList({
               disabled={isLoading}
               className={`group relative flex w-full items-center gap-3 rounded-xl border p-3 transition-all duration-300 ${
                 isCompleted
-                  ? `border-white/[0.12] bg-white/[0.08] shadow-lg ${config.glowColor}`
-                  : "border-white/[0.06] bg-white/[0.03] hover:border-white/[0.1] hover:bg-white/[0.05]"
+                  ? `border-zinc-300 bg-zinc-100 shadow-lg ${config.glowColor} dark:border-white/12 dark:bg-white/8`
+                  : "border-zinc-200 bg-zinc-50 hover:border-zinc-300 hover:bg-zinc-100 dark:border-white/6 dark:bg-white/3 dark:hover:border-white/10 dark:hover:bg-white/5"
               } ${isAnimating ? "scale-[0.98]" : ""}`}
             >
               {/* Checkbox */}
@@ -86,11 +86,11 @@ export function CheckinList({
                 className={`relative flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-lg transition-all duration-300 ${
                   isCompleted
                     ? `${config.color} ring-2 ${config.ringColor}`
-                    : `border-2 border-zinc-600 group-hover:${config.borderColor}`
+                    : `border-2 border-zinc-400 group-hover:${config.borderColor} dark:border-zinc-600`
                 }`}
               >
                 <Check
-                  className={`h-3 w-3 text-white transition-all duration-200 ${
+                  className={`h-3 w-3 text-white transition-all duration-200 dark:text-white ${
                     isCompleted ? "scale-100 opacity-100" : "scale-50 opacity-0"
                   }`}
                 />
@@ -100,8 +100,8 @@ export function CheckinList({
               <div
                 className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg transition-all duration-300 ${
                   isCompleted
-                    ? `bg-white/[0.1] ${config.textColor}`
-                    : "bg-white/[0.05] text-zinc-500"
+                    ? `bg-zinc-200 ${config.textColor} dark:bg-white/10`
+                    : "bg-zinc-100 text-zinc-500 dark:bg-white/5 dark:text-zinc-500"
                 }`}
               >
                 <span className="text-base">{CATEGORY_EMOJIS[categoryId]}</span>
@@ -111,13 +111,13 @@ export function CheckinList({
               <div className="min-w-0 flex-1 text-left">
                 <span
                   className={`text-sm font-medium transition-all duration-300 ${
-                    isCompleted ? "text-white" : "text-zinc-400"
+                    isCompleted ? "text-black dark:text-white" : "text-zinc-600 dark:text-zinc-400"
                   }`}
                 >
                   {habit.name}
                 </span>
                 {habit.description && (
-                  <p className="mt-0.5 text-xs text-zinc-600">
+                  <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-600">
                     {habit.description}
                   </p>
                 )}
@@ -135,9 +135,9 @@ export function CheckinList({
       {/* Encouragement message */}
       {completedCount === totalCount && totalCount > 0 && (
         <div className="py-3 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.1] bg-gradient-to-r from-blue-500/20 via-red-500/20 to-purple-500/20 px-4 py-2">
+          <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-gradient-to-r from-blue-500/20 via-red-500/20 to-purple-500/20 px-4 py-2 dark:border-white/10">
             <Sparkles className="h-4 w-4 text-yellow-400" />
-            <span className="text-sm font-medium text-white">Perfect day!</span>
+            <span className="text-sm font-medium text-black dark:text-white">Perfect day!</span>
           </div>
         </div>
       )}

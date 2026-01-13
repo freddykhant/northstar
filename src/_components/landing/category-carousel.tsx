@@ -101,7 +101,7 @@ function MindContent() {
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: i * 0.1 + 0.5 }}
-              className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100"
+              className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30"
             >
               {emoji}
             </motion.div>
@@ -128,7 +128,7 @@ function BodyContent() {
                 prev.includes(i) ? prev.filter((x) => x !== i) : [...prev, i],
               )
             }
-            className="flex w-full items-center gap-2 rounded-lg bg-white/70 px-3 py-2 transition-all hover:bg-white"
+            className="flex w-full items-center gap-2 rounded-lg bg-white/70 px-3 py-2 transition-all hover:bg-white dark:bg-zinc-800/70 dark:hover:bg-zinc-800"
             whileTap={{ scale: 0.98 }}
           >
             <div

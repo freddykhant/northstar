@@ -53,7 +53,7 @@ export function StatsCards({
       {stats.map((stat) => (
         <div
           key={stat.label}
-          className="relative overflow-hidden rounded-xl border border-white/[0.06] bg-white/[0.03] p-5 backdrop-blur-sm"
+          className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white p-5 backdrop-blur-sm dark:border-white/6 dark:bg-white/3"
         >
           {/* Subtle glow */}
           <div
@@ -62,16 +62,18 @@ export function StatsCards({
 
           <div className="relative">
             <div className="mb-3 flex items-center justify-between">
-              <span className="text-xs tracking-wider text-zinc-500 uppercase">
+              <span className="text-xs tracking-wider text-zinc-500 uppercase dark:text-zinc-500">
                 {stat.label}
               </span>
               <stat.icon className={`h-4 w-4 ${stat.color}`} />
             </div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl font-semibold text-white">
+              <span className="text-3xl font-semibold text-black dark:text-white">
                 {stat.value}
               </span>
-              <span className="text-sm text-zinc-500">{stat.unit}</span>
+              <span className="text-sm text-zinc-500 dark:text-zinc-500">
+                {stat.unit}
+              </span>
             </div>
           </div>
         </div>
