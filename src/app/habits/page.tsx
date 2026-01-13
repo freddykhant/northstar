@@ -24,7 +24,8 @@ export default function HabitsPage() {
   });
 
   const utils = api.useUtils();
-  const { data: habits, isLoading: habitsLoading } = api.habit.getAll.useQuery();
+  const { data: habits, isLoading: habitsLoading } =
+    api.habit.getAll.useQuery();
 
   const createMutation = api.habit.create.useMutation({
     onMutate: async () => {
@@ -59,7 +60,7 @@ export default function HabitsPage() {
             ? {
                 ...habit,
                 name: variables.name,
-                description: variables.description,
+                description: variables.description || null,
                 categoryId: variables.categoryId,
               }
             : habit,

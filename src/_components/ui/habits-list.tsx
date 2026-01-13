@@ -2,7 +2,7 @@
 
 import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
-import { CATEGORY_COLORS, CATEGORY_EMOJIS } from "~/lib/constants";
+import { CATEGORY_EMOJIS } from "~/lib/constants";
 import type { CategoryId } from "~/lib/types";
 
 type Category = "mind" | "body" | "soul";
@@ -14,6 +14,14 @@ interface Habit {
   categoryId: string;
   isActive: boolean;
   createdAt: Date;
+  userId: string;
+  updatedAt: Date | null;
+  category: {
+    id: string;
+    name: string;
+    color: string;
+    createdAt: Date;
+  };
 }
 
 interface HabitsListProps {
@@ -94,7 +102,9 @@ export function HabitsList({
                 <div
                   key={habit.id}
                   className={`group relative flex items-center justify-between rounded-xl border border-white/[0.06] bg-white/[0.03] p-4 backdrop-blur-sm transition-all duration-200 hover:border-white/[0.1] hover:bg-white/[0.05] ${
-                    hoveredHabit === habit.id ? `shadow-lg ${config.glowColor}` : ""
+                    hoveredHabit === habit.id
+                      ? `shadow-lg ${config.glowColor}`
+                      : ""
                   }`}
                   onMouseEnter={() => setHoveredHabit(habit.id)}
                   onMouseLeave={() => setHoveredHabit(null)}
@@ -147,10 +157,12 @@ export function HabitsList({
                     <div className="relative">
                       <button
                         onClick={() =>
-                          setOpenMenuId(openMenuId === habit.id ? null : habit.id)
+                          setOpenMenuId(
+                            openMenuId === habit.id ? null : habit.id,
+                          )
                         }
                         disabled={isToggling || isDeleting}
-                        className="rounded-lg p-1.5 opacity-0 transition-all hover:bg-white/[0.1] group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="rounded-lg p-1.5 opacity-0 transition-all group-hover:opacity-100 hover:bg-white/[0.1] disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         <MoreHorizontal className="h-4 w-4 text-zinc-400" />
                       </button>
@@ -163,7 +175,7 @@ export function HabitsList({
                             onClick={() => setOpenMenuId(null)}
                           />
                           {/* Menu */}
-                          <div className="absolute right-0 top-full z-20 mt-1 w-40 rounded-lg border border-white/[0.1] bg-zinc-900 py-1 shadow-xl">
+                          <div className="absolute top-full right-0 z-20 mt-1 w-40 rounded-lg border border-white/[0.1] bg-zinc-900 py-1 shadow-xl">
                             <button
                               onClick={() => {
                                 onEdit(habit);
