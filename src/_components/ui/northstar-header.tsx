@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton } from "./user-button";
@@ -19,21 +20,18 @@ export function NorthstarHeader({ user }: NorthstarHeaderProps) {
     <header className="relative z-50 flex items-center justify-between px-6 py-4">
       <div className="flex items-center gap-8">
         <Link href="/home" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-blue-500 via-red-500 to-purple-500">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-            </svg>
+          <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg">
+            <Image
+              src="/northstar-logo.png"
+              alt="Northstar"
+              width={64}
+              height={64}
+              className="h-full w-full object-cover"
+            />
           </div>
-          <span className="text-lg font-semibold text-black dark:text-white">Northstar</span>
+          <span className="text-lg font-semibold text-black dark:text-white">
+            Northstar
+          </span>
         </Link>
 
         <nav className="flex items-center gap-6">

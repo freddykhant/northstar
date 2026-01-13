@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 
 export function LandingFooter() {
@@ -79,19 +80,14 @@ export function LandingFooter() {
           className="flex flex-col items-center justify-center gap-4 border-t border-zinc-200 pt-8 sm:flex-row sm:justify-between dark:border-white/10"
         >
           <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-linear-to-br from-blue-500 via-red-500 to-purple-500">
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-              </svg>
+            <div className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-lg">
+              <Image
+                src="/northstar-logo.png"
+                alt="Northstar"
+                width={24}
+                height={24}
+                className="h-full w-full object-cover"
+              />
             </div>
             <span className="text-sm font-semibold text-black dark:text-white">
               Northstar
