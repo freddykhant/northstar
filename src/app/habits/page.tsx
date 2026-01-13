@@ -61,7 +61,7 @@ export default function HabitsPage() {
                 ...habit,
                 name: variables.name,
                 description: variables.description || null,
-                categoryId: variables.categoryId,
+                categoryId: variables.categoryId || null,
               }
             : habit,
         );
@@ -203,13 +203,13 @@ export default function HabitsPage() {
       <NorthstarHeader />
 
       {/* Content */}
-      <main className="relative z-10 mx-auto w-full max-w-4xl flex-1 px-6 py-8">
-        <div className="mb-8 flex items-center justify-between">
+      <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 px-6 py-8">
+        <div className="mb-10 flex items-center justify-between">
           <div>
-            <h1 className="mb-1 text-2xl font-semibold text-white">
+            <h1 className="mb-2 bg-gradient-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-5xl font-bold text-transparent">
               Your Habits
             </h1>
-            <p className="text-sm text-zinc-400">
+            <p className="text-lg text-zinc-400">
               Manage your daily practices across all dimensions
             </p>
           </div>
