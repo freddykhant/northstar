@@ -9,7 +9,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 export const metadata: Metadata = {
   title: "northstar",
   description: "habit tracker for the locked in",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [{ rel: "icon", url: "/northstar-logo.png" }],
 };
 
 export default function RootLayout({
