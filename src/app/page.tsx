@@ -18,15 +18,15 @@ export default async function LandingPage() {
       {/* Animated Background Gradient Orbs */}
       <div className="pointer-events-none absolute inset-0">
         <div
-          className="absolute left-1/4 top-20 h-[500px] w-[500px] animate-float rounded-full bg-blue-500/30 blur-[120px]"
+          className="animate-float absolute top-20 left-1/4 h-[500px] w-[500px] rounded-full bg-blue-500/30 blur-[120px]"
           style={{ animationDelay: "0s" }}
         />
         <div
-          className="absolute right-1/4 top-40 h-[400px] w-[400px] animate-float rounded-full bg-red-500/20 blur-[100px]"
+          className="animate-float absolute top-40 right-1/4 h-[400px] w-[400px] rounded-full bg-red-500/20 blur-[100px]"
           style={{ animationDelay: "1s" }}
         />
         <div
-          className="absolute bottom-20 left-1/3 h-[450px] w-[450px] animate-float rounded-full bg-purple-500/25 blur-[110px]"
+          className="animate-float absolute bottom-20 left-1/3 h-[450px] w-[450px] rounded-full bg-purple-500/25 blur-[110px]"
           style={{ animationDelay: "2s" }}
         />
       </div>
@@ -49,7 +49,7 @@ export default async function LandingPage() {
           <div className="mx-auto max-w-7xl">
             {/* Hero Content */}
             <div className="mb-20 text-center">
-              <div className="mb-6 inline-flex animate-fade-in-up items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur-sm">
+              <div className="animate-fade-in-up mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur-sm">
                 <div className="h-2 w-2 animate-pulse rounded-full bg-green-400" />
                 <span className="text-sm text-zinc-300">
                   Join others building better habits
@@ -57,7 +57,7 @@ export default async function LandingPage() {
               </div>
 
               <h1
-                className="mb-6 animate-fade-in-up bg-gradient-to-b from-white via-white to-zinc-500 bg-clip-text text-6xl font-bold leading-tight text-transparent sm:text-7xl lg:text-8xl"
+                className="animate-fade-in-up mb-6 bg-gradient-to-b from-white via-white to-zinc-500 bg-clip-text text-6xl leading-tight font-bold text-transparent sm:text-7xl lg:text-8xl"
                 style={{ animationDelay: "0.1s" }}
               >
                 Your daily habits,
@@ -68,7 +68,7 @@ export default async function LandingPage() {
               </h1>
 
               <p
-                className="mx-auto mb-10 max-w-2xl animate-fade-in-up text-lg text-zinc-400 sm:text-xl"
+                className="animate-fade-in-up mx-auto mb-10 max-w-2xl text-lg text-zinc-400 sm:text-xl"
                 style={{ animationDelay: "0.2s" }}
               >
                 Track habits across mind, body, and soul. Watch your consistency
@@ -77,7 +77,7 @@ export default async function LandingPage() {
               </p>
 
               <div
-                className="flex animate-fade-in-up flex-col items-center justify-center gap-4 sm:flex-row"
+                className="animate-fade-in-up flex flex-col items-center justify-center gap-4 sm:flex-row"
                 style={{ animationDelay: "0.3s" }}
               >
                 <Link
@@ -136,22 +136,22 @@ export default async function LandingPage() {
             <div className="grid gap-6 md:grid-cols-3">
               {/* Mind Card */}
               <div className="group relative overflow-hidden rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-500/10 to-blue-600/5 p-8 backdrop-blur-sm transition-all duration-500 hover:scale-105 hover:border-blue-500/40 hover:shadow-2xl hover:shadow-blue-500/20">
-                <div className="absolute right-0 top-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-blue-500/20 blur-3xl transition-all group-hover:scale-150" />
+                <div className="absolute top-0 right-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-blue-500/20 blur-3xl transition-all group-hover:scale-150" />
                 <div className="relative">
                   <div className="mb-4 text-5xl">🧠</div>
                   <h3 className="mb-2 text-2xl font-bold text-blue-300">
                     Mind
                   </h3>
                   <p className="text-zinc-400">
-                    Mental clarity, learning, creativity. Build your intellectual
-                    foundation.
+                    Mental clarity, learning, creativity. Build your
+                    intellectual foundation.
                   </p>
                 </div>
               </div>
 
               {/* Body Card */}
               <div className="group relative overflow-hidden rounded-2xl border border-red-500/20 bg-gradient-to-br from-red-500/10 to-red-600/5 p-8 backdrop-blur-sm transition-all duration-500 hover:scale-105 hover:border-red-500/40 hover:shadow-2xl hover:shadow-red-500/20">
-                <div className="absolute right-0 top-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-red-500/20 blur-3xl transition-all group-hover:scale-150" />
+                <div className="absolute top-0 right-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-red-500/20 blur-3xl transition-all group-hover:scale-150" />
                 <div className="relative">
                   <div className="mb-4 text-5xl">💪</div>
                   <h3 className="mb-2 text-2xl font-bold text-red-300">Body</h3>
@@ -163,7 +163,7 @@ export default async function LandingPage() {
 
               {/* Soul Card */}
               <div className="group relative overflow-hidden rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-500/10 to-purple-600/5 p-8 backdrop-blur-sm transition-all duration-500 hover:scale-105 hover:border-purple-500/40 hover:shadow-2xl hover:shadow-purple-500/20">
-                <div className="absolute right-0 top-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-purple-500/20 blur-3xl transition-all group-hover:scale-150" />
+                <div className="absolute top-0 right-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-purple-500/20 blur-3xl transition-all group-hover:scale-150" />
                 <div className="relative">
                   <div className="mb-4 text-5xl">✨</div>
                   <h3 className="mb-2 text-2xl font-bold text-purple-300">
@@ -252,7 +252,8 @@ export default async function LandingPage() {
                   Ready to start?
                 </h2>
                 <p className="mb-8 text-lg text-zinc-300">
-                  Your future self will thank you for the habits you build today.
+                  Your future self will thank you for the habits you build
+                  today.
                 </p>
                 <Link
                   href="/signup"
