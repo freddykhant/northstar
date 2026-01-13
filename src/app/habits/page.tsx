@@ -23,37 +23,137 @@ export default function HabitsPage() {
     categoryId: "mind" as "mind" | "body" | "soul",
   });
 
-  const { data: habits, refetch } = api.habit.getAll.useQuery();
+  const utils = api.useUtils();
+  const { data: habits, isLoading: habitsLoading } = api.habit.getAll.useQuery();
 
   const createMutation = api.habit.create.useMutation({
+    onMutate: async () => {
+      // Cancel outgoing refetches
+      await utils.habit.getAll.cancel();
+    },
     onSuccess: () => {
-      void refetch();
+      // Invalidate and refetch
+      void utils.habit.getAll.invalidate();
       setIsModalOpen(false);
       setFormData({ name: "", description: "", categoryId: "mind" });
+    },
+    onError: (error, _variables, context) => {
+      // Optionally show error toast
+      console.error("Failed to create habit:", error);
     },
   });
 
   const updateMutation = api.habit.update.useMutation({
+    onMutate: async (variables) => {
+      // Cancel outgoing refetches
+      await utils.habit.getAll.cancel();
+
+      // Snapshot the previous value
+      const previousHabits = utils.habit.getAll.getData();
+
+      // Optimistically update
+      utils.habit.getAll.setData(undefined, (old) => {
+        if (!old) return old;
+        return old.map((habit) =>
+          habit.id === variables.id
+            ? {
+                ...habit,
+                name: variables.name,
+                description: variables.description,
+                categoryId: variables.categoryId,
+              }
+            : habit,
+        );
+      });
+
+      return { previousHabits };
+    },
     onSuccess: () => {
-      void refetch();
+      void utils.habit.getAll.invalidate();
       setEditingHabit(null);
       setFormData({ name: "", description: "", categoryId: "mind" });
       setIsModalOpen(false);
     },
+    onError: (error, _variables, context) => {
+      // Rollback on error
+      if (context?.previousHabits) {
+        utils.habit.getAll.setData(undefined, context.previousHabits);
+      }
+      console.error("Failed to update habit:", error);
+    },
   });
 
   const toggleMutation = api.habit.toggleActive.useMutation({
-    onSuccess: () => void refetch(),
+    onMutate: async (variables) => {
+      // Cancel outgoing refetches
+      await utils.habit.getAll.cancel();
+
+      // Snapshot the previous value
+      const previousHabits = utils.habit.getAll.getData();
+
+      // Optimistically update
+      utils.habit.getAll.setData(undefined, (old) => {
+        if (!old) return old;
+        return old.map((habit) =>
+          habit.id === variables.id
+            ? { ...habit, isActive: !habit.isActive }
+            : habit,
+        );
+      });
+
+      return { previousHabits };
+    },
+    onSuccess: () => {
+      void utils.habit.getAll.invalidate();
+    },
+    onError: (error, _variables, context) => {
+      // Rollback on error
+      if (context?.previousHabits) {
+        utils.habit.getAll.setData(undefined, context.previousHabits);
+      }
+      console.error("Failed to toggle habit:", error);
+    },
   });
 
   const deleteMutation = api.habit.delete.useMutation({
-    onSuccess: () => void refetch(),
+    onMutate: async (variables) => {
+      // Cancel outgoing refetches
+      await utils.habit.getAll.cancel();
+
+      // Snapshot the previous value
+      const previousHabits = utils.habit.getAll.getData();
+
+      // Optimistically update
+      utils.habit.getAll.setData(undefined, (old) => {
+        if (!old) return old;
+        return old.filter((habit) => habit.id !== variables.id);
+      });
+
+      return { previousHabits };
+    },
+    onSuccess: () => {
+      void utils.habit.getAll.invalidate();
+    },
+    onError: (error, _variables, context) => {
+      // Rollback on error
+      if (context?.previousHabits) {
+        utils.habit.getAll.setData(undefined, context.previousHabits);
+      }
+      console.error("Failed to delete habit:", error);
+    },
   });
 
-  if (status === "loading") {
+  if (status === "loading" || habitsLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a]">
-        <div className="text-zinc-400">Loading...</div>
+      <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#0c0c0c]">
+        <GradientBackground />
+        <NorthstarHeader />
+        <div className="flex flex-1 items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-white" />
+            <div className="text-sm text-zinc-400">Loading habits...</div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -127,6 +227,8 @@ export default function HabitsPage() {
             onEdit={openEditModal}
             onToggle={(id) => toggleMutation.mutate({ id })}
             onDelete={(id) => deleteMutation.mutate({ id })}
+            isToggling={toggleMutation.isPending}
+            isDeleting={deleteMutation.isPending}
           />
         ) : (
           <div className="flex flex-col items-center justify-center rounded-3xl border border-white/[0.06] bg-white/[0.03] p-20 backdrop-blur-sm">
@@ -305,8 +407,12 @@ export default function HabitsPage() {
                             closeModal();
                           }
                         }}
-                        className="rounded-xl border border-red-800 bg-red-950/50 px-4 py-3 font-semibold text-red-400 transition-all hover:bg-red-950"
+                        disabled={deleteMutation.isPending}
+                        className="flex items-center gap-2 rounded-xl border border-red-800 bg-red-950/50 px-4 py-3 font-semibold text-red-400 transition-all hover:bg-red-950 disabled:cursor-not-allowed disabled:opacity-50"
                       >
+                        {deleteMutation.isPending && (
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-red-300" />
+                        )}
                         Delete
                       </button>
                       <button
@@ -315,8 +421,12 @@ export default function HabitsPage() {
                           toggleMutation.mutate({ id: editingHabit });
                           closeModal();
                         }}
-                        className="rounded-xl border border-zinc-700 bg-zinc-800/50 px-4 py-3 font-semibold text-zinc-300 transition-all hover:bg-zinc-700"
+                        disabled={toggleMutation.isPending}
+                        className="flex items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-800/50 px-4 py-3 font-semibold text-zinc-300 transition-all hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-50"
                       >
+                        {toggleMutation.isPending && (
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-600 border-t-white" />
+                        )}
                         {habits?.find((h) => h.id === editingHabit)?.isActive
                           ? "Pause"
                           : "Activate"}
@@ -330,8 +440,11 @@ export default function HabitsPage() {
                       createMutation.isPending ||
                       updateMutation.isPending
                     }
-                    className="flex-1 rounded-xl bg-white py-3 font-semibold text-black transition-all hover:bg-zinc-100 disabled:opacity-50"
+                    className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-white py-3 font-semibold text-black transition-all hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-50"
                   >
+                    {(createMutation.isPending || updateMutation.isPending) && (
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-300 border-t-black" />
+                    )}
                     {editingHabit ? "Update Habit" : "Create Habit"}
                   </button>
                 </div>

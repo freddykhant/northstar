@@ -21,6 +21,8 @@ interface HabitsListProps {
   onEdit: (habit: Habit) => void;
   onToggle: (id: number) => void;
   onDelete: (id: number) => void;
+  isToggling?: boolean;
+  isDeleting?: boolean;
 }
 
 const categoryConfig = {
@@ -55,6 +57,8 @@ export function HabitsList({
   onEdit,
   onToggle,
   onDelete,
+  isToggling = false,
+  isDeleting = false,
 }: HabitsListProps) {
   const [hoveredHabit, setHoveredHabit] = useState<number | null>(null);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
@@ -145,7 +149,8 @@ export function HabitsList({
                         onClick={() =>
                           setOpenMenuId(openMenuId === habit.id ? null : habit.id)
                         }
-                        className="rounded-lg p-1.5 opacity-0 transition-all hover:bg-white/[0.1] group-hover:opacity-100"
+                        disabled={isToggling || isDeleting}
+                        className="rounded-lg p-1.5 opacity-0 transition-all hover:bg-white/[0.1] group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         <MoreHorizontal className="h-4 w-4 text-zinc-400" />
                       </button>
@@ -164,7 +169,8 @@ export function HabitsList({
                                 onEdit(habit);
                                 setOpenMenuId(null);
                               }}
-                              className="w-full px-4 py-2 text-left text-sm text-zinc-300 transition-colors hover:bg-white/[0.05] hover:text-white"
+                              disabled={isToggling || isDeleting}
+                              className="w-full px-4 py-2 text-left text-sm text-zinc-300 transition-colors hover:bg-white/[0.05] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                             >
                               Edit
                             </button>
@@ -173,8 +179,12 @@ export function HabitsList({
                                 onToggle(habit.id);
                                 setOpenMenuId(null);
                               }}
-                              className="w-full px-4 py-2 text-left text-sm text-zinc-300 transition-colors hover:bg-white/[0.05] hover:text-white"
+                              disabled={isToggling || isDeleting}
+                              className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-zinc-300 transition-colors hover:bg-white/[0.05] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                             >
+                              {isToggling && (
+                                <div className="h-3 w-3 animate-spin rounded-full border border-zinc-600 border-t-white" />
+                              )}
                               {habit.isActive ? "Deactivate" : "Activate"}
                             </button>
                             <button
@@ -188,8 +198,12 @@ export function HabitsList({
                                 }
                                 setOpenMenuId(null);
                               }}
-                              className="w-full px-4 py-2 text-left text-sm text-red-400 transition-colors hover:bg-red-500/[0.1] hover:text-red-300"
+                              disabled={isToggling || isDeleting}
+                              className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-400 transition-colors hover:bg-red-500/[0.1] hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
                             >
+                              {isDeleting && (
+                                <div className="h-3 w-3 animate-spin rounded-full border border-red-600 border-t-red-300" />
+                              )}
                               Delete
                             </button>
                           </div>
