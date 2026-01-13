@@ -36,7 +36,7 @@ export function LandingFooter() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
-          className="mb-4 text-4xl font-bold text-black dark:text-white sm:text-5xl"
+          className="mb-4 text-4xl font-bold text-black sm:text-5xl dark:text-white"
         >
           Habits that set you
           <br />
@@ -93,7 +93,9 @@ export function LandingFooter() {
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
               </svg>
             </div>
-            <span className="text-sm font-semibold text-black dark:text-white">Northstar</span>
+            <span className="text-sm font-semibold text-black dark:text-white">
+              Northstar
+            </span>
           </div>
 
           <p className="text-sm text-zinc-500 dark:text-zinc-400">

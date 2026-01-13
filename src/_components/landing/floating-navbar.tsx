@@ -44,7 +44,9 @@ export function FloatingNavbar() {
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
             </svg>
           </div>
-          <span className="text-sm font-bold text-black dark:text-white">Northstar</span>
+          <span className="text-sm font-bold text-black dark:text-white">
+            Northstar
+          </span>
         </Link>
 
         {/* Divider */}
@@ -67,7 +69,7 @@ export function FloatingNavbar() {
         </div>
 
         {/* Divider */}
-        <div className="hidden h-5 w-px bg-zinc-200 dark:bg-white/10 sm:block" />
+        <div className="hidden h-5 w-px bg-zinc-200 sm:block dark:bg-white/10" />
 
         {/* CTA Buttons */}
         <div className="flex items-center gap-3">

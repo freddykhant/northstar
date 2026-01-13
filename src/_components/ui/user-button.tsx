@@ -82,7 +82,7 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
             onClick={() => setIsOpen(false)}
             aria-hidden="true"
           />
-          
+
           <div
             className={`absolute top-full z-[100] mt-2 w-64 rounded-xl border border-white/10 bg-zinc-900/95 shadow-2xl backdrop-blur-xl ${
               position === "right" ? "right-0" : "left-[calc(100%+0.5rem)]"
