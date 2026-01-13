@@ -394,11 +394,6 @@ export default function HabitsPage() {
                   <div className="grid grid-cols-3 gap-3">
                     {(["mind", "body", "soul"] as const).map((cat) => {
                       const isSelected = formData.categoryId === cat;
-                      const gradients = {
-                        mind: "from-blue-500 to-blue-400",
-                        body: "from-red-500 to-red-400",
-                        soul: "from-purple-500 to-purple-400",
-                      };
                       const glowColors = {
                         mind: "shadow-blue-500/50",
                         body: "shadow-red-500/50",

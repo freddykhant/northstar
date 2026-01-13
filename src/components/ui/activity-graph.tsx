@@ -22,10 +22,9 @@ const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 interface ActivityGraphProps {
   completions: DayData[];
-  todayDate: string;
 }
 
-export function ActivityGraph({ completions, todayDate }: ActivityGraphProps) {
+export function ActivityGraph({ completions }: ActivityGraphProps) {
   const [hoveredDay, setHoveredDay] = useState<{
     date: Date;
     mind: number;
@@ -55,7 +54,7 @@ export function ActivityGraph({ completions, todayDate }: ActivityGraphProps) {
   const graphData = useMemo(() => {
     return days.map((dateStr) => {
       const dateObj = new Date(dateStr + "T00:00:00");
-      const completion = completionMap.get(dateStr) || {
+      const completion = completionMap.get(dateStr) ?? {
         mind: 0,
         body: 0,
         soul: 0,

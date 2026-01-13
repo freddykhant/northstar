@@ -133,7 +133,7 @@ export default function HomePage() {
             </div>
 
             {/* Activity Graph */}
-            <ActivityGraph completions={graphData} todayDate={today} />
+            <ActivityGraph completions={graphData} />
           </div>
 
           {/* Right Column - Today's Checklist */}
