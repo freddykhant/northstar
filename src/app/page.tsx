@@ -70,19 +70,19 @@ export default async function LandingPage() {
                 style={{ animationDelay: "0.2s" }}
               >
                 <ScrollingBadge
-                  icon="🧠"
+                  icon="mind"
                   label="Mind"
                   targetId="mind"
                   color="blue"
                 />
                 <ScrollingBadge
-                  icon="💪"
+                  icon="body"
                   label="Body"
                   targetId="body"
                   color="red"
                 />
                 <ScrollingBadge
-                  icon="✨"
+                  icon="soul"
                   label="Soul"
                   targetId="soul"
                   color="purple"
