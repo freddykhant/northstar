@@ -1,6 +1,8 @@
 "use client";
 
 import { Check, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Confetti } from "./confetti";
 import { CATEGORY_EMOJIS } from "~/lib/constants";
 import type { CategoryId, HabitWithStatus } from "~/lib/types";
 
@@ -44,9 +46,25 @@ export function CheckinList({
   const completedCount = habits.filter((h) => h.isCompleted).length;
   const totalCount = habits.length;
   const progress = (completedCount / totalCount) * 100;
+  const [shouldCelebrate, setShouldCelebrate] = useState(false);
+  const [prevCompletedCount, setPrevCompletedCount] = useState(completedCount);
+
+  // Trigger confetti when all habits are completed
+  useEffect(() => {
+    if (
+      completedCount === totalCount &&
+      totalCount > 0 &&
+      completedCount > prevCompletedCount
+    ) {
+      setShouldCelebrate(true);
+      setTimeout(() => setShouldCelebrate(false), 100);
+    }
+    setPrevCompletedCount(completedCount);
+  }, [completedCount, totalCount, prevCompletedCount]);
 
   return (
     <div className="space-y-6">
+      <Confetti trigger={shouldCelebrate} />
       {/* Progress indicator */}
       <div className="flex items-center gap-3 rounded-full border border-zinc-200 bg-zinc-50 px-4 py-2.5 dark:border-white/8 dark:bg-white/5">
         <span className="text-xl font-semibold text-black dark:text-white">

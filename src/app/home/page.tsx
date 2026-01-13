@@ -9,6 +9,7 @@ import { CategoryStatCard } from "~/_components/ui/category-stat-card";
 import { CheckinList } from "~/_components/ui/checkin-list";
 import { GlassCard } from "~/_components/ui/glass-card";
 import { GradientBackground } from "~/_components/ui/gradient-background";
+import { MoodTracker } from "~/_components/ui/mood-tracker";
 import { NorthstarHeader } from "~/_components/ui/northstar-header";
 import { StatsCards } from "~/_components/ui/stats-cards";
 import { useGraphData } from "~/hooks/use-graph-data";
@@ -98,16 +99,18 @@ export default function HomePage() {
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-8">
         {/* Greeting Header */}
         <div className="mb-10">
-          <h1 className="mb-2 bg-linear-to-r from-black via-zinc-700 to-zinc-400 bg-clip-text text-5xl font-bold text-transparent dark:from-white dark:via-zinc-100 dark:to-zinc-400">
+          <h1 className="mb-2 bg-linear-to-r from-black via-zinc-700 to-zinc-400 bg-clip-text py-4 text-5xl font-bold text-transparent dark:from-white dark:via-zinc-100 dark:to-zinc-400">
             {getGreeting()}, {session.user.name?.split(" ")[0] ?? "there"}
           </h1>
-          <p className="text-lg text-zinc-600 dark:text-zinc-400">{formatDate(today)}</p>
+          <p className="text-lg text-zinc-600 dark:text-zinc-400">
+            {formatDate(today)}
+          </p>
         </div>
 
         {/* Main Grid Layout */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Left Column - Activity Graph (takes 2 columns) */}
-          <div className="lg:col-span-2">
+          <div className="space-y-6 lg:col-span-2">
             {/* Category Stats Overview Cards */}
             <div className="mb-6 grid grid-cols-3 gap-4">
               {CATEGORY_IDS.map((categoryId) => {
@@ -136,6 +139,9 @@ export default function HomePage() {
 
             {/* Activity Graph */}
             <ActivityGraph completions={graphData} />
+
+            {/* Mood Tracker */}
+            <MoodTracker />
           </div>
 
           {/* Right Column - Today's Checklist */}
