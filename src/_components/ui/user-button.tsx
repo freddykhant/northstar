@@ -12,7 +12,7 @@ interface UserButtonProps {
     email?: string | null;
     image?: string | null;
   };
-  position?: "left" | "right";
+  position?: "left" | "right" | "sidebar";
 }
 
 export function UserButton({ user, position = "right" }: UserButtonProps) {
@@ -53,15 +53,59 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
       .toUpperCase()
       .slice(0, 2) || "U";
 
+  // For sidebar, show full user info
+  const isSidebar = position === "sidebar";
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 via-red-500 to-purple-500 text-sm font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl"
+        className={`${
+          isSidebar
+            ? "flex w-full items-center gap-3 rounded-xl border border-zinc-200 bg-white p-3 shadow-sm transition-all hover:bg-zinc-50 dark:border-white/10 dark:bg-zinc-800/50 dark:hover:bg-zinc-800"
+            : "flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br from-blue-500 via-red-500 to-purple-500 text-sm font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl"
+        }`}
         aria-label="User menu"
         aria-expanded={isOpen}
       >
-        {user.image ? (
+        {isSidebar ? (
+          <>
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-br from-blue-500 via-red-500 to-purple-500 text-sm font-semibold text-white shadow-md">
+              {user.image ? (
+                <Image
+                  src={user.image}
+                  alt={user.name || "User"}
+                  width={36}
+                  height={36}
+                  className="rounded-full"
+                />
+              ) : (
+                initials
+              )}
+            </div>
+            <div className="flex-1 overflow-hidden text-left">
+              <p className="truncate text-sm font-medium text-black dark:text-white">
+                {user.name || "User"}
+              </p>
+              <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">
+                {user.email}
+              </p>
+            </div>
+            <svg
+              className="h-4 w-4 text-zinc-400 dark:text-zinc-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </>
+        ) : user.image ? (
           <Image
             src={user.image}
             alt={user.name || "User"}
@@ -78,20 +122,24 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
         <>
           {/* Backdrop for mobile */}
           <div
-            className="fixed inset-0 z-[90]"
+            className="fixed inset-0 z-90"
             onClick={() => setIsOpen(false)}
             aria-hidden="true"
           />
 
           <div
-            className={`absolute top-full z-[100] mt-2 w-64 rounded-xl border border-zinc-200 bg-white/95 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-zinc-900/95 ${
-              position === "right" ? "right-0" : "left-[calc(100%+0.5rem)]"
+            className={`absolute z-100 w-64 rounded-xl border border-zinc-200 bg-white/95 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-zinc-900/95 ${
+              position === "sidebar"
+                ? "bottom-full left-0 mb-2"
+                : position === "right"
+                  ? "top-full right-0 mt-2"
+                  : "top-full left-[calc(100%+0.5rem)] mt-2"
             }`}
           >
             {/* User Info */}
             <div className="border-b border-zinc-200 px-4 py-3 dark:border-white/10">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 via-red-500 to-purple-500 text-sm font-semibold text-white shadow-lg">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-linear-to-br from-blue-500 via-red-500 to-purple-500 text-sm font-semibold text-white shadow-lg">
                   {user.image ? (
                     <Image
                       src={user.image}

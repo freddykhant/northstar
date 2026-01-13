@@ -7,11 +7,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { GradientBackground } from "~/_components/ui/gradient-background";
 import { HabitsList } from "~/_components/ui/habits-list";
-import { NorthstarHeader } from "~/_components/ui/northstar-header";
+import { Sidebar } from "~/_components/ui/sidebar";
 import { api } from "~/trpc/react";
 
 export default function HabitsPage() {
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingHabit, setEditingHabit] = useState<number | null>(null);
@@ -148,7 +148,6 @@ export default function HabitsPage() {
     return (
       <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#0c0c0c]">
         <GradientBackground />
-        <NorthstarHeader />
         <div className="flex flex-1 items-center justify-center">
           <div className="flex flex-col items-center gap-3">
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-white" />
@@ -195,31 +194,25 @@ export default function HabitsPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-hidden bg-white dark:bg-[#0c0c0c]">
+    <div className="relative flex min-h-screen overflow-hidden bg-white dark:bg-[#0c0c0c]">
       {/* Background */}
       <GradientBackground />
 
-      {/* Header */}
-      <NorthstarHeader />
+      {/* Sidebar */}
+      <Sidebar
+        user={session?.user}
+        onCreateHabit={() => setIsModalOpen(true)}
+      />
 
       {/* Content */}
-      <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 px-6 py-8">
-        <div className="mb-10 flex items-center justify-between">
-          <div>
-            <h1 className="mb-2 bg-gradient-to-r from-black via-zinc-700 to-zinc-400 bg-clip-text text-5xl font-bold text-transparent dark:from-white dark:via-zinc-100 dark:to-zinc-400">
-              Your Habits
-            </h1>
-            <p className="text-lg text-zinc-600 dark:text-zinc-400">
-              Manage your daily practices across all dimensions
-            </p>
-          </div>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-100 px-4 py-2 text-sm text-black transition-all hover:bg-zinc-200 dark:border-white/8 dark:bg-white/8 dark:text-white dark:hover:bg-white/12"
-          >
-            <Plus className="h-4 w-4" />
-            Add Habit
-          </button>
+      <main className="relative z-10 ml-64 w-full max-w-7xl flex-1 px-6 py-8">
+        <div className="mb-10">
+          <h1 className="mb-2 bg-gradient-to-r from-black via-zinc-700 to-zinc-400 bg-clip-text text-5xl font-bold text-transparent dark:from-white dark:via-zinc-100 dark:to-zinc-400">
+            Your Habits
+          </h1>
+          <p className="text-lg text-zinc-600 dark:text-zinc-400">
+            Manage your daily practices across all dimensions
+          </p>
         </div>
 
         {habits && habits.length > 0 ? (
@@ -266,7 +259,7 @@ export default function HabitsPage() {
               {/* Close Button */}
               <button
                 onClick={closeModal}
-                className="absolute right-4 top-4 rounded-lg p-2 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-black dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+                className="absolute top-4 right-4 rounded-lg p-2 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-black dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -371,7 +364,7 @@ export default function HabitsPage() {
                       setFormData({ ...formData, name: e.target.value })
                     }
                     placeholder="e.g., Morning Meditation"
-                    className="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-4 py-3 text-black placeholder-zinc-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-white dark:placeholder-zinc-500 dark:focus:ring-zinc-600"
+                    className="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-4 py-3 text-black placeholder-zinc-400 transition-all focus:border-transparent focus:ring-2 focus:ring-zinc-300 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-white dark:placeholder-zinc-500 dark:focus:ring-zinc-600"
                     autoFocus
                   />
                 </div>
@@ -388,7 +381,7 @@ export default function HabitsPage() {
                     }
                     placeholder="Why does this matter to you?"
                     rows={3}
-                    className="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-4 py-3 text-black placeholder-zinc-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-white dark:placeholder-zinc-500 dark:focus:ring-zinc-600"
+                    className="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-4 py-3 text-black placeholder-zinc-400 transition-all focus:border-transparent focus:ring-2 focus:ring-zinc-300 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-white dark:placeholder-zinc-500 dark:focus:ring-zinc-600"
                   />
                 </div>
 

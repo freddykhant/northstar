@@ -9,7 +9,7 @@ import { CategoryStatCard } from "~/_components/ui/category-stat-card";
 import { CheckinList } from "~/_components/ui/checkin-list";
 import { GlassCard } from "~/_components/ui/glass-card";
 import { GradientBackground } from "~/_components/ui/gradient-background";
-import { NorthstarHeader } from "~/_components/ui/northstar-header";
+import { Sidebar } from "~/_components/ui/sidebar";
 import { StatsCards } from "~/_components/ui/stats-cards";
 import { useGraphData } from "~/hooks/use-graph-data";
 import { useHabitCompletion } from "~/hooks/use-habit-completion";
@@ -87,15 +87,16 @@ export default function HomePage() {
   const bestStreak = overallStats?.bestStreak ?? 0;
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-white text-black dark:bg-[#0a0a0a] dark:text-white">
+    <div className="relative flex min-h-screen overflow-hidden bg-white text-black dark:bg-[#0a0a0a] dark:text-white">
       {/* Background */}
       <GradientBackground />
 
-      {/* Header */}
-      <NorthstarHeader user={session.user} />
+      {/* Sidebar */}
+      <Sidebar user={session.user} />
 
-      {/* Content */}
-      <div className="relative z-10 mx-auto max-w-7xl px-6 py-8">
+      {/* Main Content */}
+      <div className="relative z-10 ml-64 flex-1">
+        <div className="mx-auto max-w-7xl px-6 py-8">
         {/* Greeting Header */}
         <div className="mb-10">
           <h1 className="mb-2 bg-linear-to-r from-black via-zinc-700 to-zinc-400 bg-clip-text text-5xl font-bold text-transparent dark:from-white dark:via-zinc-100 dark:to-zinc-400">
@@ -172,6 +173,7 @@ export default function HomePage() {
               )}
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>
