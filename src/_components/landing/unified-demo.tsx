@@ -319,7 +319,7 @@ export function UnifiedDemo() {
         transition={{ delay: 0.5 }}
         className="mt-6 text-center text-sm text-zinc-500"
       >
-        👆 Try checking off the habits above and watch the graph light up!
+        👆 Try it out!
       </motion.p>
     </div>
   );
