@@ -84,12 +84,12 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
           />
 
           <div
-            className={`absolute top-full z-[100] mt-2 w-64 rounded-xl border border-white/10 bg-zinc-900/95 shadow-2xl backdrop-blur-xl ${
+            className={`absolute top-full z-[100] mt-2 w-64 rounded-xl border border-zinc-200 bg-white/95 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-zinc-900/95 ${
               position === "right" ? "right-0" : "left-[calc(100%+0.5rem)]"
             }`}
           >
             {/* User Info */}
-            <div className="border-b border-white/10 px-4 py-3">
+            <div className="border-b border-zinc-200 px-4 py-3 dark:border-white/10">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 via-red-500 to-purple-500 text-sm font-semibold text-white shadow-lg">
                   {user.image ? (
@@ -105,10 +105,12 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
                   )}
                 </div>
                 <div className="flex-1 overflow-hidden">
-                  <p className="truncate text-sm font-medium text-white">
+                  <p className="truncate text-sm font-medium text-black dark:text-white">
                     {user.name || "User"}
                   </p>
-                  <p className="truncate text-xs text-zinc-400">{user.email}</p>
+                  <p className="truncate text-xs text-zinc-600 dark:text-zinc-400">
+                    {user.email}
+                  </p>
                 </div>
               </div>
             </div>
@@ -119,7 +121,7 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
               {mounted && (
                 <button
                   onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                  className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-zinc-300 transition-colors hover:bg-white/5 hover:text-white"
+                  className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-black dark:text-zinc-300 dark:hover:bg-white/5 dark:hover:text-white"
                 >
                   {theme === "dark" ? (
                     <>
@@ -136,12 +138,12 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
               )}
 
               {/* Divider */}
-              <div className="my-1 border-t border-white/10" />
+              <div className="my-1 border-t border-zinc-200 dark:border-white/10" />
 
               {/* Sign Out */}
               <button
                 onClick={() => signOut({ callbackUrl: "/signin" })}
-                className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-zinc-300 transition-colors hover:bg-white/5 hover:text-white"
+                className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-black dark:text-zinc-300 dark:hover:bg-white/5 dark:hover:text-white"
               >
                 <LogOut size={16} />
                 Sign out

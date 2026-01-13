@@ -33,7 +33,7 @@ export function NorthstarHeader({ user }: NorthstarHeaderProps) {
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
             </svg>
           </div>
-          <span className="text-lg font-semibold text-white">Northstar</span>
+          <span className="text-lg font-semibold text-black dark:text-white">Northstar</span>
         </Link>
 
         <nav className="flex items-center gap-6">
@@ -41,8 +41,8 @@ export function NorthstarHeader({ user }: NorthstarHeaderProps) {
             href="/home"
             className={`text-sm transition-colors ${
               pathname === "/home"
-                ? "text-white"
-                : "text-zinc-400 hover:text-white"
+                ? "text-black dark:text-white"
+                : "text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-white"
             }`}
           >
             Home
@@ -51,8 +51,8 @@ export function NorthstarHeader({ user }: NorthstarHeaderProps) {
             href="/habits"
             className={`text-sm transition-colors ${
               pathname === "/habits"
-                ? "text-white"
-                : "text-zinc-400 hover:text-white"
+                ? "text-black dark:text-white"
+                : "text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-white"
             }`}
           >
             Habits
