@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Sparkles } from "lucide-react";
-import { CATEGORY_COLORS, CATEGORY_EMOJIS } from "~/lib/constants";
+import { CATEGORY_EMOJIS } from "~/lib/constants";
 import type { CategoryId, HabitWithStatus } from "~/lib/types";
 
 interface CheckinListProps {
@@ -134,7 +134,7 @@ export function CheckinList({
 
       {/* Encouragement message */}
       {completedCount === totalCount && totalCount > 0 && (
-        <div className="text-center py-3">
+        <div className="py-3 text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.1] bg-gradient-to-r from-blue-500/20 via-red-500/20 to-purple-500/20 px-4 py-2">
             <Sparkles className="h-4 w-4 text-yellow-400" />
             <span className="text-sm font-medium text-white">Perfect day!</span>

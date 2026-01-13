@@ -1,26 +1,20 @@
 "use client";
 
-import { Settings, Sparkles } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
-import { HabitGraph } from "~/components/features/habit-graph";
-import { CategoryBadge } from "~/components/ui/category-badge";
+import { ActivityGraph } from "~/components/ui/activity-graph";
 import { CategoryStatCard } from "~/components/ui/category-stat-card";
-import {
-  GlassCard,
-  GlassCardBody,
-  GlassCardHeader,
-} from "~/components/ui/glass-card";
+import { CheckinList } from "~/components/ui/checkin-list";
+import { GlassCard } from "~/components/ui/glass-card";
 import { GradientBackground } from "~/components/ui/gradient-background";
-import { ProgressBarWithLabel } from "~/components/ui/progress-bar";
+import { NorthstarHeader } from "~/components/ui/northstar-header";
+import { StatsCards } from "~/components/ui/stats-cards";
 import { useGraphData } from "~/hooks/use-graph-data";
 import { useHabitCompletion } from "~/hooks/use-habit-completion";
-import { CATEGORY_EMOJIS, CATEGORY_IDS } from "~/lib/constants";
-import type { CategoryId } from "~/lib/types";
+import { CATEGORY_IDS } from "~/lib/constants";
 import {
-  calculateCompletionPercentage,
   formatDate,
   getCurrentYearRange,
   getGreeting,
@@ -84,47 +78,22 @@ export default function HomePage() {
     return null;
   }
 
-  // Calculate completion percentage
-  const completedCount =
-    habitsWithStatus?.filter((h) => h.isCompleted).length ?? 0;
-  const totalCount = habitsWithStatus?.length ?? 0;
-  const completionPercentage = calculateCompletionPercentage(
-    completedCount,
-    totalCount,
-  );
+  // TODO: Calculate these values from real data
+  const currentStreak = 0; // Placeholder
+  const weekPercentage = 0; // Placeholder
+  const totalCompleted = 0; // Placeholder
+  const bestStreak = 0; // Placeholder
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#0a0a0a] text-white">
       {/* Background */}
       <GradientBackground />
 
+      {/* Header */}
+      <NorthstarHeader />
+
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-8">
-        {/* Top Navigation Bar */}
-        <nav className="mb-12 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500">
-              <Sparkles className="h-6 w-6 text-white" />
-            </div>
-            <span className="text-xl font-bold text-white">Northstar</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/habits"
-              className="flex items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900/70 px-4 py-2.5 text-sm font-medium text-zinc-300 backdrop-blur-xl transition-all hover:border-zinc-700 hover:bg-zinc-800/70"
-            >
-              <Settings className="h-4 w-4" />
-              Manage Habits
-            </Link>
-            <button
-              onClick={() => signOut({ callbackUrl: "/" })}
-              className="rounded-xl border border-zinc-800 bg-zinc-900/70 px-4 py-2.5 text-sm font-medium text-zinc-400 backdrop-blur-xl transition-all hover:border-zinc-700 hover:bg-zinc-800/70 hover:text-zinc-300"
-            >
-              Sign Out
-            </button>
-          </div>
-        </nav>
-
         {/* Greeting Header */}
         <div className="mb-10">
           <h1 className="mb-2 bg-gradient-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-5xl font-bold text-transparent">
@@ -137,7 +106,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Left Column - Activity Graph (takes 2 columns) */}
           <div className="lg:col-span-2">
-            {/* Stats Overview Cards */}
+            {/* Category Stats Overview Cards */}
             <div className="mb-6 grid grid-cols-3 gap-4">
               {CATEGORY_IDS.map((categoryId) => {
                 const count =
@@ -153,83 +122,34 @@ export default function HomePage() {
               })}
             </div>
 
+            {/* New Stats Cards */}
+            <div className="mb-6">
+              <StatsCards
+                currentStreak={currentStreak}
+                weekPercentage={weekPercentage}
+                totalCompleted={totalCompleted}
+                bestStreak={bestStreak}
+              />
+            </div>
+
             {/* Activity Graph */}
-            <HabitGraph completions={graphData} todayDate={today} />
+            <ActivityGraph completions={graphData} todayDate={today} />
           </div>
 
           {/* Right Column - Today's Checklist */}
           <div className="lg:col-span-1">
             <div className="sticky top-8">
               {habitsWithStatus && habitsWithStatus.length > 0 ? (
-                <GlassCard>
-                  {/* Checklist Header */}
-                  <GlassCardHeader>
-                    <h2 className="mb-3 text-xl font-bold text-white">
-                      Today&apos;s Focus
-                    </h2>
-                    <ProgressBarWithLabel
-                      percentage={completionPercentage}
-                      completedCount={completedCount}
-                      totalCount={totalCount}
-                    />
-                  </GlassCardHeader>
-
-                  {/* Checklist Items */}
-                  <GlassCardBody className="max-h-[600px] overflow-y-auto p-4">
-                    <div className="space-y-2">
-                      {habitsWithStatus.map((habit) => {
-                        const categoryId = habit.category.id as CategoryId;
-                        const isJustCompleted = justCompleted.has(habit.id);
-
-                        return (
-                          <label
-                            key={habit.id}
-                            className={`group flex cursor-pointer items-start gap-3 rounded-2xl border p-3 transition-all duration-300 ${
-                              isJustCompleted
-                                ? "scale-[1.02] border-green-500/50 bg-green-500/10 shadow-lg shadow-green-500/20"
-                                : "border-transparent hover:border-zinc-800 hover:bg-zinc-800/50"
-                            }`}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={habit.isCompleted}
-                              onChange={() => handleToggle(habit.id)}
-                              disabled={toggleMutation.isPending}
-                              className="mt-0.5 h-5 w-5 cursor-pointer rounded-md border-zinc-600 bg-zinc-800 text-white transition-all focus:ring-2 focus:ring-white focus:ring-offset-0 disabled:opacity-50"
-                            />
-                            <div className="min-w-0 flex-1">
-                              <div className="mb-1 flex items-center gap-2">
-                                <span
-                                  className={`text-lg transition-transform duration-300 ${
-                                    isJustCompleted ? "scale-125" : ""
-                                  }`}
-                                >
-                                  {CATEGORY_EMOJIS[categoryId]}
-                                </span>
-                                <div
-                                  className={`flex-1 text-sm font-medium transition-all ${
-                                    habit.isCompleted
-                                      ? "text-zinc-500 line-through"
-                                      : "text-white"
-                                  }`}
-                                >
-                                  {habit.name}
-                                </div>
-                              </div>
-                              {habit.description && (
-                                <div className="text-xs text-zinc-600">
-                                  {habit.description}
-                                </div>
-                              )}
-                              <div className="mt-1.5">
-                                <CategoryBadge categoryId={categoryId} />
-                              </div>
-                            </div>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  </GlassCardBody>
+                <GlassCard className="border border-white/[0.06] bg-white/[0.03] p-6 backdrop-blur-sm">
+                  <h2 className="mb-6 text-xl font-bold text-white">
+                    Today&apos;s Focus
+                  </h2>
+                  <CheckinList
+                    habits={habitsWithStatus}
+                    onToggle={handleToggle}
+                    justCompleted={justCompleted}
+                    isLoading={toggleMutation.isPending}
+                  />
                 </GlassCard>
               ) : (
                 <GlassCard className="flex flex-col items-center justify-center p-12 text-center">
