@@ -49,32 +49,16 @@ export default async function LandingPage() {
           <div className="mx-auto max-w-7xl">
             {/* Hero Content */}
             <div className="mb-20 text-center">
-              <div className="animate-fade-in-up mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur-sm">
-                <div className="h-2 w-2 animate-pulse rounded-full bg-green-400" />
-                <span className="text-sm text-zinc-300">
-                  Join others building better habits
-                </span>
-              </div>
-
               <h1
                 className="animate-fade-in-up mb-6 bg-gradient-to-b from-white via-white to-zinc-500 bg-clip-text text-6xl leading-tight font-bold text-transparent sm:text-7xl lg:text-8xl"
                 style={{ animationDelay: "0.1s" }}
               >
-                Your daily habits,
+                Back your habits to
                 <br />
                 <span className="bg-gradient-to-r from-blue-400 via-red-400 to-purple-400 bg-clip-text">
-                  beautifully visualized
+                  reach your Northstar
                 </span>
               </h1>
-
-              <p
-                className="animate-fade-in-up mx-auto mb-10 max-w-2xl text-lg text-zinc-400 sm:text-xl"
-                style={{ animationDelay: "0.2s" }}
-              >
-                Track habits across mind, body, and soul. Watch your consistency
-                grow with a GitHub-style activity graph that makes progress
-                rewarding.
-              </p>
 
               <div
                 className="animate-fade-in-up flex flex-col items-center justify-center gap-4 sm:flex-row"
