@@ -7,7 +7,10 @@ interface BrowserMockupProps {
   title?: string;
 }
 
-export function BrowserMockup({ children, title = "Northstar" }: BrowserMockupProps) {
+export function BrowserMockup({
+  children,
+  title = "Northstar",
+}: BrowserMockupProps) {
   return (
     <div className="overflow-hidden rounded-xl border border-white/10 bg-zinc-900 shadow-2xl">
       {/* Browser Chrome */}

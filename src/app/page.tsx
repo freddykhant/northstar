@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { CategorySection } from "~/_components/landing/category-section";
+import { CategoryCarousel } from "~/_components/landing/category-carousel";
 import { FloatingNavbar } from "~/_components/landing/floating-navbar";
 import { LandingFooter } from "~/_components/landing/landing-footer";
 import { ScrollingBadge } from "~/_components/landing/scrolling-badge";
@@ -101,52 +101,8 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* Category Sections */}
-        <CategorySection
-          id="mind"
-          category="mind"
-          title="Mind"
-          description="Sharpen your mental edge. Track habits that build focus, expand knowledge, and spark creativity. From reading to learning new skills, every mental rep counts."
-          habits={[
-            "Read 30 mins",
-            "Learn something new",
-            "Meditation",
-            "Journal",
-            "Brain games",
-          ]}
-          imageSrc="/mind.svg"
-        />
-
-        <CategorySection
-          id="body"
-          category="body"
-          title="Body"
-          description="Your body is your vessel. Build habits that keep you strong, energized, and healthy. Movement, nutrition, rest—the foundation of everything else."
-          habits={[
-            "Morning workout",
-            "10k steps",
-            "Drink water",
-            "Sleep 8 hours",
-            "Stretch",
-          ]}
-          imageSrc="/body.svg"
-          reverse
-        />
-
-        <CategorySection
-          id="soul"
-          category="soul"
-          title="Soul"
-          description="Nurture what matters most. Connect with yourself and others. Practice gratitude, mindfulness, and the things that bring meaning to your days."
-          habits={[
-            "Gratitude journal",
-            "Call a friend",
-            "Nature walk",
-            "Digital detox",
-            "Acts of kindness",
-          ]}
-          imageSrc="/soul.svg"
-        />
+        {/* Category Carousel */}
+        <CategoryCarousel />
 
         {/* Footer */}
         <LandingFooter />

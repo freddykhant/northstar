@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 
 interface HabitItem {
@@ -12,25 +12,55 @@ interface HabitItem {
 }
 
 const DEMO_HABITS: HabitItem[] = [
-  { id: 1, name: "Morning meditation", category: "mind", emoji: "🧘", graphPosition: 6 },
-  { id: 2, name: "30 min workout", category: "body", emoji: "🏋️", graphPosition: 6 },
-  { id: 3, name: "Evening gratitude", category: "soul", emoji: "✨", graphPosition: 6 },
+  {
+    id: 1,
+    name: "Morning meditation",
+    category: "mind",
+    emoji: "🧘",
+    graphPosition: 6,
+  },
+  {
+    id: 2,
+    name: "30 min workout",
+    category: "body",
+    emoji: "🏋️",
+    graphPosition: 6,
+  },
+  {
+    id: 3,
+    name: "Evening gratitude",
+    category: "soul",
+    emoji: "✨",
+    graphPosition: 6,
+  },
 ];
 
 const CATEGORY_COLORS = {
-  mind: { bg: "bg-blue-500", border: "border-blue-500", shadow: "shadow-blue-500/50" },
-  body: { bg: "bg-red-500", border: "border-red-500", shadow: "shadow-red-500/50" },
-  soul: { bg: "bg-purple-500", border: "border-purple-500", shadow: "shadow-purple-500/50" },
+  mind: {
+    bg: "bg-blue-500",
+    border: "border-blue-500",
+    shadow: "shadow-blue-500/50",
+  },
+  body: {
+    bg: "bg-red-500",
+    border: "border-red-500",
+    shadow: "shadow-red-500/50",
+  },
+  soul: {
+    bg: "bg-purple-500",
+    border: "border-purple-500",
+    shadow: "shadow-purple-500/50",
+  },
 };
 
 // Pre-filled week data (Mon-Sat filled, Sunday waiting for user)
 const WEEK_DATA = [
-  { mind: true, body: true, soul: true },   // Mon
-  { mind: true, body: false, soul: true },  // Tue
-  { mind: true, body: true, soul: true },   // Wed
-  { mind: false, body: true, soul: true },  // Thu
-  { mind: true, body: true, soul: false },  // Fri
-  { mind: true, body: true, soul: true },   // Sat
+  { mind: true, body: true, soul: true }, // Mon
+  { mind: true, body: false, soul: true }, // Tue
+  { mind: true, body: true, soul: true }, // Wed
+  { mind: false, body: true, soul: true }, // Thu
+  { mind: true, body: true, soul: false }, // Fri
+  { mind: true, body: true, soul: true }, // Sat
   { mind: false, body: false, soul: false }, // Sun (today - user fills this!)
 ];
 
@@ -89,19 +119,21 @@ export function UnifiedDemo() {
             <div className="space-y-3">
               {(["mind", "body", "soul"] as const).map((category) => (
                 <div key={category} className="flex items-center gap-4">
-                  <span className="w-12 text-xs font-medium capitalize text-zinc-500">
+                  <span className="w-12 text-xs font-medium text-zinc-500 capitalize">
                     {category}
                   </span>
                   <div className="flex gap-1.5">
                     {WEEK_DATA.map((day, dayIndex) => {
                       const isToday = dayIndex === 6;
-                      const isFilled = isToday 
+                      const isFilled = isToday
                         ? getTodayState(category)
                         : day[category];
                       const colors = CATEGORY_COLORS[category];
-                      const wasJustCompleted = isToday && 
-                        justCompleted !== null && 
-                        DEMO_HABITS.find(h => h.id === justCompleted)?.category === category;
+                      const wasJustCompleted =
+                        isToday &&
+                        justCompleted !== null &&
+                        DEMO_HABITS.find((h) => h.id === justCompleted)
+                          ?.category === category;
 
                       return (
                         <motion.div
@@ -113,14 +145,18 @@ export function UnifiedDemo() {
                                 ? "border-dashed border-zinc-300 bg-zinc-50"
                                 : "border-zinc-200 bg-zinc-100"
                           }`}
-                          animate={wasJustCompleted ? {
-                            scale: [1, 1.3, 1],
-                            boxShadow: [
-                              "0 0 0 0 rgba(0,0,0,0)",
-                              `0 0 20px 5px ${category === 'mind' ? 'rgba(59,130,246,0.5)' : category === 'body' ? 'rgba(239,68,68,0.5)' : 'rgba(168,85,247,0.5)'}`,
-                              "0 0 0 0 rgba(0,0,0,0)"
-                            ]
-                          } : {}}
+                          animate={
+                            wasJustCompleted
+                              ? {
+                                  scale: [1, 1.3, 1],
+                                  boxShadow: [
+                                    "0 0 0 0 rgba(0,0,0,0)",
+                                    `0 0 20px 5px ${category === "mind" ? "rgba(59,130,246,0.5)" : category === "body" ? "rgba(239,68,68,0.5)" : "rgba(168,85,247,0.5)"}`,
+                                    "0 0 0 0 rgba(0,0,0,0)",
+                                  ],
+                                }
+                              : {}
+                          }
                           transition={{ duration: 0.5 }}
                         >
                           {isToday && !isFilled && (
@@ -143,7 +179,7 @@ export function UnifiedDemo() {
                   </div>
                 </div>
               ))}
-              
+
               {/* Day labels */}
               <div className="flex items-center gap-4">
                 <span className="w-12" />
@@ -152,7 +188,9 @@ export function UnifiedDemo() {
                     <div
                       key={i}
                       className={`flex h-8 w-8 items-center justify-center text-xs ${
-                        i === 6 ? "font-semibold text-blue-600" : "text-zinc-400"
+                        i === 6
+                          ? "font-semibold text-blue-600"
+                          : "text-zinc-400"
                       }`}
                     >
                       {label}
@@ -172,7 +210,9 @@ export function UnifiedDemo() {
                   Sunday
                 </span>
               </div>
-              <p className="text-sm text-zinc-500">Complete habits to light up your graph</p>
+              <p className="text-sm text-zinc-500">
+                Complete habits to light up your graph
+              </p>
             </div>
 
             {/* Checklist */}
@@ -187,7 +227,7 @@ export function UnifiedDemo() {
                     onClick={() => toggleHabit(habit)}
                     className={`group relative w-full overflow-hidden rounded-xl border-2 p-4 text-left transition-all ${
                       isCompleted
-                        ? `${colors.border} bg-gradient-to-r from-${habit.category === 'mind' ? 'blue' : habit.category === 'body' ? 'red' : 'purple'}-50 to-white`
+                        ? `${colors.border} bg-gradient-to-r from-${habit.category === "mind" ? "blue" : habit.category === "body" ? "red" : "purple"}-50 to-white`
                         : "border-zinc-200 bg-white hover:border-zinc-300 hover:bg-zinc-50"
                     }`}
                     whileTap={{ scale: 0.98 }}
@@ -214,7 +254,11 @@ export function UnifiedDemo() {
                               stroke="currentColor"
                               strokeWidth={3}
                             >
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M5 13l4 4L19 7"
+                              />
                             </motion.svg>
                           )}
                         </AnimatePresence>
@@ -224,18 +268,22 @@ export function UnifiedDemo() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <span className="text-xl">{habit.emoji}</span>
-                          <span className={`font-medium ${isCompleted ? "text-zinc-700" : "text-black"}`}>
+                          <span
+                            className={`font-medium ${isCompleted ? "text-zinc-700" : "text-black"}`}
+                          >
                             {habit.name}
                           </span>
                         </div>
                       </div>
 
                       {/* Category indicator */}
-                      <div className={`rounded-lg px-3 py-1 text-xs font-medium capitalize ${
-                        isCompleted 
-                          ? `${colors.bg} text-white`
-                          : "bg-zinc-100 text-zinc-600"
-                      }`}>
+                      <div
+                        className={`rounded-lg px-3 py-1 text-xs font-medium capitalize ${
+                          isCompleted
+                            ? `${colors.bg} text-white`
+                            : "bg-zinc-100 text-zinc-600"
+                        }`}
+                      >
                         {habit.category}
                       </div>
                     </div>
@@ -254,7 +302,9 @@ export function UnifiedDemo() {
                   className="mt-6 rounded-xl bg-gradient-to-r from-blue-500 via-red-500 to-purple-500 p-4 text-center text-white"
                 >
                   <span className="text-2xl">🎉</span>
-                  <p className="mt-1 font-semibold">Perfect day! All habits complete.</p>
+                  <p className="mt-1 font-semibold">
+                    Perfect day! All habits complete.
+                  </p>
                 </motion.div>
               )}
             </AnimatePresence>

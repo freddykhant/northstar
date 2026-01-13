@@ -8,7 +8,11 @@ interface FeatureBadgeProps {
   color?: "blue" | "red" | "purple" | "zinc";
 }
 
-export function FeatureBadge({ icon, label, color = "zinc" }: FeatureBadgeProps) {
+export function FeatureBadge({
+  icon,
+  label,
+  color = "zinc",
+}: FeatureBadgeProps) {
   const colorStyles = {
     blue: "text-blue-400",
     red: "text-red-400",

@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 
 export function LandingFooter() {
@@ -54,7 +53,7 @@ export function LandingFooter() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
-          className="mb-16 mt-10 inline-flex items-center gap-3 rounded-2xl border border-zinc-200 bg-white px-2 py-2 shadow-lg"
+          className="mt-10 mb-16 inline-flex items-center gap-3 rounded-2xl border border-zinc-200 bg-white px-2 py-2 shadow-lg"
         >
           <Link
             href="/signup"

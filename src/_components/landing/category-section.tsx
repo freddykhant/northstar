@@ -90,7 +90,9 @@ export function CategorySection({
             transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
             className="flex-1 text-center lg:text-left"
           >
-            <h2 className={`mb-4 text-5xl font-bold ${styles.text}`}>{title}</h2>
+            <h2 className={`mb-4 text-5xl font-bold ${styles.text}`}>
+              {title}
+            </h2>
             <p className="mb-8 text-xl leading-relaxed text-zinc-600">
               {description}
             </p>

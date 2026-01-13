@@ -17,7 +17,7 @@ export function FloatingNavbar() {
 
   return (
     <nav
-      className={`fixed left-1/2 top-6 z-50 -translate-x-1/2 transition-all duration-500 ${
+      className={`fixed top-6 left-1/2 z-50 -translate-x-1/2 transition-all duration-500 ${
         isScrolled ? "scale-[0.98]" : "scale-100"
       }`}
     >

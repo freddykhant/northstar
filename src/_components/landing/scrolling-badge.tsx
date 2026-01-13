@@ -28,7 +28,12 @@ const TEXT_GRADIENTS = {
   purple: "from-purple-400 via-pink-400 to-purple-600",
 };
 
-export function ScrollingBadge({ icon, label, targetId, color }: ScrollingBadgeProps) {
+export function ScrollingBadge({
+  icon,
+  label,
+  targetId,
+  color,
+}: ScrollingBadgeProps) {
   const Icon = ICONS[icon];
   const iconColor = ICON_COLORS[color];
   const textGradient = TEXT_GRADIENTS[color];
@@ -48,7 +53,9 @@ export function ScrollingBadge({ icon, label, targetId, color }: ScrollingBadgeP
       whileTap={{ scale: 0.95 }}
     >
       {/* Icon */}
-      <Icon className={`h-5 w-5 ${iconColor} transition-transform group-hover:scale-110`} />
+      <Icon
+        className={`h-5 w-5 ${iconColor} transition-transform group-hover:scale-110`}
+      />
 
       {/* Animated gradient text */}
       <span
