@@ -267,7 +267,7 @@ function CategoryCard({
       transition={{ delay: index * 0.15, duration: 0.5 }}
     >
       <motion.div
-        className="group relative h-[520px] w-[380px] overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-lg transition-all hover:shadow-xl dark:border-white/10 dark:bg-zinc-900"
+        className="group relative h-[460px] w-[380px] overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-lg transition-all hover:shadow-xl dark:border-white/10 dark:bg-zinc-900"
         whileHover={{ y: -4 }}
       >
         {/* Gradient title with icon (like feature badge) */}
@@ -304,26 +304,6 @@ function CategoryCard({
             {category.description}
           </p>
         </div>
-
-        {/* Arrow button */}
-        <button
-          className="absolute right-6 bottom-6 flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white transition-all hover:border-zinc-300 hover:bg-zinc-50 dark:border-white/10 dark:bg-zinc-800 dark:hover:border-white/20 dark:hover:bg-zinc-700"
-          aria-label={`Learn more about ${category.name}`}
-        >
-          <svg
-            className="h-4 w-4 text-zinc-600 dark:text-zinc-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </button>
       </motion.div>
     </motion.div>
   );
