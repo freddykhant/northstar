@@ -27,13 +27,9 @@ export default function HomePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  // Get today's date
   const today = useMemo(() => getTodayDate(), []);
-
-  // Get date range for current year
   const dateRange = useMemo(() => getCurrentYearRange(), []);
 
-  // Fetch data
   const { data: habitsWithStatus } = api.completion.getForDate.useQuery(
     { date: today },
     { enabled: !!today },
@@ -51,23 +47,18 @@ export default function HomePage() {
 
   const { data: overallStats } = api.completion.getOverallStats.useQuery();
 
-  // Transform completions data for the graph
   const graphData = useGraphData(completionsData);
-
-  // Handle habit completion with optimistic updates
   const { handleToggle, justCompleted, toggleMutation } = useHabitCompletion({
     today,
     dateRange,
   });
 
-  // Authentication check
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/signin");
     }
   }, [status, router]);
 
-  // Loading state
   if (status === "loading") {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-white text-black dark:bg-[#0a0a0a] dark:text-white">
@@ -76,12 +67,10 @@ export default function HomePage() {
     );
   }
 
-  // Not authenticated
   if (!session?.user) {
     return null;
   }
 
-  // Extract real stats from the query (with fallbacks)
   const currentStreak = overallStats?.currentStreak ?? 0;
   const weekPercentage = overallStats?.weekPercentage ?? 0;
   const totalCompleted = overallStats?.totalCompleted ?? 0;

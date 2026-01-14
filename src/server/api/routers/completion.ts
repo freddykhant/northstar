@@ -3,7 +3,8 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { completions, habits } from "~/server/db/schema";
 
-// Helper function to normalize date to YYYY-MM-DD string
+// drizzle returns dates in different formats depending on the driver
+// this ensures we always get YYYY-MM-DD strings for consistency
 function normalizeDateString(date: string | Date | unknown): string {
   if (typeof date === "string") {
     return date.split("T")[0]!;
@@ -15,19 +16,17 @@ function normalizeDateString(date: string | Date | unknown): string {
 }
 
 export const completionRouter = createTRPCRouter({
-  // toggle completion for a habit on a specific date
   toggle: protectedProcedure
     .input(
       z.object({
         habitId: z.number(),
-        date: z.string(), // ISO date string (YYYY-MM-DD)
+        date: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const { habitId, date } = input;
       const userId = ctx.session.user.id;
 
-      // user verification
       const habit = await ctx.db.query.habits.findFirst({
         where: and(eq(habits.id, habitId), eq(habits.userId, userId)),
       });
@@ -36,7 +35,6 @@ export const completionRouter = createTRPCRouter({
         throw new Error("Habit not found or does not belong to you");
       }
 
-      // check if completion already exists
       const existingCompletion = await ctx.db.query.completions.findFirst({
         where: and(
           eq(completions.habitId, habitId),
@@ -46,14 +44,12 @@ export const completionRouter = createTRPCRouter({
       });
 
       if (existingCompletion) {
-        // delete (uncomplete)
         await ctx.db
           .delete(completions)
           .where(eq(completions.id, existingCompletion.id));
 
         return { completed: false, habitId, date };
       } else {
-        // create (complete)
         const [newCompletion] = await ctx.db
           .insert(completions)
           .values({
@@ -67,12 +63,11 @@ export const completionRouter = createTRPCRouter({
       }
     }),
 
-  // get all completions for a date range (for contribution graph)
   getMyCompletions: protectedProcedure
     .input(
       z.object({
-        startDate: z.string(), // ISO date string (YYYY-MM-DD)
-        endDate: z.string(), // ISO date string (YYYY-MM-DD)
+        startDate: z.string(),
+        endDate: z.string(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -95,7 +90,6 @@ export const completionRouter = createTRPCRouter({
         orderBy: (completions, { desc }) => [desc(completions.completedDate)],
       });
 
-      // Format dates to ensure they're strings in YYYY-MM-DD format
       return result.map((completion) => {
         return {
           ...completion,
@@ -104,18 +98,16 @@ export const completionRouter = createTRPCRouter({
       });
     }),
 
-  // get stats for a specific date (grouped by category)
   getStatsForDate: protectedProcedure
     .input(
       z.object({
-        date: z.string(), // ISO date string (YYYY-MM-DD)
+        date: z.string(),
       }),
     )
     .query(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
       const { date } = input;
 
-      // get all completions for this date with habit and category info
       const completionsForDate = await ctx.db.query.completions.findMany({
         where: and(
           eq(completions.userId, userId),
@@ -130,7 +122,6 @@ export const completionRouter = createTRPCRouter({
         },
       });
 
-      // group by category
       const stats = completionsForDate.reduce(
         (acc, completion) => {
           const categoryId = completion.habit.category.id;
@@ -160,18 +151,16 @@ export const completionRouter = createTRPCRouter({
       };
     }),
 
-  // get completion status for user's active habits on a specific date
   getForDate: protectedProcedure
     .input(
       z.object({
-        date: z.string(), // ISO date string (YYYY-MM-DD)
+        date: z.string(),
       }),
     )
     .query(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
       const { date } = input;
 
-      // Get all active habits
       const userHabits = await ctx.db.query.habits.findMany({
         where: and(eq(habits.userId, userId), eq(habits.isActive, true)),
         with: {
@@ -180,7 +169,6 @@ export const completionRouter = createTRPCRouter({
         orderBy: (habits, { desc }) => [desc(habits.createdAt)],
       });
 
-      // get completions for this date
       const completionsForDate = await ctx.db.query.completions.findMany({
         where: and(
           eq(completions.userId, userId),
@@ -188,36 +176,29 @@ export const completionRouter = createTRPCRouter({
         ),
       });
 
-      // map completions to habit IDs
       const completedHabitIds = new Set(
         completionsForDate.map((c) => c.habitId),
       );
 
-      // return habits with completion status
       return userHabits.map((habit) => ({
         ...habit,
         isCompleted: completedHabitIds.has(habit.id),
       }));
     }),
 
-  // get overall statistics (streaks, totals, percentages)
   getOverallStats: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session.user.id;
 
-    // Get all completions for this user, ordered by date
     const allCompletions = await ctx.db.query.completions.findMany({
       where: eq(completions.userId, userId),
       orderBy: (completions, { asc }) => [asc(completions.completedDate)],
     });
 
-    // Get all active habits count
     const activeHabits = await ctx.db.query.habits.findMany({
       where: and(eq(habits.userId, userId), eq(habits.isActive, true)),
     });
 
     const activeHabitsCount = activeHabits.length;
-
-    // Total completed
     const totalCompleted = allCompletions.length;
 
     if (allCompletions.length === 0) {
@@ -229,18 +210,18 @@ export const completionRouter = createTRPCRouter({
       };
     }
 
-    // Group completions by date
+    // count how many habits were completed each day
     const completionsByDate = new Map<string, number>();
     allCompletions.forEach((completion) => {
       const dateStr = normalizeDateString(completion.completedDate);
-
       completionsByDate.set(dateStr, (completionsByDate.get(dateStr) ?? 0) + 1);
     });
 
     // Get unique dates with completions, sorted
     const uniqueDates = Array.from(completionsByDate.keys()).sort();
 
-    // Calculate current streak (working backwards from today)
+    // current streak: walk backwards from today until we hit a day with no completions
+    // if today is empty, check yesterday first to allow for ongoing streaks
     const today = new Date().toISOString().split("T")[0]!;
     let currentStreak = 0;
     let checkDate = new Date(today);
@@ -251,7 +232,6 @@ export const completionRouter = createTRPCRouter({
         currentStreak++;
         checkDate.setDate(checkDate.getDate() - 1);
       } else {
-        // If today has no completions, we check yesterday to allow for ongoing streaks
         if (currentStreak === 0 && dateStr === today) {
           checkDate.setDate(checkDate.getDate() - 1);
           continue;
@@ -260,7 +240,7 @@ export const completionRouter = createTRPCRouter({
       }
     }
 
-    // Calculate best streak (longest consecutive days with completions)
+    // best streak: find longest consecutive sequence in completion history
     let bestStreak = 0;
     let tempStreak = 1;
 
@@ -280,7 +260,8 @@ export const completionRouter = createTRPCRouter({
     }
     bestStreak = Math.max(bestStreak, tempStreak);
 
-    // Calculate week percentage (last 7 days)
+    // week percentage: how many of the possible completions did they hit?
+    // e.g. 3 active habits over 7 days = 21 possible completions
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     const sevenDaysAgoStr = sevenDaysAgo.toISOString().split("T")[0]!;
@@ -290,7 +271,6 @@ export const completionRouter = createTRPCRouter({
       return dateStr >= sevenDaysAgoStr && dateStr <= today;
     });
 
-    // Week percentage = (completions in last 7 days) / (7 days * active habits) * 100
     const possibleCompletions = 7 * activeHabitsCount;
     const weekPercentage =
       possibleCompletions > 0

@@ -5,32 +5,14 @@ import GoogleProvider from "next-auth/providers/google";
 
 import { db } from "~/server/db";
 
-/**
- * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
- * object and keep type safety.
- *
- * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
- */
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      // ...other properties
-      // role: UserRole;
     } & DefaultSession["user"];
   }
-
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
 }
 
-/**
- * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
- *
- * @see https://next-auth.js.org/configuration/options
- */
 export const authConfig = {
   providers: [
     GoogleProvider({
@@ -46,7 +28,6 @@ export const authConfig = {
       },
 
       async authorize(credentials) {
-        // properly validate and type the credentials
         const { email, password } = credentials as {
           email: string;
           password: string;
@@ -56,7 +37,6 @@ export const authConfig = {
           return null;
         }
 
-        // find user by email
         const user = await db.query.users.findFirst({
           where: (users, { eq }) => eq(users.email, email),
         });
@@ -65,7 +45,6 @@ export const authConfig = {
           return null;
         }
 
-        // verify password
         const isValid = await bcrypt.compare(password, user.password);
 
         if (!isValid) {
@@ -80,39 +59,24 @@ export const authConfig = {
         };
       },
     }),
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
   ],
-  // Note: No adapter needed for JWT sessions
-  // Database is only queried during login (in authorize function)
-  // Google OAuth will store account in database via callbacks
   session: {
-    strategy: "jwt", // JWT tokens instead of database sessions
+    strategy: "jwt",
   },
   callbacks: {
     jwt: async ({ token, user, account }) => {
-      // Initial sign in
       if (user) {
         token.id = user.id;
         token.email = user.email;
 
-        // For Google OAuth, create/update user in database
+        // google oauth doesn't use adapter, so manually create/find user in db
         if (account?.provider === "google" && user.email) {
           const { schema } = await import("~/server/db");
-          // Check if user exists
           const existingUser = await db.query.users.findFirst({
             where: (users, { eq }) => eq(users.email, user.email!),
           });
 
           if (!existingUser) {
-            // Create new user
             const [newUser] = await db
               .insert(schema.users)
               .values({

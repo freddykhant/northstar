@@ -1,7 +1,3 @@
-/**
- * Custom hook for handling habit completion with optimistic updates
- */
-
 "use client";
 
 import { useState } from "react";
@@ -24,12 +20,11 @@ export function useHabitCompletion({
 
   const toggleMutation = api.completion.toggle.useMutation({
     onMutate: async ({ habitId }) => {
-      // Cancel outgoing refetches
+      // optimistic updates: cancel pending queries and snapshot current state
       await utils.completion.getForDate.cancel();
       await utils.completion.getStatsForDate.cancel();
       await utils.completion.getMyCompletions.cancel();
 
-      // Snapshot the previous values
       const previousHabits = utils.completion.getForDate.getData({
         date: today,
       });
@@ -41,13 +36,11 @@ export function useHabitCompletion({
         endDate: dateRange.endDate,
       });
 
-      // Find the habit being toggled
       const habit = previousHabits?.find((h) => h.id === habitId);
       if (!habit) return { previousHabits, previousStats, previousCompletions };
 
       const isCompleting = !habit.isCompleted;
 
-      // Optimistically update habits
       if (previousHabits) {
         utils.completion.getForDate.setData(
           { date: today },
@@ -57,7 +50,6 @@ export function useHabitCompletion({
         );
       }
 
-      // Optimistically update stats
       if (previousStats && habit) {
         const categoryId = habit.category.id;
         const updatedByCategory = previousStats.byCategory.map((cat) => {
@@ -82,12 +74,12 @@ export function useHabitCompletion({
         );
       }
 
-      // Optimistically update graph data
       if (previousCompletions && habit) {
         if (isCompleting) {
-          // Add completion to graph with proper structure matching server response
+          // need to match the exact structure that comes back from server
+          // or the graph will break when it tries to render
           const newCompletion = {
-            id: Date.now(), // temporary ID
+            id: Date.now(),
             habitId: habitId,
             userId: habit.userId,
             completedDate: today,
@@ -114,11 +106,9 @@ export function useHabitCompletion({
               startDate: dateRange.startDate,
               endDate: dateRange.endDate,
             },
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-            updatedCompletions as any,
+            updatedCompletions as any, // eslint-disable-line
           );
         } else {
-          // Remove completion from graph
           const filteredCompletions = previousCompletions.filter(
             (c) => !(c.habitId === habitId && c.completedDate === today),
           );
@@ -133,8 +123,8 @@ export function useHabitCompletion({
         }
       }
 
-      // Show completion animation
       if (isCompleting) {
+        // show animation for 1 second
         setJustCompleted((prev) => new Set(prev).add(habitId));
         setTimeout(() => {
           setJustCompleted((prev) => {
@@ -148,7 +138,7 @@ export function useHabitCompletion({
       return { previousHabits, previousStats, previousCompletions };
     },
     onError: (err, variables, context) => {
-      // Rollback on error
+      // something went wrong, rollback all the optimistic updates
       if (context?.previousHabits) {
         utils.completion.getForDate.setData(
           { date: today },
@@ -172,7 +162,6 @@ export function useHabitCompletion({
       }
     },
     onSuccess: () => {
-      // Refetch to sync with server
       void utils.completion.getForDate.invalidate({ date: today });
       void utils.completion.getStatsForDate.invalidate({ date: today });
       void utils.completion.getMyCompletions.invalidate({

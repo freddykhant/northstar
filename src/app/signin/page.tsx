@@ -44,7 +44,6 @@ export default function SignInPage() {
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-white dark:bg-[#0a0a0a]">
-      {/* Base gradient layer */}
       <div
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 dark:opacity-100"
         style={{
@@ -55,7 +54,6 @@ export default function SignInPage() {
           `,
         }}
       />
-      {/* Light mode gradient */}
       <div
         className="pointer-events-none absolute inset-0 opacity-100 transition-opacity duration-500 dark:opacity-0"
         style={{
@@ -66,7 +64,6 @@ export default function SignInPage() {
           `,
         }}
       />
-      {/* Subtle noise texture overlay */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.015]"
         style={{
@@ -75,7 +72,6 @@ export default function SignInPage() {
       />
       <main className="relative z-10 flex flex-1 items-center justify-center px-4">
         <div className="w-full max-w-100 rounded-3xl border border-zinc-200 bg-white/80 p-8 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-900/50">
-          {/* Logo */}
           <div className="mb-6">
             <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-800">
               <PanelLeftOpen className="h-7 w-7 text-zinc-600 dark:text-zinc-400" />
@@ -90,7 +86,6 @@ export default function SignInPage() {
 
           <div className="space-y-4">
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Email Input */}
               <div>
                 <label className="mb-2 block text-sm font-medium text-black dark:text-white">
                   Email
@@ -105,7 +100,6 @@ export default function SignInPage() {
                 />
               </div>
 
-              {/* Password Input */}
               <div>
                 <label className="mb-2 block text-sm font-medium text-black dark:text-white">
                   Password
@@ -126,7 +120,6 @@ export default function SignInPage() {
                 </div>
               )}
 
-              {/* Sign In Button */}
               <button
                 type="submit"
                 disabled={isLoading}
@@ -137,7 +130,6 @@ export default function SignInPage() {
             </form>
           </div>
 
-          {/* Google Sign In */}
           <div className="mt-4 space-y-3">
             <button
               type="button"
@@ -166,7 +158,6 @@ export default function SignInPage() {
             </button>
           </div>
 
-          {/* Sign Up Link */}
           <p className="mt-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
             Don&apos;t have an account?{" "}
             <Link
