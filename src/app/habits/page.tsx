@@ -6,13 +6,12 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { GradientBackground } from "~/_components/ui/gradient-background";
-import { NorthstarHeader } from "~/_components/ui/northstar-header";
 import { CATEGORY_EMOJIS } from "~/lib/constants";
 import type { CategoryId } from "~/lib/types";
 import { api } from "~/trpc/react";
 
 export default function HabitsPage() {
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingHabit, setEditingHabit] = useState<number | null>(null);
@@ -149,7 +148,6 @@ export default function HabitsPage() {
     return (
       <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#0c0c0c]">
         <GradientBackground />
-        <NorthstarHeader />
         <div className="flex flex-1 items-center justify-center">
           <div className="flex flex-col items-center gap-3">
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-white" />
@@ -246,12 +244,15 @@ export default function HabitsPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-hidden bg-white dark:bg-[#0c0c0c]">
+    <div className="relative flex min-h-screen overflow-hidden bg-white dark:bg-[#0c0c0c]">
       {/* Background */}
       <GradientBackground />
 
-      {/* Header */}
-      <NorthstarHeader />
+      {/* Sidebar */}
+      <Sidebar
+        user={session?.user}
+        onCreateHabit={() => setIsModalOpen(true)}
+      />
 
       {/* Content */}
       <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 px-6 py-8">

@@ -10,7 +10,6 @@ import { CheckinList } from "~/_components/ui/checkin-list";
 import { GlassCard } from "~/_components/ui/glass-card";
 import { GradientBackground } from "~/_components/ui/gradient-background";
 import { MoodTracker } from "~/_components/ui/mood-tracker";
-import { NorthstarHeader } from "~/_components/ui/northstar-header";
 import { StatsCards } from "~/_components/ui/stats-cards";
 import { useGraphData } from "~/hooks/use-graph-data";
 import { useHabitCompletion } from "~/hooks/use-habit-completion";
@@ -77,94 +76,96 @@ export default function HomePage() {
   const bestStreak = overallStats?.bestStreak ?? 0;
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-white text-black dark:bg-[#0a0a0a] dark:text-white">
+    <div className="relative flex min-h-screen overflow-hidden bg-white text-black dark:bg-[#0a0a0a] dark:text-white">
       {/* Background */}
       <GradientBackground />
 
-      {/* Header */}
-      <NorthstarHeader user={session.user} />
+      {/* Sidebar */}
+      <Sidebar user={session.user} />
 
-      {/* Content */}
-      <div className="relative z-10 mx-auto max-w-7xl px-6 py-8">
-        {/* Greeting Header */}
-        <div className="mb-10">
-          <h1 className="mb-2 bg-linear-to-r from-black via-zinc-700 to-zinc-400 bg-clip-text py-4 text-5xl font-bold text-transparent dark:from-white dark:via-zinc-100 dark:to-zinc-400">
-            {getGreeting()}, {session.user.name?.split(" ")[0] ?? "there"}
-          </h1>
-          <p className="text-lg text-zinc-600 dark:text-zinc-400">
-            {formatDate(today)}
-          </p>
-        </div>
-
-        {/* Main Grid Layout */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {/* Left Column - Activity Graph (takes 2 columns) */}
-          <div className="space-y-6 lg:col-span-2">
-            {/* Category Stats Overview Cards */}
-            <div className="mb-6 grid grid-cols-3 gap-4">
-              {CATEGORY_IDS.map((categoryId) => {
-                const count =
-                  stats?.byCategory.find((c) => c.category.id === categoryId)
-                    ?.count ?? 0;
-                return (
-                  <CategoryStatCard
-                    key={categoryId}
-                    categoryId={categoryId}
-                    count={count}
-                  />
-                );
-              })}
-            </div>
-
-            {/* New Stats Cards */}
-            <div className="mb-6">
-              <StatsCards
-                currentStreak={currentStreak}
-                weekPercentage={weekPercentage}
-                totalCompleted={totalCompleted}
-                bestStreak={bestStreak}
-              />
-            </div>
-
-            {/* Activity Graph */}
-            <ActivityGraph completions={graphData} />
-
-            {/* Mood Tracker */}
-            <MoodTracker />
+      {/* Main Content */}
+      <div className="relative z-10 ml-64 flex-1">
+        <div className="mx-auto max-w-7xl px-6 py-8">
+          {/* Greeting Header */}
+          <div className="mb-10">
+            <h1 className="mb-2 bg-linear-to-r from-black via-zinc-700 to-zinc-400 bg-clip-text py-4 text-5xl font-bold text-transparent dark:from-white dark:via-zinc-100 dark:to-zinc-400">
+              {getGreeting()}, {session.user.name?.split(" ")[0] ?? "there"}
+            </h1>
+            <p className="text-lg text-zinc-600 dark:text-zinc-400">
+              {formatDate(today)}
+            </p>
           </div>
 
-          {/* Right Column - Today's Checklist */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8">
-              {habitsWithStatus && habitsWithStatus.length > 0 ? (
-                <GlassCard className="border border-zinc-200 bg-white p-6 backdrop-blur-sm dark:border-white/6 dark:bg-white/3">
-                  <h2 className="mb-6 text-xl font-bold text-black dark:text-white">
-                    Today&apos;s Focus
-                  </h2>
-                  <CheckinList
-                    habits={habitsWithStatus}
-                    onToggle={handleToggle}
-                    justCompleted={justCompleted}
-                    isLoading={toggleMutation.isPending}
-                  />
-                </GlassCard>
-              ) : (
-                <GlassCard className="flex flex-col items-center justify-center border border-zinc-200 bg-white p-12 text-center dark:border-white/6 dark:bg-white/3">
-                  <div className="mb-4 text-6xl">🌟</div>
-                  <h2 className="mb-2 text-xl font-bold text-black dark:text-white">
-                    No habits yet
-                  </h2>
-                  <p className="mb-6 text-sm text-zinc-600 dark:text-zinc-400">
-                    Create your first habit to start building consistency
-                  </p>
-                  <Link
-                    href="/habits"
-                    className="inline-block rounded-xl bg-black px-6 py-3 text-sm font-semibold text-white transition-transform hover:scale-105 dark:bg-white dark:text-black"
-                  >
-                    Create Habit
-                  </Link>
-                </GlassCard>
-              )}
+          {/* Main Grid Layout */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {/* Left Column - Activity Graph (takes 2 columns) */}
+            <div className="space-y-6 lg:col-span-2">
+              {/* Category Stats Overview Cards */}
+              <div className="mb-6 grid grid-cols-3 gap-4">
+                {CATEGORY_IDS.map((categoryId) => {
+                  const count =
+                    stats?.byCategory.find((c) => c.category.id === categoryId)
+                      ?.count ?? 0;
+                  return (
+                    <CategoryStatCard
+                      key={categoryId}
+                      categoryId={categoryId}
+                      count={count}
+                    />
+                  );
+                })}
+              </div>
+
+              {/* New Stats Cards */}
+              <div className="mb-6">
+                <StatsCards
+                  currentStreak={currentStreak}
+                  weekPercentage={weekPercentage}
+                  totalCompleted={totalCompleted}
+                  bestStreak={bestStreak}
+                />
+              </div>
+
+              {/* Activity Graph */}
+              <ActivityGraph completions={graphData} />
+
+              {/* Mood Tracker */}
+              <MoodTracker />
+            </div>
+
+            {/* Right Column - Today's Checklist */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-8">
+                {habitsWithStatus && habitsWithStatus.length > 0 ? (
+                  <GlassCard className="border border-zinc-200 bg-white p-6 backdrop-blur-sm dark:border-white/6 dark:bg-white/3">
+                    <h2 className="mb-6 text-xl font-bold text-black dark:text-white">
+                      Today&apos;s Focus
+                    </h2>
+                    <CheckinList
+                      habits={habitsWithStatus}
+                      onToggle={handleToggle}
+                      justCompleted={justCompleted}
+                      isLoading={toggleMutation.isPending}
+                    />
+                  </GlassCard>
+                ) : (
+                  <GlassCard className="flex flex-col items-center justify-center border border-zinc-200 bg-white p-12 text-center dark:border-white/6 dark:bg-white/3">
+                    <div className="mb-4 text-6xl">🌟</div>
+                    <h2 className="mb-2 text-xl font-bold text-black dark:text-white">
+                      No habits yet
+                    </h2>
+                    <p className="mb-6 text-sm text-zinc-600 dark:text-zinc-400">
+                      Create your first habit to start building consistency
+                    </p>
+                    <Link
+                      href="/habits"
+                      className="inline-block rounded-xl bg-black px-6 py-3 text-sm font-semibold text-white transition-transform hover:scale-105 dark:bg-white dark:text-black"
+                    >
+                      Create Habit
+                    </Link>
+                  </GlassCard>
+                )}
+              </div>
             </div>
           </div>
         </div>
