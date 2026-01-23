@@ -10,6 +10,7 @@ import { CheckinList } from "~/_components/ui/checkin-list";
 import { GlassCard } from "~/_components/ui/glass-card";
 import { GradientBackground } from "~/_components/ui/gradient-background";
 import { MoodTracker } from "~/_components/ui/mood-tracker";
+import { Sidebar } from "~/_components/ui/sidebar";
 import { StatsCards } from "~/_components/ui/stats-cards";
 import { useGraphData } from "~/hooks/use-graph-data";
 import { useHabitCompletion } from "~/hooks/use-habit-completion";

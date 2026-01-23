@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { GradientBackground } from "~/_components/ui/gradient-background";
+import { Sidebar } from "~/_components/ui/sidebar";
 import { CATEGORY_EMOJIS } from "~/lib/constants";
 import type { CategoryId } from "~/lib/types";
 import { api } from "~/trpc/react";
