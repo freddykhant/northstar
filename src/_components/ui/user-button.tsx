@@ -60,9 +60,9 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`${
+        className={`cursor-pointer ${
           isSidebar
-            ? "flex w-full items-center gap-3 rounded-xl border border-zinc-200 bg-white p-3 shadow-sm transition-all hover:bg-zinc-50 dark:border-white/10 dark:bg-zinc-800/50 dark:hover:bg-zinc-800"
+            ? "flex w-full items-center gap-3 rounded-xl border border-zinc-200 bg-white p-3 shadow-sm transition-all hover:bg-zinc-50 dark:border-white/10 dark:bg-zinc-800/50 dark:hover:bg-zinc-800 "
             : "flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br from-blue-500 via-red-500 to-purple-500 text-sm font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl"
         }`}
         aria-label="User menu"
