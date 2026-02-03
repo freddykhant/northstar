@@ -13,7 +13,7 @@ interface ActivityGraphProps {
 }
 
 export function ActivityGraph({ completions }: ActivityGraphProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>("month");
+  const [viewMode, setViewMode] = useState<ViewMode>("year");
   const [hoveredDay, setHoveredDay] = useState<{
     date: Date;
     mind: number;
@@ -87,9 +87,9 @@ export function ActivityGraph({ completions }: ActivityGraphProps) {
         {/* View Toggle */}
         <div className="flex items-center gap-1 rounded-lg border border-zinc-200 bg-zinc-100 p-1 dark:border-white/10 dark:bg-white/5">
           {[
+            { id: "year", label: "Year" },
             { id: "month", label: "Month" },
             { id: "week", label: "Week" },
-            { id: "year", label: "Year" },
           ].map((view) => (
             <button
               key={view.id}
