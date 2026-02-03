@@ -21,7 +21,7 @@ export function WeekView({ completionMap, getCategoryColor }: WeekViewProps) {
     for (let i = 0; i < 7; i++) {
       const date = new Date(startOfWeek);
       date.setDate(startOfWeek.getDate() + i);
-      // Use local date format (YYYY-MM-DD) to match completion data
+      // use local date format (YYYY-MM-DD) to match completion data
       const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
       const completion = completionMap.get(dateStr) ?? {
         mind: 0,

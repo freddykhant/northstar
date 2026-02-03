@@ -40,7 +40,7 @@ export function MonthView({
     const daysInMonth = lastDay.getDate();
     const startDayOfWeek = firstDay.getDay();
 
-    // Create weeks array
+    // create weeks array
     const weeks: {
       date: Date;
       day: number;
@@ -56,7 +56,7 @@ export function MonthView({
       soul: number;
     }[] = [];
 
-    // Pad start of first week
+    // pad start of first week
     for (let i = 0; i < startDayOfWeek; i++) {
       currentWeek.push({
         date: new Date(0),
@@ -67,10 +67,10 @@ export function MonthView({
       });
     }
 
-    // Fill in days
+    // fill in days
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
-      // Use local date format (YYYY-MM-DD) to match completion data
+      // use local date format (YYYY-MM-DD) to match completion data
       const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
       const completion = completionMap.get(dateStr) ?? {
         mind: 0,
@@ -92,7 +92,7 @@ export function MonthView({
       }
     }
 
-    // Pad end of last week
+    // pad end of last week
     if (currentWeek.length > 0) {
       while (currentWeek.length < 7) {
         currentWeek.push({

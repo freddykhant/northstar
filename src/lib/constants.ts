@@ -1,6 +1,4 @@
-/**
- * Application-wide constants
- */
+// application-wide constants
 
 import type { CategoryId } from "./types";
 

@@ -21,7 +21,7 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { theme, setTheme } = useTheme();
 
-  // Wait for client-side hydration
+  // wait for client-side hydration
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -53,7 +53,7 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
       .toUpperCase()
       .slice(0, 2) || "U";
 
-  // For sidebar, show full user info
+  // for sidebar, show full user info
   const isSidebar = position === "sidebar";
 
   return (
