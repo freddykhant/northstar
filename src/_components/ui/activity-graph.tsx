@@ -79,7 +79,8 @@ export function ActivityGraph({ completions }: ActivityGraphProps) {
     if (body > 0 && soul > 0 && mind === 0) {
       return `rgba(236, 72, 153, ${alpha})`;
     }
-    return `rgba(255, 255, 255, ${alpha})`;
+    // All three = Gold/Amber for "perfect day"
+    return `rgba(251, 191, 36, ${alpha})`;
   }
 
   function getCategoryColor(category: string, completed: boolean) {
@@ -306,10 +307,8 @@ function MonthView({
         {weeks.map((week, weekIndex) => (
           <div key={weekIndex} className="flex items-center gap-[3px]">
             {/* Week label */}
-            <div className="w-8 text-xs text-zinc-500">
-              W{weekIndex + 1}
-            </div>
-            
+            <div className="w-8 text-xs text-zinc-500">W{weekIndex + 1}</div>
+
             {/* Days in the week */}
             {week.map((dayData, dayIndex) => {
               const isValid = dayData.day > 0;
