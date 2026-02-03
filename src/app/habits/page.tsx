@@ -430,15 +430,13 @@ function HabitCard({
       {/* Content */}
       <div className="flex items-start justify-between">
         <div className="flex min-w-0 flex-1 items-start gap-3">
-          <motion.div
+          <div
             className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${config.lightBg}`}
-            whileHover={{ rotate: 360 }}
-            transition={{ duration: 0.6 }}
           >
             <span className="text-xl">
               {CATEGORY_EMOJIS[habit.categoryId as CategoryId]}
             </span>
-          </motion.div>
+          </div>
           <div className="min-w-0 flex-1">
             <h3 className="mb-1 truncate font-semibold text-black dark:text-white">
               {habit.name}
