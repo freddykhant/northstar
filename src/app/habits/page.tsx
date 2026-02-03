@@ -353,7 +353,9 @@ export default function HabitsPage() {
                             isToggling={toggleMutation.isPending}
                             isDeleting={deleteMutation.isPending}
                             showMenu={openMenuId === habit.id}
-                            onToggleMenu={(id) => setOpenMenuId(openMenuId === id ? null : id)}
+                            onToggleMenu={(id) =>
+                              setOpenMenuId(openMenuId === id ? null : id)
+                            }
                           />
                         ))}
                       </AnimatePresence>
@@ -423,7 +425,7 @@ function HabitCard({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       whileHover={{ y: -2 }}
-      className={`group relative rounded-2xl border ${config.borderColor} bg-white p-4 shadow-sm transition-all hover:shadow-md dark:bg-white/3 ${showMenu ? "z-50" : ""}`}
+      className={`group relative rounded-2xl border ${config.borderColor} bg-white p-4 shadow-sm transition-all hover:shadow-md dark:bg-white/3 ${showMenu ? "z-[102]" : ""}`}
     >
       {/* Content */}
       <div className="flex items-start justify-between">
@@ -503,14 +505,14 @@ function HabitCard({
               {showMenu && (
                 <>
                   <div
-                    className="fixed inset-0 z-40"
+                    className="fixed inset-0 z-[100]"
                     onClick={() => onToggleMenu(habit.id)}
                   />
                   <motion.div
                     initial={{ opacity: 0, y: -10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                    className="absolute top-full right-0 z-50 mt-2 w-40 rounded-xl border border-zinc-200 bg-white py-1.5 shadow-xl dark:border-white/10 dark:bg-zinc-900"
+                    className="absolute top-full right-0 z-[101] mt-2 w-40 rounded-xl border border-zinc-200 bg-white py-1.5 shadow-xl dark:border-white/10 dark:bg-zinc-900"
                   >
                     <button
                       onClick={() => {
