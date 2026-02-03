@@ -54,9 +54,7 @@ export function getCurrentYearRange(): { startDate: string; endDate: string } {
   };
 }
 
-/**
- * Format date as local YYYY-MM-DD string
- */
+// format date as local YYYY-MM-DD string
 export function formatDateAsLocal(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -64,9 +62,7 @@ export function formatDateAsLocal(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-/**
- * Generate all days in the current year
- */
+// generate all days in the current year
 export function getAllDaysInCurrentYear(): string[] {
   const result: string[] = [];
   const currentYear = getCurrentYear();
@@ -82,9 +78,7 @@ export function getAllDaysInCurrentYear(): string[] {
   return result;
 }
 
-/**
- * Calculate completion percentage
- */
+// calculate completion percentage
 export function calculateCompletionPercentage(
   completed: number,
   total: number,
@@ -92,9 +86,7 @@ export function calculateCompletionPercentage(
   return total > 0 ? Math.round((completed / total) * 100) : 0;
 }
 
-/**
- * Normalize date string to ensure consistent format (YYYY-MM-DD)
- */
+// normalize date string to ensure consistent format (YYYY-MM-DD)
 export function normalizeDateString(date: unknown): string {
   if (typeof date === "string") return date;
   if (date instanceof Date) return formatDateAsLocal(date);

@@ -23,7 +23,7 @@ export function ActivityGraph({ completions }: ActivityGraphProps) {
     y: number;
   } | null>(null);
 
-  // Create completion map for quick lookup
+  // create completion map for quick lookup
   const completionMap = useMemo(() => {
     const map = new Map<string, { mind: number; body: number; soul: number }>();
     completions.forEach((completion) => {
@@ -36,7 +36,7 @@ export function ActivityGraph({ completions }: ActivityGraphProps) {
     return map;
   }, [completions]);
 
-  // Get color based on completion
+  // get color based on completion
   function getColor(mind: number, body: number, soul: number) {
     if (mind < 0) return "transparent";
 
@@ -64,7 +64,7 @@ export function ActivityGraph({ completions }: ActivityGraphProps) {
     if (body > 0 && soul > 0 && mind === 0) {
       return `rgba(236, 72, 153, ${alpha})`;
     }
-    // All three = Gold/Amber for "perfect day"
+    // all three = gold/amber for "perfect day"
     return `rgba(251, 191, 36, ${alpha})`;
   }
 

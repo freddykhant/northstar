@@ -1,6 +1,4 @@
-/**
- * Shared TypeScript types and interfaces
- */
+// shared typescript types and interfaces
 
 export type CategoryId = "mind" | "body" | "soul";
 

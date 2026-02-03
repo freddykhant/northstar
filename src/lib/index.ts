@@ -1,6 +1,4 @@
-/**
- * Library barrel export
- */
+// library barrel export
 
 export * from "./constants";
 export * from "./types";

@@ -1,6 +1,4 @@
-/**
- * Custom hook for transforming completion data into graph format
- */
+// custom hook for transforming completion data into graph format
 
 "use client";
 
@@ -22,7 +20,7 @@ export function useGraphData(
   return useMemo(() => {
     if (!completionsData) return [];
 
-    // Group completions by date and category
+    // group completions by date and category
     const dataByDate = new Map<
       string,
       { mind: boolean; body: boolean; soul: boolean }
@@ -37,7 +35,7 @@ export function useGraphData(
       dataByDate.get(dateKey)![categoryId] = true;
     });
 
-    // Convert to array format
+    // convert to array format
     return Array.from(dataByDate.entries()).map(([date, categories]) => ({
       date,
       categories,

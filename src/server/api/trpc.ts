@@ -1,11 +1,6 @@
-/**
- * YOU PROBABLY DON'T NEED TO EDIT THIS FILE, UNLESS:
- * 1. You want to modify request context (see Part 1).
- * 2. You want to create a new middleware or type of procedure (see Part 3).
- *
- * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
- * need to use are documented accordingly near the end.
- */
+// trpc server setup - you probably don't need to edit this unless:
+// 1. you want to modify request context (see part 1)
+// 2. you want to create a new middleware or type of procedure (see part 3)
 
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";

@@ -1,6 +1,4 @@
-/**
- * UI Components barrel export
- */
+// ui components barrel export
 
 export { ActivityGraph } from "./activity-graph";
 export { CategoryStatCard } from "./category-stat-card";
