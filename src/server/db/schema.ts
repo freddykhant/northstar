@@ -1,9 +1,9 @@
 import { relations } from "drizzle-orm";
 import {
   index,
-  uniqueIndex,
   pgTableCreator,
   primaryKey,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
 

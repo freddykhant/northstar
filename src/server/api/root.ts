@@ -1,8 +1,8 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
-import { categoryRouter } from "./routers/categories";
-import { habitRouter } from "./routers/habit";
 import { authRouter } from "./routers/auth";
+import { categoryRouter } from "./routers/categories";
 import { completionRouter } from "./routers/completion";
+import { habitRouter } from "./routers/habit";
 import { moodRouter } from "./routers/mood";
 
 /**
