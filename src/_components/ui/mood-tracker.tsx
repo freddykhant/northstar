@@ -85,7 +85,10 @@ export function MoodTracker() {
           const existingIndex = old.findIndex((m) => m.moodDate === today);
           if (existingIndex >= 0) {
             const updated = [...old];
-            updated[existingIndex] = { ...updated[existingIndex]!, level: variables.level };
+            updated[existingIndex] = {
+              ...updated[existingIndex]!,
+              level: variables.level,
+            };
             return updated;
           }
           return [
@@ -107,7 +110,10 @@ export function MoodTracker() {
         const existingIndex = old.findIndex((m) => m.moodDate === today);
         if (existingIndex >= 0) {
           const updated = [...old];
-          updated[existingIndex] = { ...updated[existingIndex]!, level: variables.level };
+          updated[existingIndex] = {
+            ...updated[existingIndex]!,
+            level: variables.level,
+          };
           return updated;
         }
         return [
@@ -136,7 +142,10 @@ export function MoodTracker() {
     onError: (_error, _variables, context) => {
       // rollback on error
       if (context?.previousTodayMood !== undefined) {
-        utils.mood.getByDate.setData({ date: today }, context.previousTodayMood);
+        utils.mood.getByDate.setData(
+          { date: today },
+          context.previousTodayMood,
+        );
       }
       if (context?.previousWeekMoods) {
         utils.mood.getRange.setData(
