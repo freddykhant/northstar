@@ -16,6 +16,7 @@ export default function HabitsPage() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingHabit, setEditingHabit] = useState<number | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -308,14 +309,20 @@ export default function HabitsPage() {
                         <div
                           className={`flex h-10 w-10 items-center justify-center rounded-lg ${config.color}`}
                         >
-                          <Icon className="h-5 w-5 text-white" strokeWidth={2.5} />
+                          <Icon
+                            className="h-5 w-5 text-white"
+                            strokeWidth={2.5}
+                          />
                         </div>
                         <div>
-                          <h2 className={`text-xl font-bold ${config.textColor}`}>
+                          <h2
+                            className={`text-xl font-bold ${config.textColor}`}
+                          >
                             {config.label}
                           </h2>
                           <p className="text-xs text-zinc-500">
-                            {categoryHabits.length} {categoryHabits.length === 1 ? "habit" : "habits"}
+                            {categoryHabits.length}{" "}
+                            {categoryHabits.length === 1 ? "habit" : "habits"}
                           </p>
                         </div>
                       </div>
@@ -345,14 +352,16 @@ export default function HabitsPage() {
                             onDelete={(id) => deleteMutation.mutate({ id })}
                             isToggling={toggleMutation.isPending}
                             isDeleting={deleteMutation.isPending}
+                            showMenu={openMenuId === habit.id}
+                            onToggleMenu={(id) => setOpenMenuId(openMenuId === id ? null : id)}
                           />
                         ))}
                       </AnimatePresence>
                       {categoryHabits.length === 0 && (
-                        <div className={`rounded-xl border ${config.borderColor} ${config.lightBg} p-4 text-center`}>
-                          <p className="text-sm text-zinc-500">
-                            No habits yet
-                          </p>
+                        <div
+                          className={`rounded-xl border ${config.borderColor} ${config.lightBg} p-4 text-center`}
+                        >
+                          <p className="text-sm text-zinc-500">No habits yet</p>
                         </div>
                       )}
                     </div>
@@ -394,6 +403,8 @@ function HabitCard({
   onDelete,
   isToggling,
   isDeleting,
+  showMenu,
+  onToggleMenu,
 }: {
   habit: any;
   config: any;
@@ -402,9 +413,9 @@ function HabitCard({
   onDelete: (id: number) => void;
   isToggling: boolean;
   isDeleting: boolean;
+  showMenu: boolean;
+  onToggleMenu: (id: number) => void;
 }) {
-  const [showMenu, setShowMenu] = useState(false);
-
   return (
     <motion.div
       layout
@@ -412,7 +423,7 @@ function HabitCard({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       whileHover={{ y: -2 }}
-      className={`group relative overflow-hidden rounded-2xl border ${config.borderColor} bg-white p-4 shadow-sm transition-all hover:shadow-md dark:bg-white/3`}
+      className={`group relative rounded-2xl border ${config.borderColor} bg-white p-4 shadow-sm transition-all hover:shadow-md dark:bg-white/3 ${showMenu ? "z-50" : ""}`}
     >
       {/* Content */}
       <div className="flex items-start justify-between">
@@ -468,7 +479,7 @@ function HabitCard({
           {/* Menu Button */}
           <div className="relative">
             <motion.button
-              onClick={() => setShowMenu(!showMenu)}
+              onClick={() => onToggleMenu(habit.id)}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               className="rounded-lg p-1.5 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-zinc-100 dark:hover:bg-white/10"
@@ -492,19 +503,19 @@ function HabitCard({
               {showMenu && (
                 <>
                   <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setShowMenu(false)}
+                    className="fixed inset-0 z-40"
+                    onClick={() => onToggleMenu(habit.id)}
                   />
                   <motion.div
                     initial={{ opacity: 0, y: -10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                    className="absolute top-full right-0 z-20 mt-2 w-40 rounded-xl border border-zinc-200 bg-white py-1.5 shadow-xl dark:border-white/10 dark:bg-zinc-900"
+                    className="absolute top-full right-0 z-50 mt-2 w-40 rounded-xl border border-zinc-200 bg-white py-1.5 shadow-xl dark:border-white/10 dark:bg-zinc-900"
                   >
                     <button
                       onClick={() => {
                         onEdit(habit);
-                        setShowMenu(false);
+                        onToggleMenu(habit.id);
                       }}
                       className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-white/5"
                     >
@@ -513,7 +524,7 @@ function HabitCard({
                     <button
                       onClick={() => {
                         onToggle(habit.id);
-                        setShowMenu(false);
+                        onToggleMenu(habit.id);
                       }}
                       disabled={isToggling}
                       className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-zinc-700 transition-colors hover:bg-zinc-100 disabled:opacity-50 dark:text-zinc-300 dark:hover:bg-white/5"
@@ -526,7 +537,7 @@ function HabitCard({
                         if (confirm(`Delete "${habit.name}"?`)) {
                           onDelete(habit.id);
                         }
-                        setShowMenu(false);
+                        onToggleMenu(habit.id);
                       }}
                       disabled={isDeleting}
                       className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50 dark:text-red-400 dark:hover:bg-red-500/10"
@@ -619,6 +630,7 @@ function CreateHabitModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={onClose}
         >
           {/* Backdrop */}
           <motion.div
@@ -626,7 +638,6 @@ function CreateHabitModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="absolute inset-0 bg-black/50 backdrop-blur-md dark:bg-black/90"
-            onClick={onClose}
           />
 
           {/* Modal Content */}
@@ -636,6 +647,7 @@ function CreateHabitModal({
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", bounce: 0.3 }}
             className="relative w-full max-w-2xl"
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="rounded-3xl border border-zinc-200 bg-white/95 p-8 shadow-2xl shadow-black/20 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-900/95 dark:shadow-black/50">
               {/* Close Button */}
