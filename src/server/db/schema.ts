@@ -82,6 +82,28 @@ export const completions = createTable(
   ],
 );
 
+export const moods = createTable(
+  "mood",
+  (d) => ({
+    id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+    userId: d
+      .varchar({ length: 255 })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    level: d.integer().notNull(), // 1-5 mood level
+    moodDate: d.date().notNull(), // just the date, not timestamp
+    createdAt: d
+      .timestamp({ withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+  }),
+  (t) => [
+    // one mood per day per user
+    uniqueIndex("mood_unique_idx").on(t.userId, t.moodDate),
+    index("mood_user_date_idx").on(t.userId, t.moodDate),
+  ],
+);
+
 // app schema relations
 
 export const categoriesRelations = relations(categories, ({ many }) => ({
@@ -111,6 +133,13 @@ export const completionsRelations = relations(completions, ({ one }) => ({
   }),
 }));
 
+export const moodsRelations = relations(moods, ({ one }) => ({
+  user: one(users, {
+    fields: [moods.userId],
+    references: [users.id],
+  }),
+}));
+
 // auth related schemas
 
 export const users = createTable("user", (d) => ({
@@ -135,6 +164,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   habits: many(habits),
   completions: many(completions),
+  moods: many(moods),
 }));
 
 export const accounts = createTable(

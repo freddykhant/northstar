@@ -3,6 +3,7 @@ import { categoryRouter } from "./routers/categories";
 import { habitRouter } from "./routers/habit";
 import { authRouter } from "./routers/auth";
 import { completionRouter } from "./routers/completion";
+import { moodRouter } from "./routers/mood";
 
 /**
  * This is the primary router for your server.
@@ -14,6 +15,7 @@ export const appRouter = createTRPCRouter({
   category: categoryRouter,
   habit: habitRouter,
   completion: completionRouter,
+  mood: moodRouter,
 });
 
 // export type definition of API
