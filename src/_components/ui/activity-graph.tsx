@@ -43,9 +43,9 @@ export function ActivityGraph({ completions }: ActivityGraphProps) {
     const map = new Map<string, { mind: number; body: number; soul: number }>();
     completions.forEach((completion) => {
       map.set(completion.date, {
-        mind: completion.categories.mind || 0,
-        body: completion.categories.body || 0,
-        soul: completion.categories.soul || 0,
+        mind: completion.categories.mind ? 1 : 0,
+        body: completion.categories.body ? 1 : 0,
+        soul: completion.categories.soul ? 1 : 0,
       });
     });
     return map;
@@ -244,7 +244,8 @@ function MonthView({
     // Fill in days
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
-      const dateStr = date.toISOString().split("T")[0]!;
+      // Use local date format (YYYY-MM-DD) to match completion data
+      const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
       const completion = completionMap.get(dateStr) ?? {
         mind: 0,
         body: 0,
@@ -389,7 +390,8 @@ function WeekView({
     for (let i = 0; i < 7; i++) {
       const date = new Date(startOfWeek);
       date.setDate(startOfWeek.getDate() + i);
-      const dateStr = date.toISOString().split("T")[0]!;
+      // Use local date format (YYYY-MM-DD) to match completion data
+      const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
       const completion = completionMap.get(dateStr) ?? {
         mind: 0,
         body: 0,
