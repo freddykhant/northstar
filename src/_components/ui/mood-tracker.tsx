@@ -18,14 +18,6 @@ const MOOD_EMOJIS: Record<MoodLevel, string> = {
   5: "😄",
 };
 
-const MOOD_LABELS: Record<MoodLevel, string> = {
-  1: "Struggling",
-  2: "Not great",
-  3: "Okay",
-  4: "Good",
-  5: "Amazing",
-};
-
 export function MoodTracker() {
   const [selectedMood, setSelectedMood] = useState<MoodLevel | null>(null);
   const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -56,7 +48,7 @@ export function MoodTracker() {
   return (
     <motion.div
       layout
-      className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white p-6 backdrop-blur-sm dark:border-white/6 dark:bg-white/3"
+      className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white p-4 backdrop-blur-sm dark:border-white/6 dark:bg-white/3"
     >
       {!hasSubmitted ? (
         // Input Mode
@@ -74,21 +66,18 @@ export function MoodTracker() {
             </span>
           </div>
 
-          <div className="mb-6 flex justify-between gap-2">
+          <div className="mb-4 flex justify-between gap-2">
             {([1, 2, 3, 4, 5] as MoodLevel[]).map((level) => (
               <button
                 key={level}
                 onClick={() => setSelectedMood(level)}
-                className={`flex flex-1 flex-col items-center gap-2 rounded-lg border-2 p-3 transition-all ${
+                className={`flex flex-1 items-center justify-center rounded-lg border-2 p-2 transition-all ${
                   selectedMood === level
                     ? "scale-105 border-blue-500 bg-blue-50 shadow-md dark:bg-blue-950/30"
                     : "border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 dark:border-white/10 dark:hover:bg-white/5"
                 }`}
               >
                 <span className="text-2xl">{MOOD_EMOJIS[level]}</span>
-                <span className="text-xs text-zinc-600 dark:text-zinc-400">
-                  {MOOD_LABELS[level]}
-                </span>
               </button>
             ))}
           </div>
@@ -141,11 +130,18 @@ export function MoodTracker() {
               {/* Week Bar Chart */}
               <div className="mb-6 flex items-end justify-between gap-2">
                 {weekData.map((day, i) => (
-                  <div key={i} className="flex flex-1 flex-col items-center gap-2">
+                  <div
+                    key={i}
+                    className="flex flex-1 flex-col items-center gap-2"
+                  >
                     <motion.div
                       initial={{ height: 0 }}
                       animate={{ height: `${(day.level / 5) * 100}%` }}
-                      transition={{ delay: i * 0.1, type: "spring", bounce: 0.4 }}
+                      transition={{
+                        delay: i * 0.1,
+                        type: "spring",
+                        bounce: 0.4,
+                      }}
                       className="w-full rounded-t-lg bg-linear-to-t from-blue-500 via-purple-500 to-pink-500"
                       style={{ minHeight: "20px", maxHeight: "120px" }}
                     />
@@ -205,7 +201,13 @@ export function MoodTracker() {
                       }}
                     />
                     <defs>
-                      <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <linearGradient
+                        id="gradient"
+                        x1="0%"
+                        y1="0%"
+                        x2="100%"
+                        y2="100%"
+                      >
                         <stop offset="0%" stopColor="#3b82f6" />
                         <stop offset="50%" stopColor="#a855f7" />
                         <stop offset="100%" stopColor="#ec4899" />
