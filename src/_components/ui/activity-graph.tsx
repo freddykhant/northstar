@@ -289,68 +289,75 @@ function MonthView({
         {MONTHS[currentMonth]} {currentYear}
       </div>
 
-      <div className="flex gap-4">
-        {/* Day labels */}
-        <div className="flex flex-col gap-[3px] pt-[2px] text-xs text-zinc-500">
-          {DAYS.map((day) => (
-            <div key={day} className="flex h-[28px] w-8 items-center">
-              {day.slice(0, 3)}
-            </div>
-          ))}
-        </div>
+      {/* Day labels (horizontal header) */}
+      <div className="mb-2 flex gap-[3px] pl-10">
+        {DAYS.map((day) => (
+          <div
+            key={day}
+            className="flex h-6 w-[36px] items-center justify-center text-xs text-zinc-500"
+          >
+            {day.slice(0, 3)}
+          </div>
+        ))}
+      </div>
 
-        {/* Grid - horizontally scrollable */}
-        <div className="flex gap-[3px] overflow-x-auto pb-2">
-          {weeks.map((week, weekIndex) => (
-            <div key={weekIndex} className="flex flex-col gap-[3px]">
-              {week.map((dayData, dayIndex) => {
-                const isValid = dayData.day > 0;
-                const hasActivity =
-                  isValid &&
-                  (dayData.mind > 0 || dayData.body > 0 || dayData.soul > 0);
-
-                return (
-                  <div
-                    key={dayIndex}
-                    className={`relative flex h-[28px] w-[28px] items-center justify-center rounded-md transition-all duration-200 ${
-                      hasActivity
-                        ? "hover:scale-110 hover:ring-2 hover:ring-white/30"
-                        : ""
-                    } ${!isValid ? "opacity-0" : ""}`}
-                    style={{
-                      backgroundColor: isValid
-                        ? getColor(dayData.mind, dayData.body, dayData.soul)
-                        : "transparent",
-                      boxShadow: hasActivity
-                        ? `0 0 8px ${getColor(dayData.mind, dayData.body, dayData.soul)}`
-                        : "none",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (isValid) {
-                        const rect = e.currentTarget.getBoundingClientRect();
-                        setHoveredDay({
-                          date: dayData.date,
-                          mind: dayData.mind,
-                          body: dayData.body,
-                          soul: dayData.soul,
-                          x: rect.left + rect.width / 2,
-                          y: rect.top,
-                        });
-                      }
-                    }}
-                    onMouseLeave={() => setHoveredDay(null)}
-                  >
-                    {isValid && (
-                      <span className="text-[10px] font-medium text-zinc-500 dark:text-zinc-400">
-                        {dayData.day}
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
+      {/* Grid - weeks as rows, days as columns */}
+      <div className="flex flex-col gap-[3px] overflow-x-auto">
+        {weeks.map((week, weekIndex) => (
+          <div key={weekIndex} className="flex items-center gap-[3px]">
+            {/* Week label */}
+            <div className="w-8 text-xs text-zinc-500">
+              W{weekIndex + 1}
             </div>
-          ))}
-        </div>
+            
+            {/* Days in the week */}
+            {week.map((dayData, dayIndex) => {
+              const isValid = dayData.day > 0;
+              const hasActivity =
+                isValid &&
+                (dayData.mind > 0 || dayData.body > 0 || dayData.soul > 0);
+
+              return (
+                <div
+                  key={dayIndex}
+                  className={`relative flex h-[36px] w-[36px] items-center justify-center rounded-lg transition-all duration-200 ${
+                    hasActivity
+                      ? "hover:scale-105 hover:ring-2 hover:ring-white/30"
+                      : ""
+                  } ${!isValid ? "opacity-0" : ""}`}
+                  style={{
+                    backgroundColor: isValid
+                      ? getColor(dayData.mind, dayData.body, dayData.soul)
+                      : "transparent",
+                    boxShadow: hasActivity
+                      ? `0 0 10px ${getColor(dayData.mind, dayData.body, dayData.soul)}`
+                      : "none",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (isValid) {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      setHoveredDay({
+                        date: dayData.date,
+                        mind: dayData.mind,
+                        body: dayData.body,
+                        soul: dayData.soul,
+                        x: rect.left + rect.width / 2,
+                        y: rect.top,
+                      });
+                    }
+                  }}
+                  onMouseLeave={() => setHoveredDay(null)}
+                >
+                  {isValid && (
+                    <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                      {dayData.day}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ))}
       </div>
 
       {/* Legend */}
