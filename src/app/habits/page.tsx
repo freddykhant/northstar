@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Brain, Dumbbell, Sparkles, X } from "lucide-react";
+import { Brain, Dumbbell, Plus, Sparkles, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -260,24 +260,35 @@ export default function HabitsPage() {
         <div className="mx-auto max-w-7xl">
           {/* Page Header */}
           <motion.div
-            className="mb-10"
+            className="mb-10 flex items-end justify-between"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <h1 className="mb-2 bg-linear-to-r from-black via-zinc-700 to-zinc-400 bg-clip-text text-5xl font-bold text-transparent dark:from-white dark:via-zinc-100 dark:to-zinc-400">
-              Your Habits
-            </h1>
-            <p className="text-lg text-zinc-600 dark:text-zinc-400">
-              Build your life across{" "}
-              <span className="font-semibold text-blue-500">Mind</span>,{" "}
-              <span className="font-semibold text-red-500">Body</span>, and{" "}
-              <span className="font-semibold text-purple-500">Soul</span>
-            </p>
+            <div>
+              <h1 className="mb-2 bg-linear-to-r from-black via-zinc-700 to-zinc-400 bg-clip-text text-5xl font-bold text-transparent dark:from-white dark:via-zinc-100 dark:to-zinc-400">
+                Your Habits
+              </h1>
+              <p className="text-lg text-zinc-600 dark:text-zinc-400">
+                Build your life across{" "}
+                <span className="font-semibold text-blue-500">Mind</span>,{" "}
+                <span className="font-semibold text-red-500">Body</span>, and{" "}
+                <span className="font-semibold text-purple-500">Soul</span>
+              </p>
+            </div>
+            <motion.button
+              onClick={() => setIsModalOpen(true)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-medium text-white backdrop-blur-sm transition-all hover:bg-white/10"
+            >
+              <Plus className="h-4 w-4" />
+              Add Habit
+            </motion.button>
           </motion.div>
 
-          {/* Category Sections */}
+          {/* 3-Column Layout by Category */}
           {habits && habits.length > 0 ? (
-            <div className="space-y-8">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
               {(["mind", "body", "soul"] as const).map((category, idx) => {
                 const config = categoryConfig[category];
                 const categoryHabits = groupedHabits[category];
@@ -289,29 +300,22 @@ export default function HabitsPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    className="group"
+                    className="flex flex-col"
                   >
-                    {/* Category Header */}
+                    {/* Column Header */}
                     <div className="mb-4 flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <motion.div
-                          className={`flex h-12 w-12 items-center justify-center rounded-xl ${config.color} shadow-lg ${config.glowColor}`}
-                          whileHover={{ scale: 1.1, rotate: 5 }}
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`flex h-10 w-10 items-center justify-center rounded-lg ${config.color}`}
                         >
-                          <Icon
-                            className="h-6 w-6 text-white"
-                            strokeWidth={2.5}
-                          />
-                        </motion.div>
+                          <Icon className="h-5 w-5 text-white" strokeWidth={2.5} />
+                        </div>
                         <div>
-                          <h2
-                            className={`text-2xl font-bold ${config.textColor}`}
-                          >
+                          <h2 className={`text-xl font-bold ${config.textColor}`}>
                             {config.label}
                           </h2>
-                          <p className="text-sm text-zinc-500 dark:text-zinc-500">
-                            {config.description} • {categoryHabits.length}{" "}
-                            {categoryHabits.length === 1 ? "habit" : "habits"}
+                          <p className="text-xs text-zinc-500">
+                            {categoryHabits.length} {categoryHabits.length === 1 ? "habit" : "habits"}
                           </p>
                         </div>
                       </div>
@@ -320,45 +324,38 @@ export default function HabitsPage() {
                           setFormData({ ...formData, categoryId: category });
                           setIsModalOpen(true);
                         }}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className={`flex items-center gap-2 rounded-xl ${config.lightBg} ${config.textColor} border ${config.borderColor} px-4 py-2 text-sm font-medium transition-all hover:shadow-md`}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className={`rounded-lg ${config.lightBg} ${config.textColor} p-1.5 transition-colors hover:opacity-80`}
                       >
-                        <span>+</span>
-                        <span>Add {config.label} Habit</span>
+                        <Plus className="h-4 w-4" />
                       </motion.button>
                     </div>
 
-                    {/* Habits Grid */}
-                    {categoryHabits.length > 0 ? (
-                      <div className="grid gap-3 md:grid-cols-2">
-                        <AnimatePresence mode="popLayout">
-                          {categoryHabits.map((habit) => (
-                            <HabitCard
-                              key={habit.id}
-                              habit={habit}
-                              config={config}
-                              onEdit={openEditModal}
-                              onToggle={(id) => toggleMutation.mutate({ id })}
-                              onDelete={(id) => deleteMutation.mutate({ id })}
-                              isToggling={toggleMutation.isPending}
-                              isDeleting={deleteMutation.isPending}
-                            />
-                          ))}
-                        </AnimatePresence>
-                      </div>
-                    ) : (
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className={`rounded-2xl border ${config.borderColor} ${config.lightBg} p-6 text-center`}
-                      >
-                        <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                          No {config.label.toLowerCase()} habits yet. Click the
-                          button above to create one!
-                        </p>
-                      </motion.div>
-                    )}
+                    {/* Habits List */}
+                    <div className="flex flex-col gap-3">
+                      <AnimatePresence mode="popLayout">
+                        {categoryHabits.map((habit) => (
+                          <HabitCard
+                            key={habit.id}
+                            habit={habit}
+                            config={config}
+                            onEdit={openEditModal}
+                            onToggle={(id) => toggleMutation.mutate({ id })}
+                            onDelete={(id) => deleteMutation.mutate({ id })}
+                            isToggling={toggleMutation.isPending}
+                            isDeleting={deleteMutation.isPending}
+                          />
+                        ))}
+                      </AnimatePresence>
+                      {categoryHabits.length === 0 && (
+                        <div className={`rounded-xl border ${config.borderColor} ${config.lightBg} p-4 text-center`}>
+                          <p className="text-sm text-zinc-500">
+                            No habits yet
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   </motion.div>
                 );
               })}
