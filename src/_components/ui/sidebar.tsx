@@ -80,7 +80,7 @@ export function Sidebar({ user, onCreateHabit }: SidebarProps) {
         {onCreateHabit && (
           <button
             onClick={onCreateHabit}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-blue-500 via-red-500 to-purple-500 px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-blue-500 via-red-200 to-purple-500 px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl"
           >
             <Plus className="h-4 w-4" />
             Create Habit
