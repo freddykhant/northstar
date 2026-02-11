@@ -7,11 +7,6 @@ import { api } from "~/trpc/react";
 
 type MoodLevel = 1 | 2 | 3 | 4 | 5;
 
-interface MoodData {
-  level: MoodLevel;
-  date: string;
-}
-
 const MOOD_EMOJIS: Record<MoodLevel, string> = {
   1: "😢",
   2: "😕",

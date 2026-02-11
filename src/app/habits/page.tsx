@@ -41,8 +41,7 @@ export default function HabitsPage() {
       setFormData({ name: "", description: "", categoryId: "mind" });
     },
     onError: (error, _variables, context) => {
-      // Optionally show error toast
-      console.error("Failed to create habit:", error);
+      // handle error silently or show toast notification
     },
   });
 
@@ -82,7 +81,6 @@ export default function HabitsPage() {
       if (context?.previousHabits) {
         utils.habit.getAll.setData(undefined, context.previousHabits);
       }
-      console.error("Failed to update habit:", error);
     },
   });
 
@@ -114,7 +112,6 @@ export default function HabitsPage() {
       if (context?.previousHabits) {
         utils.habit.getAll.setData(undefined, context.previousHabits);
       }
-      console.error("Failed to toggle habit:", error);
     },
   });
 
@@ -142,7 +139,6 @@ export default function HabitsPage() {
       if (context?.previousHabits) {
         utils.habit.getAll.setData(undefined, context.previousHabits);
       }
-      console.error("Failed to delete habit:", error);
     },
   });
 
@@ -251,10 +247,7 @@ export default function HabitsPage() {
       <GradientBackground />
 
       {/* Sidebar */}
-      <Sidebar
-        user={session?.user}
-        onCreateHabit={() => setIsModalOpen(true)}
-      />
+      <Sidebar user={session?.user} />
 
       {/* Content */}
       <main className="relative z-10 ml-64 flex-1 px-6 py-8">

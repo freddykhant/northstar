@@ -1,6 +1,5 @@
 "use client";
 
-import { Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton } from "./user-button";
@@ -11,10 +10,9 @@ interface SidebarProps {
     email?: string | null;
     image?: string | null;
   } | null;
-  onCreateHabit?: () => void;
 }
 
-export function Sidebar({ user, onCreateHabit }: SidebarProps) {
+export function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname();
 
   const navItems = [
@@ -76,17 +74,6 @@ export function Sidebar({ user, onCreateHabit }: SidebarProps) {
 
       {/* Bottom Actions */}
       <div className="space-y-3 border-t border-zinc-200/60 p-4 dark:border-white/10">
-        {/* Create Habit Button */}
-        {onCreateHabit && (
-          <button
-            onClick={onCreateHabit}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-blue-500 via-red-200 to-purple-500 px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl"
-          >
-            <Plus className="h-4 w-4" />
-            Create Habit
-          </button>
-        )}
-
         {/* User Button */}
         {user && <UserButton user={user} position="sidebar" />}
       </div>
