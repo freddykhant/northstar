@@ -1,5 +1,6 @@
 import { and, eq, gte, lte } from "drizzle-orm";
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { completions, habits } from "~/server/db/schema";
 
@@ -35,7 +36,10 @@ export const completionRouter = createTRPCRouter({
       });
 
       if (!habit) {
-        throw new Error("Habit not found or does not belong to you");
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Habit not found or does not belong to you",
+        });
       }
 
       const existingCompletion = await ctx.db.query.completions.findFirst({
