@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
 import { UserButton } from "./user-button";
 
 interface SidebarProps {
@@ -14,14 +16,15 @@ interface SidebarProps {
 
 export function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const navItems = [
     { href: "/home", label: "Home" },
     { href: "/habits", label: "Habits" },
   ];
 
-  return (
-    <aside className="fixed top-6 left-0 z-40 flex h-[calc(100vh-3rem)] w-64 flex-col overflow-hidden rounded-r-2xl border-t border-r border-b border-zinc-200/60 bg-white/70 shadow-2xl shadow-black/5 backdrop-blur-2xl dark:border-white/10 dark:bg-zinc-900/50">
+  const sidebarContent = (
+    <>
       {/* Logo */}
       <div className="flex items-center gap-3 border-b border-zinc-200/60 px-6 py-5 dark:border-white/10">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 via-red-500 to-purple-500 shadow-lg">
@@ -53,6 +56,7 @@ export function Sidebar({ user }: SidebarProps) {
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => setMobileOpen(false)}
               className={`group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
                 isActive
                   ? "bg-linear-to-r from-blue-500/10 via-red-500/10 to-purple-500/10 text-black shadow-sm dark:text-white"
@@ -74,9 +78,42 @@ export function Sidebar({ user }: SidebarProps) {
 
       {/* Bottom Actions */}
       <div className="space-y-3 border-t border-zinc-200/60 p-4 dark:border-white/10">
-        {/* User Button */}
         {user && <UserButton user={user} position="sidebar" />}
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile hamburger button */}
+      <button
+        className="fixed left-4 top-4 z-50 flex items-center justify-center rounded-xl border border-zinc-200/60 bg-white/80 p-2 shadow backdrop-blur-sm dark:border-white/10 dark:bg-zinc-900/80 md:hidden"
+        onClick={() => setMobileOpen((o) => !o)}
+        aria-label="Toggle navigation"
+      >
+        {mobileOpen ? (
+          <X className="h-5 w-5 text-zinc-700 dark:text-zinc-300" />
+        ) : (
+          <Menu className="h-5 w-5 text-zinc-700 dark:text-zinc-300" />
+        )}
+      </button>
+
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm md:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* Sidebar — always visible on md+, slide-in on mobile */}
+      <aside
+        className={`fixed top-6 left-0 z-40 flex h-[calc(100vh-3rem)] w-64 flex-col overflow-hidden rounded-r-2xl border-t border-r border-b border-zinc-200/60 bg-white/70 shadow-2xl shadow-black/5 backdrop-blur-2xl transition-transform duration-300 dark:border-white/10 dark:bg-zinc-900/50 ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }`}
+      >
+        {sidebarContent}
+      </aside>
+    </>
   );
 }
