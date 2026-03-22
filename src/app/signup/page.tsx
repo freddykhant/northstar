@@ -154,7 +154,7 @@ export default function SignUpPage() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Min. 6 characters"
+                  placeholder="Min. 8 characters"
                   required
                   className="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-4 py-3 text-black placeholder-zinc-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-white dark:placeholder-zinc-500 dark:focus:ring-zinc-600"
                 />
