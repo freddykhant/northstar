@@ -175,6 +175,9 @@ export function CheckinList({
               <motion.button
                 key={habit.id}
                 layout
+                role="checkbox"
+                aria-checked={isCompleted}
+                aria-label={`${habit.name} — ${isCompleted ? "completed" : "not completed"}`}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, scale: 0.8 }}
@@ -245,7 +248,7 @@ export function CheckinList({
                   }
                   transition={{ duration: 0.5 }}
                 >
-                  <span className="text-lg">{CATEGORY_EMOJIS[categoryId]}</span>
+                  <span className="text-lg" aria-hidden="true">{CATEGORY_EMOJIS[categoryId]}</span>
                 </motion.div>
 
                 {/* Enhanced Label */}

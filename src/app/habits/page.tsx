@@ -314,6 +314,7 @@ export default function HabitsPage() {
                           <Icon
                             className="h-5 w-5 text-white"
                             strokeWidth={2.5}
+                            aria-hidden="true"
                           />
                         </div>
                         <div>
