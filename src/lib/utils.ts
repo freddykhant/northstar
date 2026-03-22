@@ -16,11 +16,10 @@ export function formatDate(dateStr: string): string {
 }
 
 /**
- * Get today's date in YYYY-MM-DD format
+ * Get today's date in YYYY-MM-DD format (local time, not UTC)
  */
 export function getTodayDate(): string {
-  const date = new Date();
-  return date.toISOString().split("T")[0]!;
+  return formatDateAsLocal(new Date());
 }
 
 /**
@@ -49,8 +48,8 @@ export function getCurrentYearRange(): { startDate: string; endDate: string } {
   const endOfYear = new Date(currentYear, 11, 31);
 
   return {
-    startDate: startOfYear.toISOString().split("T")[0]!,
-    endDate: endOfYear.toISOString().split("T")[0]!,
+    startDate: formatDateAsLocal(startOfYear),
+    endDate: formatDateAsLocal(endOfYear),
   };
 }
 

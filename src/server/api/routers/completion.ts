@@ -6,11 +6,14 @@ import { completions, habits } from "~/server/db/schema";
 // drizzle returns dates in different formats depending on the driver
 // this ensures we always get YYYY-MM-DD strings for consistency
 function normalizeDateString(date: string | Date | unknown): string {
+  if (date instanceof Date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
   if (typeof date === "string") {
     return date.split("T")[0]!;
-  }
-  if (date instanceof Date) {
-    return date.toISOString().split("T")[0]!;
   }
   return String(date).split("T")[0]!;
 }
@@ -222,12 +225,13 @@ export const completionRouter = createTRPCRouter({
 
     // current streak: walk backwards from today until we hit a day with no completions
     // if today is empty, check yesterday first to allow for ongoing streaks
-    const today = new Date().toISOString().split("T")[0]!;
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
     let currentStreak = 0;
-    let checkDate = new Date(today);
+    let checkDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     while (true) {
-      const dateStr = checkDate.toISOString().split("T")[0]!;
+      const dateStr = `${checkDate.getFullYear()}-${String(checkDate.getMonth() + 1).padStart(2, "0")}-${String(checkDate.getDate()).padStart(2, "0")}`;
       if (completionsByDate.has(dateStr)) {
         currentStreak++;
         checkDate.setDate(checkDate.getDate() - 1);
@@ -262,9 +266,8 @@ export const completionRouter = createTRPCRouter({
 
     // week percentage: how many of the possible completions did they hit?
     // e.g. 3 active habits over 7 days = 21 possible completions
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    const sevenDaysAgoStr = sevenDaysAgo.toISOString().split("T")[0]!;
+    const sevenDaysAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+    const sevenDaysAgoStr = `${sevenDaysAgo.getFullYear()}-${String(sevenDaysAgo.getMonth() + 1).padStart(2, "0")}-${String(sevenDaysAgo.getDate()).padStart(2, "0")}`;
 
     const weekCompletions = allCompletions.filter((completion) => {
       const dateStr = normalizeDateString(completion.completedDate);
