@@ -1,5 +1,6 @@
 import { and, eq, gte, lte } from "drizzle-orm";
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { moods } from "~/server/db/schema";
 
@@ -16,33 +17,17 @@ export const moodRouter = createTRPCRouter({
       const { level, date } = input;
       const userId = ctx.session.user.id;
 
-      // check if mood already exists for this date
-      const existingMood = await ctx.db.query.moods.findFirst({
-        where: and(eq(moods.userId, userId), eq(moods.moodDate, date)),
-      });
+      // Atomic upsert — avoids race condition between check and insert
+      const [upsertedMood] = await ctx.db
+        .insert(moods)
+        .values({ userId, level, moodDate: date })
+        .onConflictDoUpdate({
+          target: [moods.userId, moods.moodDate],
+          set: { level },
+        })
+        .returning();
 
-      if (existingMood) {
-        // update existing mood
-        const [updatedMood] = await ctx.db
-          .update(moods)
-          .set({ level })
-          .where(eq(moods.id, existingMood.id))
-          .returning();
-
-        return updatedMood;
-      } else {
-        // create new mood
-        const [newMood] = await ctx.db
-          .insert(moods)
-          .values({
-            userId,
-            level,
-            moodDate: date,
-          })
-          .returning();
-
-        return newMood;
-      }
+      return upsertedMood;
     }),
 
   // get mood for a specific date
@@ -114,7 +99,7 @@ export const moodRouter = createTRPCRouter({
       });
 
       if (!existingMood) {
-        throw new Error("Mood not found");
+        throw new TRPCError({ code: "NOT_FOUND", message: "Mood not found" });
       }
 
       await ctx.db.delete(moods).where(eq(moods.id, existingMood.id));

@@ -262,7 +262,7 @@ export const completionRouter = createTRPCRouter({
       const diffTime = currDate.getTime() - prevDate.getTime();
       const diffDays = diffTime / (1000 * 60 * 60 * 24);
 
-      if (diffDays === 1) {
+      if (Math.round(diffDays) === 1) {
         tempStreak++;
       } else {
         bestStreak = Math.max(bestStreak, tempStreak);
