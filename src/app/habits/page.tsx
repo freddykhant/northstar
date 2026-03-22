@@ -251,7 +251,7 @@ export default function HabitsPage() {
       <Sidebar user={session?.user} />
 
       {/* Content */}
-      <main className="relative z-10 ml-64 flex-1 px-6 py-8">
+      <main className="relative z-10 flex-1 px-6 py-8 md:ml-64">
         <div className="mx-auto max-w-7xl">
           {/* Mutation error banner */}
           {mutationError && (

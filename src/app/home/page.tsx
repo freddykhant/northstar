@@ -85,7 +85,7 @@ export default function HomePage() {
       <Sidebar user={session.user} />
 
       {/* Main Content */}
-      <div className="relative z-10 ml-64 flex-1">
+      <div className="relative z-10 flex-1 md:ml-64">
         <div className="mx-auto max-w-7xl px-6 py-8">
           {/* Greeting Header */}
           <div className="mb-10">
