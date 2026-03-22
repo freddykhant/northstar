@@ -131,6 +131,12 @@ export function ActivityGraph({ completions }: ActivityGraphProps) {
         />
       )}
 
+      {completions.length === 0 && (
+        <div className="mt-4 text-center text-sm text-zinc-400">
+          No activity yet — start checking off habits to see your lawn grow.
+        </div>
+      )}
+
       {/* Tooltip */}
       {hoveredDay && viewMode !== "week" && (
         <div
