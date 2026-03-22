@@ -30,22 +30,22 @@ export default function HomePage() {
   const today = useMemo(() => getTodayDate(), []);
   const dateRange = useMemo(() => getCurrentYearRange(), []);
 
-  const { data: habitsWithStatus } = api.completion.getForDate.useQuery(
-    { date: today },
-    { enabled: !!today },
-  );
+  const { data: habitsWithStatus, isError: habitsError } =
+    api.completion.getForDate.useQuery({ date: today }, { enabled: !!today });
 
   const { data: stats } = api.completion.getStatsForDate.useQuery(
     { date: today },
     { enabled: !!today },
   );
 
-  const { data: completionsData } = api.completion.getMyCompletions.useQuery({
-    startDate: dateRange.startDate,
-    endDate: dateRange.endDate,
-  });
+  const { data: completionsData, isError: completionsError } =
+    api.completion.getMyCompletions.useQuery({
+      startDate: dateRange.startDate,
+      endDate: dateRange.endDate,
+    });
 
-  const { data: overallStats } = api.completion.getOverallStats.useQuery();
+  const { data: overallStats, isError: statsError } =
+    api.completion.getOverallStats.useQuery();
 
   const graphData = useGraphData(completionsData);
   const { handleToggle, justCompleted, toggleMutation } = useHabitCompletion({
@@ -71,6 +71,8 @@ export default function HomePage() {
     return null;
   }
 
+  const hasError = habitsError ?? completionsError ?? statsError;
+
   const currentStreak = overallStats?.currentStreak ?? 0;
   const weekPercentage = overallStats?.weekPercentage ?? 0;
   const totalCompleted = overallStats?.totalCompleted ?? 0;
@@ -87,6 +89,13 @@ export default function HomePage() {
       {/* Main Content */}
       <div className="relative z-10 flex-1 md:ml-64">
         <div className="mx-auto max-w-7xl px-6 py-8">
+          {/* Query error banner */}
+          {hasError && (
+            <div className="mb-6 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+              Something went wrong loading your data. Please refresh the page.
+            </div>
+          )}
+
           {/* Greeting Header */}
           <div className="mb-10">
             <h1 className="mb-2 bg-linear-to-r from-black via-zinc-700 to-zinc-400 bg-clip-text py-4 text-5xl font-bold text-transparent dark:from-white dark:via-zinc-100 dark:to-zinc-400">

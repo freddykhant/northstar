@@ -1,4 +1,4 @@
-import { and, eq, gte, lte } from "drizzle-orm";
+import { and, eq, gte, lte, sql } from "drizzle-orm";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -196,13 +196,16 @@ export const completionRouter = createTRPCRouter({
   getOverallStats: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session.user.id;
 
-    const allCompletions = await ctx.db.query.completions.findMany({
-      where: eq(completions.userId, userId),
-      orderBy: (completions, { asc }) => [asc(completions.completedDate)],
-    });
+    // Select only the date column — no need to load all fields for streak/stats
+    const allCompletions = await ctx.db
+      .select({ completedDate: completions.completedDate })
+      .from(completions)
+      .where(eq(completions.userId, userId))
+      .orderBy(completions.completedDate);
 
     const activeHabits = await ctx.db.query.habits.findMany({
       where: and(eq(habits.userId, userId), eq(habits.isActive, true)),
+      columns: { id: true },
     });
 
     const activeHabitsCount = activeHabits.length;
@@ -273,15 +276,22 @@ export const completionRouter = createTRPCRouter({
     const sevenDaysAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
     const sevenDaysAgoStr = `${sevenDaysAgo.getFullYear()}-${String(sevenDaysAgo.getMonth() + 1).padStart(2, "0")}-${String(sevenDaysAgo.getDate()).padStart(2, "0")}`;
 
-    const weekCompletions = allCompletions.filter((completion) => {
-      const dateStr = normalizeDateString(completion.completedDate);
-      return dateStr >= sevenDaysAgoStr && dateStr <= today;
-    });
+    const [weekRow] = await ctx.db
+      .select({ count: sql<number>`count(*)` })
+      .from(completions)
+      .where(
+        and(
+          eq(completions.userId, userId),
+          gte(completions.completedDate, sevenDaysAgoStr),
+          lte(completions.completedDate, today),
+        ),
+      );
 
+    const weekCompletionCount = Number(weekRow?.count ?? 0);
     const possibleCompletions = 7 * activeHabitsCount;
     const weekPercentage =
       possibleCompletions > 0
-        ? Math.round((weekCompletions.length / possibleCompletions) * 100)
+        ? Math.round((weekCompletionCount / possibleCompletions) * 100)
         : 0;
 
     return {
