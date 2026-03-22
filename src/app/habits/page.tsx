@@ -17,6 +17,7 @@ export default function HabitsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingHabit, setEditingHabit] = useState<number | null>(null);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const [mutationError, setMutationError] = useState<string | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -40,8 +41,8 @@ export default function HabitsPage() {
       setIsModalOpen(false);
       setFormData({ name: "", description: "", categoryId: "mind" });
     },
-    onError: (error, _variables, context) => {
-      // handle error silently or show toast notification
+    onError: (error) => {
+      setMutationError(error.message ?? "Failed to create habit. Please try again.");
     },
   });
 
@@ -77,10 +78,10 @@ export default function HabitsPage() {
       setIsModalOpen(false);
     },
     onError: (error, _variables, context) => {
-      // Rollback on error
       if (context?.previousHabits) {
         utils.habit.getAll.setData(undefined, context.previousHabits);
       }
+      setMutationError(error.message ?? "Failed to update habit. Please try again.");
     },
   });
 
@@ -108,10 +109,10 @@ export default function HabitsPage() {
       void utils.habit.getAll.invalidate();
     },
     onError: (error, _variables, context) => {
-      // Rollback on error
       if (context?.previousHabits) {
         utils.habit.getAll.setData(undefined, context.previousHabits);
       }
+      setMutationError(error.message ?? "Failed to update habit. Please try again.");
     },
   });
 
@@ -252,6 +253,14 @@ export default function HabitsPage() {
       {/* Content */}
       <main className="relative z-10 ml-64 flex-1 px-6 py-8">
         <div className="mx-auto max-w-7xl">
+          {/* Mutation error banner */}
+          {mutationError && (
+            <div className="mb-6 flex items-center justify-between rounded-xl bg-red-500/10 px-4 py-3 text-sm text-red-400 border border-red-500/20">
+              <span>{mutationError}</span>
+              <button onClick={() => setMutationError(null)} className="ml-4 text-red-400 hover:text-red-300">✕</button>
+            </div>
+          )}
+
           {/* Page Header */}
           <motion.div
             className="mb-10 flex items-end justify-between"

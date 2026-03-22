@@ -18,6 +18,7 @@ const MOOD_EMOJIS: Record<MoodLevel, string> = {
 export function MoodTracker() {
   const [selectedMood, setSelectedMood] = useState<MoodLevel | null>(null);
   const [viewMode, setViewMode] = useState<"week" | "year">("week");
+  const [moodError, setMoodError] = useState<string | null>(null);
 
   const today = formatDateAsLocal(new Date());
 
@@ -134,7 +135,8 @@ export function MoodTracker() {
       });
       void utils.mood.getYearMoods.invalidate();
     },
-    onError: (_error, _variables, context) => {
+    onError: (error, _variables, context) => {
+      setMoodError(error.message ?? "Failed to save mood. Please try again.");
       // rollback on error
       if (context?.previousTodayMood !== undefined) {
         utils.mood.getByDate.setData(
@@ -197,6 +199,7 @@ export function MoodTracker() {
 
   const handleSubmit = () => {
     if (selectedMood) {
+      setMoodError(null);
       setMoodMutation.mutate({
         level: selectedMood,
         date: today,
@@ -219,6 +222,12 @@ export function MoodTracker() {
       layout
       className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white p-4 backdrop-blur-sm dark:border-white/6 dark:bg-white/3"
     >
+      {moodError && (
+        <div className="mb-3 flex items-center justify-between rounded-lg bg-red-500/10 px-3 py-2 text-xs text-red-400 border border-red-500/20">
+          <span>{moodError}</span>
+          <button onClick={() => setMoodError(null)} className="ml-2 text-red-400 hover:text-red-300">✕</button>
+        </div>
+      )}
       {!hasSubmitted ? (
         // Input Mode
         <motion.div
