@@ -2,6 +2,8 @@
 
 A habit tracker that lights up squares like the greens in your GitHub profile, making it rewarding to see the fruits of your consistency and commitment to your habits.
 
+![Northstar]assets/northstar1.gif)
+
 ## Features
 
 - Create habits under categories - mind, body, soul
