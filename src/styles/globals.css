@@ -2,30 +2,50 @@
 
 @variant dark (&:where(.dark, .dark *));
 
-/* Theme transition */
-* {
-  transition:
-    background-color 0.3s ease,
-    border-color 0.3s ease,
-    color 0.3s ease;
-}
-
 @theme {
+  /* Typography */
   --font-sans:
-    ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display",
-    "SF Pro Text", system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-    "Segoe UI Symbol", "Noto Color Emoji";
+    var(--font-sans), ui-sans-serif, -apple-system, BlinkMacSystemFont,
+    system-ui, sans-serif;
+  --font-serif:
+    var(--font-serif), ui-serif, Georgia, Cambria, "Times New Roman", serif;
 
-  /* Custom Animations */
-  --animate-fade-in: fade-in 0.6s ease-out;
-  --animate-fade-in-up: fade-in-up 0.6s ease-out;
-  --animate-scale-in: scale-in 0.3s ease-out;
-  --animate-bounce-slow: bounce-slow 2s ease-in-out infinite;
-  --animate-float: float 3s ease-in-out infinite;
-  --animate-glow-pulse: glow-pulse 2s ease-in-out infinite;
+  /* Warm paper palette (light) */
+  --color-paper: #f6f3ec;
+  --color-paper-raised: #fbf9f3;
+  --color-ink: #1a1714;
+  --color-ink-muted: #6b645b;
+  --color-hairline: rgba(0, 0, 0, 0.08);
+
+  /* Warm paper palette (dark) */
+  --color-paper-dark: #14110d;
+  --color-paper-dark-raised: #1c1814;
+  --color-ink-dark: #ece7dd;
+  --color-ink-dark-muted: #9a9489;
+  --color-hairline-dark: rgba(255, 255, 255, 0.08);
+
+  /* Single accent — muted ember */
+  --color-ember: #b94a1f;
+  --color-ember-soft: #d9683b;
+
+  /* Earthy category palette (content only — not chrome) */
+  --color-mind: #5b7a99;
+  --color-body: #b5553a;
+  --color-soul: #6f8a5e;
+
+  /* Radii — smaller, more architectural */
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+
+  /* Single elevation */
+  --shadow-card: 0 1px 0 rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.04);
+
+  /* Motion — single fade-in only */
+  --animate-fade-in: fade-in 0.4s ease-out;
+  --animate-fade-in-up: fade-in-up 0.5s ease-out;
 }
 
-/* Keyframe Animations */
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -38,7 +58,7 @@
 @keyframes fade-in-up {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -46,85 +66,44 @@
   }
 }
 
-@keyframes scale-in {
-  from {
-    transform: scale(0);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-
-@keyframes bounce-slow {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-@keyframes glow-pulse {
-  0%,
-  100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-@keyframes shimmer {
-  0%,
-  100% {
-    background-position: 200% center;
-  }
-  50% {
-    background-position: 0% center;
-  }
-}
-
-/* Custom Animation Classes */
 .animate-fade-in {
-  animation: fade-in 0.6s ease-out;
+  animation: fade-in 0.4s ease-out;
 }
 
 .animate-fade-in-up {
-  animation: fade-in-up 0.6s ease-out;
+  animation: fade-in-up 0.5s ease-out;
 }
 
-.animate-scale-in {
-  animation: scale-in 0.3s ease-out;
+/* Interactive elements get a snappy hover/focus transition only */
+a,
+button,
+input,
+select,
+textarea,
+[role="button"] {
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    opacity 0.15s ease;
 }
 
-.animate-bounce-slow {
-  animation: bounce-slow 2s ease-in-out infinite;
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-.animate-glow-pulse {
-  animation: glow-pulse 2s ease-in-out infinite;
-}
-
-.animate-shimmer {
-  animation: shimmer 3s ease-in-out infinite;
-}
-
-/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-feature-settings: "ss01", "cv11";
+}
+
+.dark body {
+  background-color: var(--color-paper-dark);
+  color: var(--color-ink-dark);
+}
+
+/* Tabular numerals where we render numbers */
+.tabular {
+  font-variant-numeric: tabular-nums;
 }
