@@ -1,45 +1,32 @@
-/**
- * GlassCard - Reusable glassmorphism card component
- */
-
 import type { PropsWithChildren } from "react";
 
-interface GlassCardProps extends PropsWithChildren {
+interface SurfaceCardProps extends PropsWithChildren {
   className?: string;
 }
 
-export function GlassCard({ children, className = "" }: GlassCardProps) {
+export function GlassCard({ children, className = "" }: SurfaceCardProps) {
   return (
     <div
-      className={`overflow-hidden rounded-3xl border border-zinc-200 bg-white/70 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-900/70 ${className}`}
+      className={`overflow-hidden rounded-[12px] border border-black/8 bg-[var(--color-paper-raised)] dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)] ${className}`}
     >
       {children}
     </div>
   );
 }
 
-interface GlassCardHeaderProps extends PropsWithChildren {
-  className?: string;
-}
-
 export function GlassCardHeader({
   children,
   className = "",
-}: GlassCardHeaderProps) {
+}: SurfaceCardProps) {
   return (
-    <div className={`border-b border-zinc-200 p-6 dark:border-zinc-800 ${className}`}>
+    <div
+      className={`border-b border-black/8 px-6 py-4 dark:border-white/8 ${className}`}
+    >
       {children}
     </div>
   );
 }
 
-interface GlassCardBodyProps extends PropsWithChildren {
-  className?: string;
-}
-
-export function GlassCardBody({
-  children,
-  className = "",
-}: GlassCardBodyProps) {
+export function GlassCardBody({ children, className = "" }: SurfaceCardProps) {
   return <div className={`p-6 ${className}`}>{children}</div>;
 }

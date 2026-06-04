@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton } from "./user-button";
@@ -17,44 +16,41 @@ export function NorthstarHeader({ user }: NorthstarHeaderProps) {
   const pathname = usePathname();
 
   return (
-    <header className="relative z-50 flex items-center justify-between px-6 py-4">
-      <div className="flex items-center gap-8">
-        <Link href="/home" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg">
-            <Image
-              src="/northstar-logo.png"
-              alt="Northstar"
-              width={64}
-              height={64}
-              className="h-full w-full object-cover"
-            />
-          </div>
-          <span className="text-lg font-semibold text-black dark:text-white">
-            Northstar
+    <header className="relative z-50 flex items-center justify-between border-b border-black/8 px-6 py-4 dark:border-white/8">
+      <div className="flex items-center gap-10">
+        <Link href="/home" className="group flex items-baseline gap-2">
+          <span
+            aria-hidden
+            className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-ember)]"
+          />
+          <span
+            className="font-serif text-[19px] italic tracking-tight text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]"
+            style={{ fontOpticalSizing: "auto" }}
+          >
+            northstar
           </span>
         </Link>
 
-        <nav className="flex items-center gap-6">
-          <Link
-            href="/home"
-            className={`text-sm transition-colors ${
-              pathname === "/home"
-                ? "text-black dark:text-white"
-                : "text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-white"
-            }`}
-          >
-            Home
-          </Link>
-          <Link
-            href="/habits"
-            className={`text-sm transition-colors ${
-              pathname === "/habits"
-                ? "text-black dark:text-white"
-                : "text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-white"
-            }`}
-          >
-            Habits
-          </Link>
+        <nav className="flex items-center gap-7">
+          {[
+            { href: "/home", label: "Home" },
+            { href: "/habits", label: "Habits" },
+          ].map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`text-[13px] ${
+                  isActive
+                    ? "text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]"
+                    : "text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] dark:text-[var(--color-ink-dark-muted)] dark:hover:text-[var(--color-ink-dark)]"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
       </div>
 

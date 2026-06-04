@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { List, X } from "@phosphor-icons/react";
 import { UserButton } from "./user-button";
 
 interface SidebarProps {
@@ -25,31 +25,29 @@ export function Sidebar({ user }: SidebarProps) {
 
   const sidebarContent = (
     <>
-      {/* Logo */}
-      <div className="flex items-center gap-3 border-b border-zinc-200/60 px-6 py-5 dark:border-white/10">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 via-red-500 to-purple-500 shadow-lg">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="white"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-          </svg>
-        </div>
-        <div>
-          <h1 className="text-lg font-bold text-black dark:text-white">
-            Northstar
-          </h1>
-        </div>
+      {/* Wordmark */}
+      <div className="flex items-baseline gap-2 border-b border-black/8 px-6 py-6 dark:border-white/8">
+        <span
+          aria-hidden
+          className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-ember)]"
+        />
+        <span
+          className="font-serif text-[20px] italic tracking-tight text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]"
+          style={{ fontOpticalSizing: "auto" }}
+        >
+          northstar
+        </span>
+      </div>
+
+      {/* Section label */}
+      <div className="px-6 pt-6 pb-2">
+        <span className="text-[10px] font-medium tracking-[0.14em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
+          Navigate
+        </span>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 p-4">
+      <nav className="flex-1 px-3">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -57,27 +55,23 @@ export function Sidebar({ user }: SidebarProps) {
               key={item.href}
               href={item.href}
               onClick={() => setMobileOpen(false)}
-              className={`group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
+              className={`relative flex items-center gap-3 rounded-[6px] px-3 py-2 text-[13px] ${
                 isActive
-                  ? "bg-linear-to-r from-blue-500/10 via-red-500/10 to-purple-500/10 text-black shadow-sm dark:text-white"
-                  : "text-zinc-600 hover:bg-zinc-100 hover:text-black dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-white"
+                  ? "text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]"
+                  : "text-[var(--color-ink-muted)] hover:bg-black/3 hover:text-[var(--color-ink)] dark:text-[var(--color-ink-dark-muted)] dark:hover:bg-white/4 dark:hover:text-[var(--color-ink-dark)]"
               }`}
             >
-              <div
-                className={`h-1.5 w-1.5 rounded-full transition-all ${
-                  isActive
-                    ? "bg-linear-to-r from-blue-500 via-red-500 to-purple-500"
-                    : "bg-zinc-400 dark:bg-zinc-600"
-                }`}
-              />
+              {isActive && (
+                <span className="absolute top-1.5 bottom-1.5 left-0 w-[2px] rounded-full bg-[var(--color-ember)]" />
+              )}
               {item.label}
             </Link>
           );
         })}
       </nav>
 
-      {/* Bottom Actions */}
-      <div className="space-y-3 border-t border-zinc-200/60 p-4 dark:border-white/10">
+      {/* Bottom */}
+      <div className="border-t border-black/8 p-4 dark:border-white/8">
         {user && <UserButton user={user} position="sidebar" />}
       </div>
     </>
@@ -85,30 +79,30 @@ export function Sidebar({ user }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile hamburger button */}
+      {/* Mobile hamburger */}
       <button
-        className="fixed left-4 top-4 z-50 flex items-center justify-center rounded-xl border border-zinc-200/60 bg-white/80 p-2 shadow backdrop-blur-sm dark:border-white/10 dark:bg-zinc-900/80 md:hidden"
+        className="fixed top-4 left-4 z-50 flex items-center justify-center rounded-[6px] border border-black/8 bg-[var(--color-paper-raised)] p-2 dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)] md:hidden"
         onClick={() => setMobileOpen((o) => !o)}
         aria-label="Toggle navigation"
       >
         {mobileOpen ? (
-          <X className="h-5 w-5 text-zinc-700 dark:text-zinc-300" />
+          <X size={18} weight="regular" />
         ) : (
-          <Menu className="h-5 w-5 text-zinc-700 dark:text-zinc-300" />
+          <List size={18} weight="regular" />
         )}
       </button>
 
       {/* Mobile overlay */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-30 bg-black/30 md:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
-      {/* Sidebar — always visible on md+, slide-in on mobile */}
+      {/* Sidebar */}
       <aside
-        className={`fixed top-6 left-0 z-40 flex h-[calc(100vh-3rem)] w-64 flex-col overflow-hidden rounded-r-2xl border-t border-r border-b border-zinc-200/60 bg-white/70 shadow-2xl shadow-black/5 backdrop-blur-2xl transition-transform duration-300 dark:border-white/10 dark:bg-zinc-900/50 ${
+        className={`fixed top-0 left-0 z-40 flex h-screen w-60 flex-col overflow-hidden border-r border-black/8 bg-[var(--color-paper)] transition-transform duration-200 dark:border-white/8 dark:bg-[var(--color-paper-dark)] ${
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
