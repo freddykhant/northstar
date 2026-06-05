@@ -1,8 +1,4 @@
-/**
- * CategoryBadge - Reusable badge for displaying categories
- */
-
-import { CATEGORY_COLORS } from "~/lib/constants";
+import { CATEGORY_HEX, CATEGORY_LABELS } from "~/lib/constants";
 import type { CategoryId } from "~/lib/types";
 
 interface CategoryBadgeProps {
@@ -10,13 +6,16 @@ interface CategoryBadgeProps {
 }
 
 export function CategoryBadge({ categoryId }: CategoryBadgeProps) {
-  const colors = CATEGORY_COLORS[categoryId];
-
   return (
     <span
-      className={`inline-block rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide ${colors.badge}`}
+      className="inline-flex items-center gap-1.5 rounded-full border border-black/8 px-2 py-0.5 text-[10px] font-medium tracking-[0.12em] text-[var(--color-ink-muted)] uppercase dark:border-white/8 dark:text-[var(--color-ink-dark-muted)]"
     >
-      {categoryId}
+      <span
+        aria-hidden
+        className="inline-block h-1.5 w-1.5 rounded-full"
+        style={{ backgroundColor: CATEGORY_HEX[categoryId] }}
+      />
+      {CATEGORY_LABELS[categoryId]}
     </span>
   );
 }

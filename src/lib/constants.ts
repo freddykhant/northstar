@@ -16,38 +16,57 @@ export const CATEGORY_LABELS: Record<CategoryId, string> = {
   soul: "Soul",
 } as const;
 
+// Muted earthy tokens — slate-blue / terracotta / sage
+// Hex values mirror the CSS vars in globals.css so they can be used inline.
+export const CATEGORY_HEX: Record<CategoryId, string> = {
+  mind: "#5b7a99",
+  body: "#b5553a",
+  soul: "#6f8a5e",
+} as const;
+
+export const CATEGORY_DESCRIPTIONS: Record<CategoryId, string> = {
+  mind: "Mental & intellectual growth",
+  body: "Physical health & fitness",
+  soul: "Emotional & spiritual wellbeing",
+} as const;
+
+// Legacy shape kept for compatibility with feature components not yet on the
+// new tokens (habit-graph, etc.). New code should read CATEGORY_HEX instead.
 export const CATEGORY_COLORS = {
   mind: {
-    badge: "bg-blue-500/20 text-blue-300 border-blue-500/30",
-    card: "border-blue-500/20 bg-gradient-to-br from-blue-500/10 to-blue-600/5",
-    cardHover: "hover:border-blue-500/30",
-    glow: "bg-blue-500/20",
-    text: "text-blue-300",
-    bg: "bg-blue-500",
-    border: "border-blue-500/50",
-    shadow: "shadow-blue-500/50",
-    shadowHover: "hover:shadow-blue-500/30",
+    badge:
+      "bg-[color-mix(in_srgb,var(--color-mind)_14%,transparent)] text-[var(--color-mind)] border-[color-mix(in_srgb,var(--color-mind)_30%,transparent)]",
+    card: "border-black/8 dark:border-white/8 bg-[var(--color-paper-raised)] dark:bg-[var(--color-paper-dark-raised)]",
+    cardHover: "hover:border-black/16 dark:hover:border-white/16",
+    glow: "bg-transparent",
+    text: "text-[var(--color-mind)]",
+    bg: "bg-[var(--color-mind)]",
+    border: "border-[var(--color-mind)]",
+    shadow: "",
+    shadowHover: "",
   },
   body: {
-    badge: "bg-red-500/20 text-red-300 border-red-500/30",
-    card: "border-red-500/20 bg-gradient-to-br from-red-500/10 to-red-600/5",
-    cardHover: "hover:border-red-500/30",
-    glow: "bg-red-500/20",
-    text: "text-red-300",
-    bg: "bg-red-500",
-    border: "border-red-500/50",
-    shadow: "shadow-red-500/50",
-    shadowHover: "hover:shadow-red-500/30",
+    badge:
+      "bg-[color-mix(in_srgb,var(--color-body)_14%,transparent)] text-[var(--color-body)] border-[color-mix(in_srgb,var(--color-body)_30%,transparent)]",
+    card: "border-black/8 dark:border-white/8 bg-[var(--color-paper-raised)] dark:bg-[var(--color-paper-dark-raised)]",
+    cardHover: "hover:border-black/16 dark:hover:border-white/16",
+    glow: "bg-transparent",
+    text: "text-[var(--color-body)]",
+    bg: "bg-[var(--color-body)]",
+    border: "border-[var(--color-body)]",
+    shadow: "",
+    shadowHover: "",
   },
   soul: {
-    badge: "bg-purple-500/20 text-purple-300 border-purple-500/30",
-    card: "border-purple-500/20 bg-gradient-to-br from-purple-500/10 to-purple-600/5",
-    cardHover: "hover:border-purple-500/30",
-    glow: "bg-purple-500/20",
-    text: "text-purple-300",
-    bg: "bg-purple-500",
-    border: "border-purple-500/50",
-    shadow: "shadow-purple-500/50",
-    shadowHover: "hover:shadow-purple-500/30",
+    badge:
+      "bg-[color-mix(in_srgb,var(--color-soul)_14%,transparent)] text-[var(--color-soul)] border-[color-mix(in_srgb,var(--color-soul)_30%,transparent)]",
+    card: "border-black/8 dark:border-white/8 bg-[var(--color-paper-raised)] dark:bg-[var(--color-paper-dark-raised)]",
+    cardHover: "hover:border-black/16 dark:hover:border-white/16",
+    glow: "bg-transparent",
+    text: "text-[var(--color-soul)]",
+    bg: "bg-[var(--color-soul)]",
+    border: "border-[var(--color-soul)]",
+    shadow: "",
+    shadowHover: "",
   },
 } as const;

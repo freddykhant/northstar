@@ -1,8 +1,12 @@
 "use client";
 
-import { MoreHorizontal } from "lucide-react";
+import { DotsThree } from "@phosphor-icons/react";
 import { useState } from "react";
-import { CATEGORY_EMOJIS } from "~/lib/constants";
+import {
+  CATEGORY_DESCRIPTIONS,
+  CATEGORY_HEX,
+  CATEGORY_LABELS,
+} from "~/lib/constants";
 import type { CategoryId } from "~/lib/types";
 
 type Category = "mind" | "body" | "soul";
@@ -33,33 +37,6 @@ interface HabitsListProps {
   isDeleting?: boolean;
 }
 
-const categoryConfig = {
-  mind: {
-    label: "Mind",
-    description: "Mental & intellectual growth",
-    color: "bg-blue-500",
-    textColor: "text-blue-400",
-    borderColor: "border-blue-500/20",
-    glowColor: "shadow-blue-500/20",
-  },
-  body: {
-    label: "Body",
-    description: "Physical health & fitness",
-    color: "bg-red-500",
-    textColor: "text-red-400",
-    borderColor: "border-red-500/20",
-    glowColor: "shadow-red-500/20",
-  },
-  soul: {
-    label: "Soul",
-    description: "Emotional & spiritual wellbeing",
-    color: "bg-purple-500",
-    textColor: "text-purple-400",
-    borderColor: "border-purple-500/20",
-    glowColor: "shadow-purple-500/20",
-  },
-} as const;
-
 export function HabitsList({
   habits,
   onEdit,
@@ -68,7 +45,6 @@ export function HabitsList({
   isToggling = false,
   isDeleting = false,
 }: HabitsListProps) {
-  const [hoveredHabit, setHoveredHabit] = useState<number | null>(null);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
 
   const groupedHabits = {
@@ -78,82 +54,57 @@ export function HabitsList({
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {(Object.keys(groupedHabits) as Category[]).map((category) => {
-        const config = categoryConfig[category];
         const categoryHabits = groupedHabits[category];
-
         if (categoryHabits.length === 0) return null;
 
+        const tint = CATEGORY_HEX[category as CategoryId];
+
         return (
-          <div key={category}>
-            <div className="mb-4 flex items-center gap-3">
-              <div className={`h-3 w-3 rounded-full ${config.color}`} />
-              <div>
-                <h2 className={`text-lg font-medium ${config.textColor}`}>
-                  {config.label}
-                </h2>
-                <p className="text-xs text-zinc-500 dark:text-zinc-500">{config.description}</p>
-              </div>
+          <section key={category}>
+            <div className="mb-4 flex items-baseline gap-3 border-b border-black/8 pb-2 dark:border-white/8">
+              <span
+                aria-hidden
+                className="inline-block h-2 w-2 rounded-full"
+                style={{ backgroundColor: tint }}
+              />
+              <h2 className="text-[11px] font-medium tracking-[0.14em] text-[var(--color-ink)] uppercase dark:text-[var(--color-ink-dark)]">
+                {CATEGORY_LABELS[category as CategoryId]}
+              </h2>
+              <p className="text-[11px] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+                {CATEGORY_DESCRIPTIONS[category as CategoryId]}
+              </p>
             </div>
 
-            <div className="space-y-2">
+            <ul className="divide-y divide-black/8 dark:divide-white/8">
               {categoryHabits.map((habit) => (
-                <div
+                <li
                   key={habit.id}
-                  className={`group relative flex items-center justify-between rounded-xl border border-zinc-200 bg-white p-4 backdrop-blur-sm transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-50 dark:border-white/6 dark:bg-white/3 dark:hover:border-white/10 dark:hover:bg-white/5 ${
-                    hoveredHabit === habit.id
-                      ? `shadow-lg ${config.glowColor}`
-                      : ""
-                  }`}
-                  onMouseEnter={() => setHoveredHabit(habit.id)}
-                  onMouseLeave={() => setHoveredHabit(null)}
+                  className="group flex items-center justify-between py-3.5"
                 >
-                  <div className="flex items-center gap-4">
-                    <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-100 dark:bg-white/5 ${config.textColor}`}
-                    >
-                      <span className="text-xl">
-                        {CATEGORY_EMOJIS[category as CategoryId]}
-                      </span>
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-black dark:text-white">{habit.name}</h3>
-                      {habit.description && (
-                        <p className="text-xs text-zinc-500 dark:text-zinc-500">
-                          {habit.description}
-                        </p>
-                      )}
-                    </div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-[14px] text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]">
+                      {habit.name}
+                    </h3>
+                    {habit.description && (
+                      <p className="mt-0.5 text-[12px] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+                        {habit.description}
+                      </p>
+                    )}
                   </div>
 
-                  <div className="flex items-center gap-4">
-                    {/* Active/Inactive indicator */}
-                    <div
-                      className={`flex h-6 w-6 items-center justify-center rounded-full border-2 transition-all ${
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`text-[10px] font-medium tracking-[0.12em] uppercase ${
                         habit.isActive
-                          ? `${config.color} border-transparent`
-                          : "border-zinc-300 bg-transparent dark:border-zinc-600"
+                          ? "text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]"
+                          : "text-[var(--color-ink-muted)]/60 dark:text-[var(--color-ink-dark-muted)]/60"
                       }`}
                     >
-                      {habit.isActive && (
-                        <svg
-                          className="h-3 w-3 text-white"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={3}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      )}
-                    </div>
+                      {habit.isActive ? "Active" : "Paused"}
+                    </span>
 
-                    {/* More options */}
                     <div className="relative">
                       <button
                         onClick={() =>
@@ -162,27 +113,26 @@ export function HabitsList({
                           )
                         }
                         disabled={isToggling || isDeleting}
-                        className="rounded-lg p-1.5 opacity-0 transition-all group-hover:opacity-100 hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-white/10"
+                        aria-label="More options"
+                        className="rounded-[4px] p-1.5 opacity-0 hover:bg-black/6 group-hover:opacity-100 disabled:opacity-30 dark:hover:bg-white/6"
                       >
-                        <MoreHorizontal className="h-4 w-4 text-zinc-600 dark:text-zinc-400" />
+                        <DotsThree size={16} weight="bold" />
                       </button>
 
                       {openMenuId === habit.id && (
                         <>
-                          {/* Backdrop */}
                           <div
                             className="fixed inset-0 z-10"
                             onClick={() => setOpenMenuId(null)}
                           />
-                          {/* Menu */}
-                          <div className="absolute right-0 top-full z-20 mt-1 w-40 rounded-lg border border-zinc-200 bg-white py-1 shadow-xl dark:border-white/10 dark:bg-zinc-900">
+                          <div className="absolute top-full right-0 z-20 mt-1 w-40 overflow-hidden rounded-[8px] border border-black/8 bg-[var(--color-paper-raised)] py-1 dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)]">
                             <button
                               onClick={() => {
                                 onEdit(habit);
                                 setOpenMenuId(null);
                               }}
                               disabled={isToggling || isDeleting}
-                              className="w-full px-4 py-2 text-left text-sm text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-black disabled:cursor-not-allowed disabled:opacity-50 dark:text-zinc-300 dark:hover:bg-white/5 dark:hover:text-white"
+                              className="w-full px-3 py-2 text-left text-[13px] text-[var(--color-ink)] hover:bg-black/4 disabled:opacity-50 dark:text-[var(--color-ink-dark)] dark:hover:bg-white/4"
                             >
                               Edit
                             </button>
@@ -192,12 +142,9 @@ export function HabitsList({
                                 setOpenMenuId(null);
                               }}
                               disabled={isToggling || isDeleting}
-                              className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-black disabled:cursor-not-allowed disabled:opacity-50 dark:text-zinc-300 dark:hover:bg-white/5 dark:hover:text-white"
+                              className="w-full px-3 py-2 text-left text-[13px] text-[var(--color-ink)] hover:bg-black/4 disabled:opacity-50 dark:text-[var(--color-ink-dark)] dark:hover:bg-white/4"
                             >
-                              {isToggling && (
-                                <div className="h-3 w-3 animate-spin rounded-full border border-zinc-600 border-t-white" />
-                              )}
-                              {habit.isActive ? "Deactivate" : "Activate"}
+                              {habit.isActive ? "Pause" : "Resume"}
                             </button>
                             <button
                               onClick={() => {
@@ -211,11 +158,8 @@ export function HabitsList({
                                 setOpenMenuId(null);
                               }}
                               disabled={isToggling || isDeleting}
-                              className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 transition-colors hover:bg-red-50 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50 dark:text-red-400 dark:hover:bg-red-500/10 dark:hover:text-red-300"
+                              className="w-full px-3 py-2 text-left text-[13px] text-[var(--color-ember)] hover:bg-[var(--color-ember)]/8 disabled:opacity-50"
                             >
-                              {isDeleting && (
-                                <div className="h-3 w-3 animate-spin rounded-full border border-red-600 border-t-red-300" />
-                              )}
                               Delete
                             </button>
                           </div>
@@ -223,10 +167,10 @@ export function HabitsList({
                       )}
                     </div>
                   </div>
-                </div>
+                </li>
               ))}
-            </div>
-          </div>
+            </ul>
+          </section>
         );
       })}
     </div>

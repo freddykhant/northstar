@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, Moon, Sun } from "lucide-react";
+import { CaretDown, Moon, SignOut, Sun } from "@phosphor-icons/react";
 import { signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
@@ -21,7 +21,6 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { theme, setTheme } = useTheme();
 
-  // wait for client-side hydration
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -35,14 +34,8 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
         setIsOpen(false);
       }
     }
-
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    if (isOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
   const initials =
@@ -53,79 +46,65 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
       .toUpperCase()
       .slice(0, 2) || "U";
 
-  // for sidebar, show full user info
   const isSidebar = position === "sidebar";
+
+  const Avatar = ({ size }: { size: number }) => (
+    <div
+      className="flex shrink-0 items-center justify-center rounded-full border border-black/8 bg-[var(--color-paper)] text-[11px] font-medium text-[var(--color-ink)] dark:border-white/8 dark:bg-[var(--color-paper-dark)] dark:text-[var(--color-ink-dark)]"
+      style={{ width: size, height: size }}
+    >
+      {user.image ? (
+        <Image
+          src={user.image}
+          alt={user.name || "User"}
+          width={size}
+          height={size}
+          className="rounded-full"
+        />
+      ) : (
+        initials
+      )}
+    </div>
+  );
 
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`cursor-pointer ${
+        className={
           isSidebar
-            ? "flex w-full items-center gap-3 rounded-xl border border-zinc-200 bg-white p-3 shadow-sm transition-all hover:bg-zinc-50 dark:border-white/10 dark:bg-zinc-800/50 dark:hover:bg-zinc-800 "
-            : "flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br from-blue-500 via-red-500 to-purple-500 text-sm font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl"
-        }`}
+            ? "flex w-full items-center gap-3 rounded-[6px] px-2 py-2 hover:bg-black/4 dark:hover:bg-white/4"
+            : "flex items-center"
+        }
         aria-label="User menu"
         aria-expanded={isOpen}
       >
         {isSidebar ? (
           <>
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-br from-blue-500 via-red-500 to-purple-500 text-sm font-semibold text-white shadow-md">
-              {user.image ? (
-                <Image
-                  src={user.image}
-                  alt={user.name || "User"}
-                  width={36}
-                  height={36}
-                  className="rounded-full"
-                />
-              ) : (
-                initials
-              )}
-            </div>
-            <div className="flex-1 overflow-hidden text-left">
-              <p className="truncate text-sm font-medium text-black dark:text-white">
-                {user.name || "User"}
-              </p>
-            </div>
-            <svg
-              className="h-4 w-4 text-zinc-400 dark:text-zinc-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
+            <Avatar size={28} />
+            <span className="min-w-0 flex-1 truncate text-left text-[13px] text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]">
+              {user.name || "User"}
+            </span>
+            <CaretDown
+              size={12}
+              weight="regular"
+              className="text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]"
+            />
           </>
-        ) : user.image ? (
-          <Image
-            src={user.image}
-            alt={user.name || "User"}
-            width={32}
-            height={32}
-            className="rounded-full"
-          />
         ) : (
-          initials
+          <Avatar size={28} />
         )}
       </button>
 
       {isOpen && (
         <>
-          {/* Backdrop for mobile */}
           <div
             className="fixed inset-0 z-90"
             onClick={() => setIsOpen(false)}
-            aria-hidden="true"
+            aria-hidden
           />
-
           <div
-            className={`absolute z-100 w-64 rounded-xl border border-zinc-200 bg-white/95 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-zinc-900/95 ${
+            className={`absolute z-100 w-60 overflow-hidden rounded-[8px] border border-black/8 bg-[var(--color-paper-raised)] dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)] ${
               position === "sidebar"
                 ? "bottom-full left-0 mb-2"
                 : position === "right"
@@ -133,64 +112,47 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
                   : "top-full left-[calc(100%+0.5rem)] mt-2"
             }`}
           >
-            {/* User Info */}
-            <div className="border-b border-zinc-200 px-4 py-3 dark:border-white/10">
+            <div className="border-b border-black/8 px-4 py-3 dark:border-white/8">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-linear-to-br from-blue-500 via-red-500 to-purple-500 text-sm font-semibold text-white shadow-lg">
-                  {user.image ? (
-                    <Image
-                      src={user.image}
-                      alt={user.name || "User"}
-                      width={40}
-                      height={40}
-                      className="rounded-full"
-                    />
-                  ) : (
-                    initials
-                  )}
-                </div>
-                <div className="flex-1 overflow-hidden">
-                  <p className="truncate text-sm font-medium text-black dark:text-white">
+                <Avatar size={32} />
+                <div className="min-w-0 flex-1 overflow-hidden">
+                  <p className="truncate text-[13px] text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]">
                     {user.name || "User"}
                   </p>
-                  <p className="truncate text-xs text-zinc-600 dark:text-zinc-400">
+                  <p className="truncate text-[11px] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
                     {user.email}
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Menu Items */}
             <div className="py-1">
-              {/* Theme Toggle */}
               {mounted && (
                 <button
                   onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                  className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-black dark:text-zinc-300 dark:hover:bg-white/5 dark:hover:text-white"
+                  className="flex w-full items-center gap-3 px-4 py-2 text-[13px] text-[var(--color-ink)] hover:bg-black/4 dark:text-[var(--color-ink-dark)] dark:hover:bg-white/4"
                 >
                   {theme === "dark" ? (
                     <>
-                      <Sun size={16} />
+                      <Sun size={14} weight="regular" />
                       Light mode
                     </>
                   ) : (
                     <>
-                      <Moon size={16} />
+                      <Moon size={14} weight="regular" />
                       Dark mode
                     </>
                   )}
                 </button>
               )}
 
-              {/* Divider */}
-              <div className="my-1 border-t border-zinc-200 dark:border-white/10" />
+              <div className="my-1 border-t border-black/8 dark:border-white/8" />
 
-              {/* Sign Out */}
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
-                className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-black dark:text-zinc-300 dark:hover:bg-white/5 dark:hover:text-white"
+                className="flex w-full items-center gap-3 px-4 py-2 text-[13px] text-[var(--color-ink)] hover:bg-black/4 dark:text-[var(--color-ink-dark)] dark:hover:bg-white/4"
               >
-                <LogOut size={16} />
+                <SignOut size={14} weight="regular" />
                 Sign out
               </button>
             </div>

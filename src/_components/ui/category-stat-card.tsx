@@ -1,10 +1,5 @@
-/**
- * CategoryStatCard - Reusable stat card for each category
- */
-
 import {
-  CATEGORY_COLORS,
-  CATEGORY_EMOJIS,
+  CATEGORY_HEX,
   CATEGORY_LABELS,
 } from "~/lib/constants";
 import type { CategoryId } from "~/lib/types";
@@ -15,26 +10,26 @@ interface CategoryStatCardProps {
 }
 
 export function CategoryStatCard({ categoryId, count }: CategoryStatCardProps) {
-  const colors = CATEGORY_COLORS[categoryId];
-  const emoji = CATEGORY_EMOJIS[categoryId];
-  const label = CATEGORY_LABELS[categoryId];
-
   return (
-    <div
-      className={`group relative overflow-hidden rounded-2xl border p-5 backdrop-blur-xl transition-all hover:scale-[1.02] ${colors.card} ${colors.cardHover}`}
-    >
+    <div className="rounded-[12px] border border-black/8 bg-[var(--color-paper-raised)] p-5 dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)]">
+      <div className="mb-3 flex items-center gap-2">
+        <span
+          aria-hidden
+          className="inline-block h-2 w-2 rounded-full"
+          style={{ backgroundColor: CATEGORY_HEX[categoryId] }}
+        />
+        <span className="text-[11px] font-medium tracking-[0.12em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
+          {CATEGORY_LABELS[categoryId]}
+        </span>
+      </div>
       <div
-        className={`absolute top-0 right-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full blur-3xl transition-opacity group-hover:opacity-100 ${colors.glow}`}
-      />
-      <div className="relative">
-        <div className="mb-2 text-3xl">{emoji}</div>
-        <div className={`mb-1 text-sm font-medium ${colors.text}`}>{label}</div>
-        <div className="text-2xl font-bold text-black transition-all duration-300 dark:text-white">
-          {count}
-        </div>
-        <div className="text-xs uppercase tracking-wider text-zinc-500 dark:text-zinc-500">
-          completed today
-        </div>
+        className="tabular font-serif text-[32px] leading-none font-medium text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]"
+        style={{ fontOpticalSizing: "auto", letterSpacing: "-0.02em" }}
+      >
+        {count}
+      </div>
+      <div className="mt-1 text-[11px] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+        completed today
       </div>
     </div>
   );

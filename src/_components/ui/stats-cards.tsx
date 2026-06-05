@@ -1,5 +1,3 @@
-import { Calendar, Flame, Target, TrendingUp } from "lucide-react";
-
 interface StatsCardsProps {
   currentStreak: number;
   weekPercentage: number;
@@ -14,67 +12,29 @@ export function StatsCards({
   bestStreak,
 }: StatsCardsProps) {
   const stats = [
-    {
-      label: "Current Streak",
-      value: currentStreak.toString(),
-      unit: "days",
-      icon: Flame,
-      color: "text-orange-400",
-      bgGlow: "from-orange-500/20",
-    },
-    {
-      label: "This Week",
-      value: weekPercentage.toString(),
-      unit: "%",
-      icon: TrendingUp,
-      color: "text-emerald-400",
-      bgGlow: "from-emerald-500/20",
-    },
-    {
-      label: "Total Completed",
-      value: totalCompleted.toString(),
-      unit: "habits",
-      icon: Target,
-      color: "text-blue-400",
-      bgGlow: "from-blue-500/20",
-    },
-    {
-      label: "Best Streak",
-      value: bestStreak.toString(),
-      unit: "days",
-      icon: Calendar,
-      color: "text-purple-400",
-      bgGlow: "from-purple-500/20",
-    },
+    { label: "Current streak", value: currentStreak, unit: "days" },
+    { label: "This week", value: weekPercentage, unit: "%" },
+    { label: "Total completed", value: totalCompleted, unit: "habits" },
+    { label: "Best streak", value: bestStreak, unit: "days" },
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-2 divide-x divide-y divide-black/8 overflow-hidden rounded-[12px] border border-black/8 bg-[var(--color-paper-raised)] sm:grid-cols-4 sm:divide-y-0 dark:divide-white/8 dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)]">
       {stats.map((stat) => (
-        <div
-          key={stat.label}
-          className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white p-5 backdrop-blur-sm dark:border-white/6 dark:bg-white/3"
-        >
-          {/* Subtle glow */}
-          <div
-            className={`bg-gradient-radial absolute -top-8 -right-8 h-24 w-24 ${stat.bgGlow} to-transparent opacity-50 blur-2xl`}
-          />
-
-          <div className="relative">
-            <div className="mb-3 flex items-center justify-between">
-              <span className="text-xs tracking-wider text-zinc-500 uppercase dark:text-zinc-500">
-                {stat.label}
-              </span>
-              <stat.icon className={`h-4 w-4 ${stat.color}`} />
-            </div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl font-semibold text-black dark:text-white">
-                {stat.value}
-              </span>
-              <span className="text-sm text-zinc-500 dark:text-zinc-500">
-                {stat.unit}
-              </span>
-            </div>
+        <div key={stat.label} className="px-5 py-5">
+          <div className="text-[10px] font-medium tracking-[0.14em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
+            {stat.label}
+          </div>
+          <div className="mt-2 flex items-baseline gap-1.5">
+            <span
+              className="tabular font-serif text-[34px] leading-none font-medium text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]"
+              style={{ fontOpticalSizing: "auto", letterSpacing: "-0.02em" }}
+            >
+              {stat.value}
+            </span>
+            <span className="text-[12px] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+              {stat.unit}
+            </span>
           </div>
         </div>
       ))}
