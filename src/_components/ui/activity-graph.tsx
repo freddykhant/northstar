@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { CATEGORY_HEX } from "~/lib/constants";
 import type { DayData } from "~/lib/types";
 import { MonthView } from "./activity-graph-month-view";
 import { WeekView } from "./activity-graph-week-view";
@@ -10,6 +11,22 @@ type ViewMode = "month" | "week" | "year";
 
 interface ActivityGraphProps {
   completions: DayData[];
+}
+
+// Earthy ramps mirroring CATEGORY_HEX, used for the graph cells.
+const RGB = {
+  mind: [91, 122, 153] as const, // slate-blue
+  body: [181, 85, 58] as const, // terracotta
+  soul: [111, 138, 94] as const, // sage
+  ember: [194, 65, 12] as const, // perfect-day
+};
+
+function mix(...tuples: (readonly [number, number, number])[]) {
+  const n = tuples.length;
+  const r = Math.round(tuples.reduce((s, t) => s + t[0], 0) / n);
+  const g = Math.round(tuples.reduce((s, t) => s + t[1], 0) / n);
+  const b = Math.round(tuples.reduce((s, t) => s + t[2], 0) / n);
+  return [r, g, b] as const;
 }
 
 export function ActivityGraph({ completions }: ActivityGraphProps) {
@@ -23,7 +40,6 @@ export function ActivityGraph({ completions }: ActivityGraphProps) {
     y: number;
   } | null>(null);
 
-  // create completion map for quick lookup
   const completionMap = useMemo(() => {
     const map = new Map<string, { mind: number; body: number; soul: number }>();
     completions.forEach((completion) => {
@@ -36,56 +52,52 @@ export function ActivityGraph({ completions }: ActivityGraphProps) {
     return map;
   }, [completions]);
 
-  // get color based on completion
   function getColor(mind: number, body: number, soul: number) {
     if (mind < 0) return "transparent";
 
     const total = mind + body + soul;
-    if (total === 0) return "rgba(255,255,255,0.03)";
+    if (total === 0) return "color-mix(in srgb, var(--color-ink) 6%, transparent)";
 
     const intensity = Math.min(total / 3, 1);
-    const alpha = 0.3 + intensity * 0.7;
+    const alpha = 0.35 + intensity * 0.55;
 
-    if (mind > 0 && body === 0 && soul === 0) {
-      return `rgba(59, 130, 246, ${alpha})`;
-    }
-    if (body > 0 && mind === 0 && soul === 0) {
-      return `rgba(239, 68, 68, ${alpha})`;
-    }
-    if (soul > 0 && mind === 0 && body === 0) {
-      return `rgba(168, 85, 247, ${alpha})`;
-    }
-    if (mind > 0 && body > 0 && soul === 0) {
-      return `rgba(20, 184, 166, ${alpha})`;
-    }
-    if (mind > 0 && soul > 0 && body === 0) {
-      return `rgba(99, 102, 241, ${alpha})`;
-    }
-    if (body > 0 && soul > 0 && mind === 0) {
-      return `rgba(236, 72, 153, ${alpha})`;
-    }
-    // all three = gold/amber for "perfect day"
-    return `rgba(251, 191, 36, ${alpha})`;
+    let rgb: readonly [number, number, number];
+    if (mind > 0 && body === 0 && soul === 0) rgb = RGB.mind;
+    else if (body > 0 && mind === 0 && soul === 0) rgb = RGB.body;
+    else if (soul > 0 && mind === 0 && body === 0) rgb = RGB.soul;
+    else if (mind > 0 && body > 0 && soul === 0) rgb = mix(RGB.mind, RGB.body);
+    else if (mind > 0 && soul > 0 && body === 0) rgb = mix(RGB.mind, RGB.soul);
+    else if (body > 0 && soul > 0 && mind === 0) rgb = mix(RGB.body, RGB.soul);
+    else rgb = RGB.ember; // all three — perfect day
+
+    return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
   }
 
   function getCategoryColor(category: string, completed: boolean) {
-    if (!completed) return "rgba(255,255,255,0.03)";
-    const alpha = 0.8;
-    if (category === "mind") return `rgba(59, 130, 246, ${alpha})`;
-    if (category === "body") return `rgba(239, 68, 68, ${alpha})`;
-    if (category === "soul") return `rgba(168, 85, 247, ${alpha})`;
-    return "rgba(255,255,255,0.03)";
+    if (!completed)
+      return "color-mix(in srgb, var(--color-ink) 6%, transparent)";
+    const rgb =
+      category === "mind"
+        ? RGB.mind
+        : category === "body"
+          ? RGB.body
+          : category === "soul"
+            ? RGB.soul
+            : RGB.ember;
+    return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.85)`;
   }
 
   return (
-    <div className="relative rounded-xl border border-zinc-200 bg-white p-6 backdrop-blur-sm dark:border-white/6 dark:bg-white/3">
+    <div className="relative rounded-[12px] border border-black/8 bg-[var(--color-paper-raised)] p-6 dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)]">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-lg font-medium text-black dark:text-white">
+        <h2
+          className="font-serif text-[20px] leading-none font-medium text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]"
+          style={{ fontOpticalSizing: "auto" }}
+        >
           Activity
         </h2>
 
-        {/* View Toggle */}
-        <div className="flex items-center gap-1 rounded-lg border border-zinc-200 bg-zinc-100 p-1 dark:border-white/10 dark:bg-white/5">
+        <div className="flex items-center gap-0 rounded-[6px] border border-black/8 p-[2px] dark:border-white/8">
           {[
             { id: "year", label: "Year" },
             { id: "month", label: "Month" },
@@ -94,10 +106,10 @@ export function ActivityGraph({ completions }: ActivityGraphProps) {
             <button
               key={view.id}
               onClick={() => setViewMode(view.id as ViewMode)}
-              className={`cursor-pointer rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
+              className={`rounded-[4px] px-3 py-1 text-[11px] tracking-[0.04em] ${
                 viewMode === view.id
-                  ? "bg-white text-black shadow-sm dark:bg-white/15 dark:text-white"
-                  : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300"
+                  ? "bg-black/6 text-[var(--color-ink)] dark:bg-white/8 dark:text-[var(--color-ink-dark)]"
+                  : "text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]"
               }`}
             >
               {view.label}
@@ -132,12 +144,11 @@ export function ActivityGraph({ completions }: ActivityGraphProps) {
       )}
 
       {completions.length === 0 && (
-        <div className="mt-4 text-center text-sm text-zinc-400">
+        <p className="mt-4 text-center font-serif text-[13px] italic text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
           No activity yet — start checking off habits to see your lawn grow.
-        </div>
+        </p>
       )}
 
-      {/* Tooltip */}
       {hoveredDay && viewMode !== "week" && (
         <div
           className="pointer-events-none fixed z-50"
@@ -147,36 +158,30 @@ export function ActivityGraph({ completions }: ActivityGraphProps) {
             transform: "translate(-50%, -100%)",
           }}
         >
-          <div className="rounded-lg border border-zinc-200 bg-white px-3 py-2 shadow-xl dark:border-white/10 dark:bg-zinc-900">
-            <p className="mb-1.5 text-xs font-medium text-black dark:text-white">
+          <div className="rounded-[8px] border border-black/8 bg-[var(--color-paper-raised)] px-3 py-2 dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)]">
+            <p className="mb-1.5 text-[11px] tracking-[0.04em] text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]">
               {hoveredDay.date.toLocaleDateString("en-US", {
                 weekday: "short",
                 month: "short",
                 day: "numeric",
               })}
             </p>
-            <div className="flex flex-col gap-1 text-xs">
-              <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-blue-500" />
-                <span className="text-zinc-600 dark:text-zinc-400">Mind:</span>
-                <span className="text-black dark:text-white">
-                  {hoveredDay.mind > 0 ? "Done" : "—"}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-red-500" />
-                <span className="text-zinc-600 dark:text-zinc-400">Body:</span>
-                <span className="text-black dark:text-white">
-                  {hoveredDay.body > 0 ? "Done" : "—"}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-purple-500" />
-                <span className="text-zinc-600 dark:text-zinc-400">Soul:</span>
-                <span className="text-black dark:text-white">
-                  {hoveredDay.soul > 0 ? "Done" : "—"}
-                </span>
-              </div>
+            <div className="flex flex-col gap-1 text-[11px]">
+              {(["mind", "body", "soul"] as const).map((cat) => (
+                <div key={cat} className="flex items-center gap-2">
+                  <span
+                    aria-hidden
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{ backgroundColor: CATEGORY_HEX[cat] }}
+                  />
+                  <span className="text-[var(--color-ink-muted)] capitalize dark:text-[var(--color-ink-dark-muted)]">
+                    {cat}
+                  </span>
+                  <span className="text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]">
+                    {hoveredDay[cat] > 0 ? "Done" : "—"}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         </div>

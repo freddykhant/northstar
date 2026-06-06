@@ -101,50 +101,40 @@ export function YearView({
   return (
     <div>
       {/* Month labels */}
-      <div className="mb-2 ml-8 flex text-xs text-zinc-500">
+      <div className="relative mb-2 ml-8 h-4 text-[10px] tracking-[0.08em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
         {monthLabels.map(({ month, index }) => (
           <div
             key={`${month}-${index}`}
             className="absolute"
-            style={{ left: `${index * 14 + 32}px` }}
+            style={{ left: `${index * 13 + 32}px` }}
           >
             {month}
           </div>
         ))}
       </div>
 
-      <div className="mt-8 flex gap-6">
+      <div className="flex gap-3">
         {/* Day labels */}
-        <div className="flex flex-col gap-[3px] pt-[2px] text-xs text-zinc-500">
+        <div className="flex flex-col gap-[2px] pt-[1px] text-[10px] tracking-[0.04em] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
           {DAYS.map((day, i) => (
-            <div key={day} className="flex h-[12px] items-center">
+            <div key={day} className="flex h-[11px] items-center">
               {i % 2 === 1 ? day : ""}
             </div>
           ))}
         </div>
 
         {/* Graph */}
-        <div className="flex gap-[3px] overflow-x-auto pb-2">
+        <div className="flex gap-[2px] overflow-x-auto pb-2">
           {weeks.map((week, weekIndex) => (
-            <div key={weekIndex} className="flex flex-col gap-[3px]">
+            <div key={weekIndex} className="flex flex-col gap-[2px]">
               {week.map((day, dayIndex) => {
                 const isValid = day.mind >= 0;
-                const hasActivity =
-                  isValid && (day.mind > 0 || day.body > 0 || day.soul > 0);
-
                 return (
                   <div
                     key={dayIndex}
-                    className={`h-[12px] w-[12px] rounded-sm transition-all duration-200 ${
-                      hasActivity
-                        ? "hover:scale-110 hover:ring-2 hover:ring-white/30"
-                        : ""
-                    }`}
+                    className="h-[11px] w-[11px] rounded-[2px]"
                     style={{
                       backgroundColor: getColor(day.mind, day.body, day.soul),
-                      boxShadow: hasActivity
-                        ? `0 0 8px ${getColor(day.mind, day.body, day.soul)}`
-                        : "none",
                     }}
                     onMouseEnter={(e) => {
                       if (isValid) {
@@ -166,14 +156,16 @@ export function YearView({
       </div>
 
       {/* Legend */}
-      <div className="mt-4 flex items-center gap-4 text-xs text-zinc-500">
+      <div className="mt-4 flex items-center gap-3 text-[10px] tracking-[0.08em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
         <span>Less</span>
-        <div className="flex gap-1">
-          <div className="h-3 w-3 rounded-sm bg-zinc-100 dark:bg-white/3" />
-          <div className="h-3 w-3 rounded-sm bg-zinc-200 dark:bg-white/15" />
-          <div className="h-3 w-3 rounded-sm bg-zinc-300 dark:bg-white/30" />
-          <div className="h-3 w-3 rounded-sm bg-zinc-400 dark:bg-white/50" />
-          <div className="h-3 w-3 rounded-sm bg-zinc-500 dark:bg-white/70" />
+        <div className="flex gap-[2px]">
+          {[0.08, 0.25, 0.45, 0.7, 0.9].map((a) => (
+            <div
+              key={a}
+              className="h-[11px] w-[11px] rounded-[2px]"
+              style={{ backgroundColor: `rgba(194, 65, 12, ${a})` }}
+            />
+          ))}
         </div>
         <span>More</span>
       </div>

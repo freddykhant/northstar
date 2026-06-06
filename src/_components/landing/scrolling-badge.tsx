@@ -1,7 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Brain, Dumbbell, Sparkles } from "lucide-react";
+import {
+  Brain,
+  Barbell as Dumbbell,
+  Sparkle as Sparkles,
+} from "@phosphor-icons/react";
 
 interface ScrollingBadgeProps {
   icon: "mind" | "body" | "soul";

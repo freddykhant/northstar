@@ -111,7 +111,10 @@ export function MonthView({
 
   return (
     <div>
-      <div className="mb-4 text-sm font-medium text-zinc-600 dark:text-zinc-400">
+      <div
+        className="mb-4 font-serif text-[14px] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]"
+        style={{ fontOpticalSizing: "auto" }}
+      >
         {MONTHS[currentMonth]} {currentYear}
       </div>
 
@@ -120,7 +123,7 @@ export function MonthView({
         {DAYS.map((day) => (
           <div
             key={day}
-            className="flex h-6 w-[36px] items-center justify-center text-xs text-zinc-500"
+            className="flex h-5 w-[36px] items-center justify-center text-[10px] tracking-[0.08em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]"
           >
             {day.slice(0, 3)}
           </div>
@@ -131,31 +134,20 @@ export function MonthView({
       <div className="flex flex-col gap-[3px] overflow-x-auto">
         {weeks.map((week, weekIndex) => (
           <div key={weekIndex} className="flex items-center gap-[3px]">
-            {/* Week label */}
-            <div className="w-8 text-xs text-zinc-500">W{weekIndex + 1}</div>
+            <div className="w-8 text-[10px] tracking-[0.08em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
+              W{weekIndex + 1}
+            </div>
 
-            {/* Days in the week */}
             {week.map((dayData, dayIndex) => {
               const isValid = dayData.day > 0;
-              const hasActivity =
-                isValid &&
-                (dayData.mind > 0 || dayData.body > 0 || dayData.soul > 0);
-
               return (
                 <div
                   key={dayIndex}
-                  className={`relative flex h-[36px] w-[36px] items-center justify-center rounded-lg transition-all duration-200 ${
-                    hasActivity
-                      ? "hover:scale-105 hover:ring-2 hover:ring-white/30"
-                      : ""
-                  } ${!isValid ? "opacity-0" : ""}`}
+                  className={`relative flex h-[36px] w-[36px] items-center justify-center rounded-[4px] ${!isValid ? "opacity-0" : ""}`}
                   style={{
                     backgroundColor: isValid
                       ? getColor(dayData.mind, dayData.body, dayData.soul)
                       : "transparent",
-                    boxShadow: hasActivity
-                      ? `0 0 10px ${getColor(dayData.mind, dayData.body, dayData.soul)}`
-                      : "none",
                   }}
                   onMouseEnter={(e) => {
                     if (isValid) {
@@ -173,7 +165,7 @@ export function MonthView({
                   onMouseLeave={() => setHoveredDay(null)}
                 >
                   {isValid && (
-                    <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                    <span className="tabular text-[11px] text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]">
                       {dayData.day}
                     </span>
                   )}
@@ -185,19 +177,22 @@ export function MonthView({
       </div>
 
       {/* Legend */}
-      <div className="mt-4 flex items-center gap-4 text-xs text-zinc-500">
-        <div className="flex items-center gap-1.5">
-          <div className="h-3 w-3 rounded-sm bg-blue-500/80" />
-          <span>Mind</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="h-3 w-3 rounded-sm bg-red-500/80" />
-          <span>Body</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="h-3 w-3 rounded-sm bg-purple-500/80" />
-          <span>Soul</span>
-        </div>
+      <div className="mt-4 flex items-center gap-4 text-[10px] tracking-[0.08em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
+        {(
+          [
+            ["mind", "#5b7a99"],
+            ["body", "#b5553a"],
+            ["soul", "#6f8a5e"],
+          ] as const
+        ).map(([label, color]) => (
+          <div key={label} className="flex items-center gap-1.5">
+            <div
+              className="h-2.5 w-2.5 rounded-[2px]"
+              style={{ backgroundColor: color }}
+            />
+            <span>{label}</span>
+          </div>
+        ))}
       </div>
     </div>
   );

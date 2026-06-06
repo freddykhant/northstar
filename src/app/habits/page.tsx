@@ -1,7 +1,13 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Brain, Dumbbell, Plus, Sparkles, X } from "lucide-react";
+import {
+  Brain,
+  Barbell as Dumbbell,
+  Plus,
+  Sparkle as Sparkles,
+  X,
+} from "@phosphor-icons/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

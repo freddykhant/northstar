@@ -44,23 +44,29 @@ export function WeekView({ completionMap, getCategoryColor }: WeekViewProps) {
   }, [completionMap]);
 
   const categoryLabels = [
-    { id: "mind", label: "Mind", color: "bg-blue-500" },
-    { id: "body", label: "Body", color: "bg-red-500" },
-    { id: "soul", label: "Soul", color: "bg-purple-500" },
+    { id: "mind", label: "Mind", color: "#5b7a99" },
+    { id: "body", label: "Body", color: "#b5553a" },
+    { id: "soul", label: "Soul", color: "#6f8a5e" },
   ];
 
   return (
     <div>
-      <div className="mb-4 text-sm font-medium text-zinc-600 dark:text-zinc-400">
+      <div
+        className="mb-4 font-serif text-[14px] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]"
+        style={{ fontOpticalSizing: "auto" }}
+      >
         This Week
       </div>
 
       <div className="flex gap-4">
         {/* Category labels */}
-        <div className="flex flex-col gap-[6px] pt-[36px] text-xs text-zinc-500">
+        <div className="flex flex-col gap-[6px] pt-[36px] text-[10px] tracking-[0.08em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
           {categoryLabels.map((cat) => (
             <div key={cat.id} className="flex h-[36px] items-center gap-2">
-              <div className={`h-2.5 w-2.5 rounded-full ${cat.color}`} />
+              <div
+                className="h-2 w-2 rounded-full"
+                style={{ backgroundColor: cat.color }}
+              />
               <span>{cat.label}</span>
             </div>
           ))}
@@ -72,20 +78,14 @@ export function WeekView({ completionMap, getCategoryColor }: WeekViewProps) {
             <div key={dayIndex} className="flex flex-1 flex-col gap-[6px]">
               {/* Day header */}
               <div
-                className={`flex h-[30px] flex-col items-center justify-center rounded-lg ${
-                  day.isToday ? "bg-white/10 ring-1 ring-white/20" : ""
+                className={`flex h-[30px] flex-col items-center justify-center rounded-[4px] ${
+                  day.isToday ? "bg-black/6 dark:bg-white/8" : ""
                 }`}
               >
-                <span className="text-[10px] font-medium text-zinc-500 dark:text-zinc-400">
+                <span className="text-[10px] tracking-[0.08em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
                   {day.dayName.slice(0, 3)}
                 </span>
-                <span
-                  className={`text-xs font-semibold ${
-                    day.isToday
-                      ? "text-white"
-                      : "text-zinc-600 dark:text-zinc-300"
-                  }`}
-                >
+                <span className="tabular text-[11px] text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]">
                   {day.dayNum}
                 </span>
               </div>
@@ -96,22 +96,17 @@ export function WeekView({ completionMap, getCategoryColor }: WeekViewProps) {
                 return (
                   <div
                     key={category}
-                    className={`flex h-[36px] items-center justify-center rounded-lg transition-all duration-200 ${
-                      completed ? "hover:scale-105" : ""
-                    }`}
+                    className="flex h-[36px] items-center justify-center rounded-[4px]"
                     style={{
                       backgroundColor: getCategoryColor(category, completed),
-                      boxShadow: completed
-                        ? `0 0 12px ${getCategoryColor(category, completed)}`
-                        : "none",
                     }}
                   >
                     {completed && (
                       <svg
-                        className="h-4 w-4 text-white"
+                        className="h-3.5 w-3.5"
                         fill="none"
                         viewBox="0 0 24 24"
-                        stroke="currentColor"
+                        stroke="#fbf9f3"
                         strokeWidth={3}
                       >
                         <path

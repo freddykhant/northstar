@@ -1,6 +1,6 @@
 "use client";
 
-import { PanelLeftOpen } from "lucide-react";
+import { Sidebar as PanelLeftOpen } from "@phosphor-icons/react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
