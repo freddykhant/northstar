@@ -7,8 +7,6 @@ import { useEffect, useMemo } from "react";
 import { ActivityGraph } from "~/_components/ui/activity-graph";
 import { CategoryStatCard } from "~/_components/ui/category-stat-card";
 import { CheckinList } from "~/_components/ui/checkin-list";
-import { GlassCard } from "~/_components/ui/glass-card";
-import { GradientBackground } from "~/_components/ui/gradient-background";
 import { MoodTracker } from "~/_components/ui/mood-tracker";
 import { Sidebar } from "~/_components/ui/sidebar";
 import { StatsCards } from "~/_components/ui/stats-cards";
@@ -61,8 +59,10 @@ export default function HomePage() {
 
   if (status === "loading") {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center bg-white text-black dark:bg-[#0a0a0a] dark:text-white">
-        <div className="text-zinc-600 dark:text-zinc-400">Loading...</div>
+      <main className="flex min-h-screen items-center justify-center bg-[var(--color-paper)] text-[var(--color-ink)] dark:bg-[var(--color-paper-dark)] dark:text-[var(--color-ink-dark)]">
+        <div className="text-[13px] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+          Loading…
+        </div>
       </main>
     );
   }
@@ -78,107 +78,104 @@ export default function HomePage() {
   const totalCompleted = overallStats?.totalCompleted ?? 0;
   const bestStreak = overallStats?.bestStreak ?? 0;
 
-  return (
-    <div className="relative flex min-h-screen overflow-hidden bg-white text-black dark:bg-[#0a0a0a] dark:text-white">
-      {/* Background */}
-      <GradientBackground />
+  const firstName = session.user.name?.split(" ")[0] ?? "there";
 
-      {/* Sidebar */}
+  return (
+    <div className="relative flex min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)] dark:bg-[var(--color-paper-dark)] dark:text-[var(--color-ink-dark)]">
       <Sidebar user={session.user} />
 
-      {/* Main Content */}
-      <div className="relative z-10 flex-1 md:ml-64">
-        <div className="mx-auto max-w-7xl px-6 py-8">
-          {/* Query error banner */}
+      <div className="relative flex-1 md:ml-64">
+        <main className="mx-auto max-w-3xl px-6 py-16">
           {hasError && (
-            <div className="mb-6 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+            <div className="mb-8 rounded-[6px] border border-[var(--color-ember)]/30 bg-[var(--color-ember)]/8 px-3 py-2 text-[12px] text-[var(--color-ember)]">
               Something went wrong loading your data. Please refresh the page.
             </div>
           )}
 
-          {/* Greeting Header */}
-          <div className="mb-10">
-            <h1 className="mb-2 bg-linear-to-r from-black via-zinc-700 to-zinc-400 bg-clip-text py-4 text-5xl font-bold text-transparent dark:from-white dark:via-zinc-100 dark:to-zinc-400">
-              {getGreeting()}, {session.user.name?.split(" ")[0] ?? "there"}
+          {/* Greeting */}
+          <header className="mb-12">
+            <h1
+              className="font-serif text-[40px] leading-[1.05] font-medium text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]"
+              style={{
+                fontOpticalSizing: "auto",
+                letterSpacing: "-0.02em",
+              }}
+            >
+              {getGreeting()}, {firstName}.
             </h1>
-            <p className="text-lg text-zinc-600 dark:text-zinc-400">
+            <p className="mt-3 text-[13px] tracking-[0.04em] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
               {formatDate(today)}
             </p>
-          </div>
+          </header>
 
-          {/* Main Grid Layout */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            {/* Left Column - Activity Graph (takes 2 columns) */}
-            <div className="space-y-6 lg:col-span-2">
-              {/* Category Stats Overview Cards */}
-              <div className="mb-6 grid grid-cols-3 gap-4">
-                {CATEGORY_IDS.map((categoryId) => {
-                  const count =
-                    stats?.byCategory.find((c) => c.category.id === categoryId)
-                      ?.count ?? 0;
-                  return (
-                    <CategoryStatCard
-                      key={categoryId}
-                      categoryId={categoryId}
-                      count={count}
-                    />
-                  );
-                })}
-              </div>
+          {/* Metric strip */}
+          <section className="mb-10">
+            <StatsCards
+              currentStreak={currentStreak}
+              weekPercentage={weekPercentage}
+              totalCompleted={totalCompleted}
+              bestStreak={bestStreak}
+            />
+          </section>
 
-              {/* New Stats Cards */}
-              <div className="mb-6">
-                <StatsCards
-                  currentStreak={currentStreak}
-                  weekPercentage={weekPercentage}
-                  totalCompleted={totalCompleted}
-                  bestStreak={bestStreak}
+          {/* Category breakdown */}
+          <section className="mb-10 grid grid-cols-3 gap-4">
+            {CATEGORY_IDS.map((categoryId) => {
+              const count =
+                stats?.byCategory.find((c) => c.category.id === categoryId)
+                  ?.count ?? 0;
+              return (
+                <CategoryStatCard
+                  key={categoryId}
+                  categoryId={categoryId}
+                  count={count}
+                />
+              );
+            })}
+          </section>
+
+          {/* Activity graph */}
+          <section className="mb-10">
+            <ActivityGraph completions={graphData} />
+          </section>
+
+          {/* Today's check-ins */}
+          <section className="mb-10">
+            {habitsWithStatus && habitsWithStatus.length > 0 ? (
+              <div className="rounded-[12px] border border-black/8 bg-[var(--color-paper-raised)] p-6 dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)]">
+                <CheckinList
+                  habits={habitsWithStatus}
+                  onToggle={handleToggle}
+                  justCompleted={justCompleted}
+                  isLoading={toggleMutation.isPending}
                 />
               </div>
-
-              {/* Activity Graph */}
-              <ActivityGraph completions={graphData} />
-
-              {/* Mood Tracker */}
-              <MoodTracker />
-            </div>
-
-            {/* Right Column - Today's Checklist */}
-            <div className="lg:col-span-1">
-              <div className="sticky top-8">
-                {habitsWithStatus && habitsWithStatus.length > 0 ? (
-                  <GlassCard className="border border-zinc-200 bg-white p-6 backdrop-blur-sm dark:border-white/6 dark:bg-white/3">
-                    <h2 className="mb-6 text-xl font-bold text-black dark:text-white">
-                      Today&apos;s Focus
-                    </h2>
-                    <CheckinList
-                      habits={habitsWithStatus}
-                      onToggle={handleToggle}
-                      justCompleted={justCompleted}
-                      isLoading={toggleMutation.isPending}
-                    />
-                  </GlassCard>
-                ) : (
-                  <GlassCard className="flex flex-col items-center justify-center border border-zinc-200 bg-white p-12 text-center dark:border-white/6 dark:bg-white/3">
-                    <div className="mb-4 text-6xl">🌟</div>
-                    <h2 className="mb-2 text-xl font-bold text-black dark:text-white">
-                      No habits yet
-                    </h2>
-                    <p className="mb-6 text-sm text-zinc-600 dark:text-zinc-400">
-                      Create your first habit to start building consistency
-                    </p>
-                    <Link
-                      href="/habits"
-                      className="inline-block rounded-xl bg-black px-6 py-3 text-sm font-semibold text-white transition-transform hover:scale-105 dark:bg-white dark:text-black"
-                    >
-                      Create Habit
-                    </Link>
-                  </GlassCard>
-                )}
+            ) : (
+              <div className="rounded-[12px] border border-black/8 bg-[var(--color-paper-raised)] p-12 text-center dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)]">
+                <h2
+                  className="mb-2 font-serif text-[22px] font-medium text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]"
+                  style={{ fontOpticalSizing: "auto" }}
+                >
+                  Nothing to track yet
+                </h2>
+                <p className="mb-6 font-serif text-[14px] italic text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+                  Begin with a single habit. Consistency is the rest.
+                </p>
+                <Link
+                  href="/habits"
+                  className="inline-block rounded-[6px] bg-[var(--color-ink)] px-5 py-2.5 text-[13px] font-medium text-[var(--color-paper)] hover:bg-black dark:bg-[var(--color-ink-dark)] dark:text-[var(--color-paper-dark)] dark:hover:bg-white"
+                >
+                  Create your first habit
+                </Link>
               </div>
-            </div>
-          </div>
-        </div>
+            )}
+          </section>
+
+          {/* Mood tracker */}
+          <section className="mb-10">
+            <MoodTracker />
+          </section>
+        </main>
       </div>
     </div>
   );

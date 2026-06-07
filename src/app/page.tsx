@@ -1,112 +1,124 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { CategoryCarousel } from "~/_components/landing/category-carousel";
-import { FloatingNavbar } from "~/_components/landing/floating-navbar";
 import { LandingFooter } from "~/_components/landing/landing-footer";
-import { ScrollingBadge } from "~/_components/landing/scrolling-badge";
 import { UnifiedDemo } from "~/_components/landing/unified-demo";
+import {
+  CATEGORY_DESCRIPTIONS,
+  CATEGORY_HEX,
+  CATEGORY_IDS,
+  CATEGORY_LABELS,
+} from "~/lib/constants";
 import { auth } from "~/server/auth";
 
 export default async function LandingPage() {
   const session = await auth();
 
-  // if already logged in, redirect to home
   if (session?.user) {
     redirect("/home");
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-linear-to-b from-zinc-50 via-white to-zinc-50 dark:from-black dark:via-zinc-950 dark:to-black">
-      {/* Subtle Background Gradient Orbs */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute top-0 left-1/4 h-[600px] w-[600px] rounded-full bg-blue-400/10 blur-[120px] dark:bg-blue-400/20" />
-        <div className="absolute top-20 right-1/4 h-[500px] w-[500px] rounded-full bg-purple-400/10 blur-[100px] dark:bg-purple-400/20" />
-      </div>
+    <div className="min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)] dark:bg-[var(--color-paper-dark)] dark:text-[var(--color-ink-dark)]">
+      {/* Top bar: wordmark + sign in */}
+      <header className="mx-auto flex max-w-4xl items-baseline justify-between px-6 py-8">
+        <div className="flex items-baseline gap-2">
+          <span
+            aria-hidden
+            className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-ember)]"
+          />
+          <span
+            className="font-serif text-[20px] italic tracking-tight"
+            style={{ fontOpticalSizing: "auto" }}
+          >
+            northstar
+          </span>
+        </div>
+        <Link
+          href="/signin"
+          className="text-[13px] tracking-[0.04em] text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] dark:text-[var(--color-ink-dark-muted)] dark:hover:text-[var(--color-ink-dark)]"
+        >
+          Sign in
+        </Link>
+      </header>
 
-      {/* Floating Navigation */}
-      <FloatingNavbar />
+      <main className="mx-auto max-w-4xl px-6">
+        {/* Hero */}
+        <section className="pt-20 pb-24 sm:pt-28 sm:pb-32">
+          <h1
+            className="max-w-[680px] font-serif text-[44px] leading-[1.05] font-medium sm:text-[56px]"
+            style={{
+              fontOpticalSizing: "auto",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            A quiet place to keep your{" "}
+            <em className="text-[var(--color-ember)]">daily practice</em>.
+          </h1>
+          <p className="mt-6 max-w-[560px] text-[15px] leading-[1.6] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+            Northstar is a habit and mood tracker shaped like a paper journal.
+            One page, three categories, no streak shame.
+          </p>
 
-      {/* Main Content */}
-      <main className="relative z-10">
-        {/* Hero Section */}
-        <section className="px-4 pt-32 pb-32">
-          <div className="mx-auto max-w-7xl">
-            {/* Headline */}
-            <div className="mb-16 text-center">
-              <h1 className="animate-fade-in-up mb-8 text-6xl leading-[1.05] font-bold text-black sm:text-7xl lg:text-[5.5rem] dark:text-white">
-                Build habits to reach
-                <br />
-                your{" "}
-                <span className="relative inline-block">
-                  Northstar
-                  <span className="absolute -top-2 -right-2 text-5xl">✨</span>
-                </span>
-                .
-              </h1>
-
-              {/* CTA Buttons - ReadMe Style */}
-              <div
-                className="animate-fade-in-up mb-12 flex flex-wrap items-center justify-center gap-3"
-                style={{ animationDelay: "0.1s" }}
-              >
-                <Link
-                  href="/signup"
-                  className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white shadow-lg transition-all hover:bg-blue-700 hover:shadow-xl dark:bg-blue-500 dark:hover:bg-blue-600"
-                >
-                  Get Started
-                </Link>
-                <span className="text-zinc-600 dark:text-zinc-400">or</span>
-                <Link
-                  href="#demo"
-                  className="font-medium text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-                >
-                  See it in action
-                </Link>
-              </div>
-
-              {/* Feature Badges - Click to scroll */}
-              <div
-                className="animate-fade-in-up flex flex-wrap items-center justify-center gap-3"
-                style={{ animationDelay: "0.2s" }}
-              >
-                <ScrollingBadge
-                  icon="mind"
-                  label="Mind"
-                  targetId="mind"
-                  color="blue"
-                />
-                <ScrollingBadge
-                  icon="body"
-                  label="Body"
-                  targetId="body"
-                  color="red"
-                />
-                <ScrollingBadge
-                  icon="soul"
-                  label="Soul"
-                  targetId="soul"
-                  color="purple"
-                />
-              </div>
-            </div>
-
-            {/* Interactive Unified Demo */}
-            <div
-              id="demo"
-              className="animate-fade-in-up"
-              style={{ animationDelay: "0.3s" }}
+          <div className="mt-10 flex items-center gap-5">
+            <Link
+              href="/signup"
+              className="rounded-[6px] bg-[var(--color-ember)] px-5 py-2.5 text-[13px] font-medium tracking-[0.02em] text-[#fbf9f3] hover:opacity-90"
             >
-              <UnifiedDemo />
-            </div>
+              Start tracking
+            </Link>
+            <Link
+              href="#demo"
+              className="text-[13px] tracking-[0.04em] text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] dark:text-[var(--color-ink-dark-muted)] dark:hover:text-[var(--color-ink-dark)]"
+            >
+              See it in action →
+            </Link>
           </div>
         </section>
 
-        {/* Category Carousel */}
-        <CategoryCarousel />
+        {/* Three-up: Mind / Body / Soul */}
+        <section className="border-t border-black/8 py-16 dark:border-white/8">
+          <p className="mb-8 text-[11px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
+            Three categories
+          </p>
+          <div className="grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-6">
+            {CATEGORY_IDS.map((id) => (
+              <div key={id}>
+                <div className="mb-3 flex items-baseline gap-2">
+                  <span
+                    aria-hidden
+                    className="inline-block h-1.5 w-1.5 rounded-full"
+                    style={{ backgroundColor: CATEGORY_HEX[id] }}
+                  />
+                  <h3
+                    className="font-serif text-[18px] font-medium"
+                    style={{ fontOpticalSizing: "auto" }}
+                  >
+                    {CATEGORY_LABELS[id]}
+                  </h3>
+                </div>
+                <p className="text-[13px] leading-[1.55] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+                  {CATEGORY_DESCRIPTIONS[id]}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
 
-        {/* Footer */}
-        <LandingFooter />
+        {/* Demo */}
+        <section
+          id="demo"
+          className="border-t border-black/8 py-16 dark:border-white/8"
+        >
+          <p className="mb-8 text-[11px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
+            A look inside
+          </p>
+          <div className="rounded-[12px] border border-black/8 bg-[var(--color-paper-raised)] p-6 dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)]">
+            <UnifiedDemo />
+          </div>
+        </section>
       </main>
+
+      <LandingFooter />
     </div>
   );
 }
