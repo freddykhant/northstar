@@ -1,6 +1,5 @@
 "use client";
 
-import { Sidebar as PanelLeftOpen } from "@phosphor-icons/react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -18,7 +17,6 @@ export default function SignUpPage() {
 
   const signUpMutation = api.auth.signUp.useMutation({
     onSuccess: async () => {
-      // After successful signup, sign in automatically
       setIsLoading(true);
       const result = await signIn("credentials", {
         email,
@@ -39,7 +37,7 @@ export default function SignUpPage() {
     },
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
@@ -57,164 +55,163 @@ export default function SignUpPage() {
     void signIn("google", { callbackUrl: "/home" });
   };
 
+  const inputClass =
+    "w-full rounded-[6px] border border-black/8 bg-transparent px-3 py-2.5 text-[14px] text-[var(--color-ink)] placeholder-[var(--color-ink-muted)]/60 focus:border-[var(--color-ember)] focus:outline-none dark:border-white/8 dark:text-[var(--color-ink-dark)]";
+  const labelClass =
+    "mb-1.5 block text-[11px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]";
+
   return (
-    <div className="relative flex min-h-screen flex-col overflow-hidden bg-white dark:bg-[#0a0a0a]">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 dark:opacity-100"
-        style={{
-          background: `
-            radial-gradient(ellipse 80% 50% at 50% 50%, rgba(38, 35, 32, 0.4) 0%, transparent 50%),
-            radial-gradient(ellipse 60% 40% at 50% 45%, rgba(45, 40, 35, 0.3) 0%, transparent 40%),
-            radial-gradient(ellipse 100% 80% at 50% 50%, rgba(25, 23, 22, 0.5) 0%, transparent 60%)
-          `,
-        }}
-      />
-      <div
-        className="pointer-events-none absolute inset-0 opacity-100 transition-opacity duration-500 dark:opacity-0"
-        style={{
-          background: `
-            radial-gradient(ellipse 80% 50% at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
-            radial-gradient(ellipse 60% 40% at 50% 45%, rgba(239, 68, 68, 0.03) 0%, transparent 40%),
-            radial-gradient(ellipse 100% 80% at 50% 50%, rgba(168, 85, 247, 0.04) 0%, transparent 60%)
-          `,
-        }}
-      />
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.015]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-        }}
-      />
-      <main className="relative z-10 flex flex-1 items-center justify-center px-4">
-        <div className="w-full max-w-100 rounded-3xl border border-zinc-200 bg-white/80 p-8 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-900/50">
+    <main className="flex min-h-screen items-center justify-center bg-[var(--color-paper)] px-4 py-12 text-[var(--color-ink)] dark:bg-[var(--color-paper-dark)] dark:text-[var(--color-ink-dark)]">
+      <div className="w-full max-w-sm">
+        <Link
+          href="/"
+          className="mb-10 flex items-baseline justify-center gap-2"
+        >
+          <span
+            aria-hidden
+            className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-ember)]"
+          />
+          <span
+            className="font-serif text-[22px] italic tracking-tight"
+            style={{ fontOpticalSizing: "auto" }}
+          >
+            northstar
+          </span>
+        </Link>
+
+        <div className="rounded-[12px] border border-black/8 bg-[var(--color-paper-raised)] p-8 dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)]">
           <div className="mb-6">
-            <div className="mb-6 flex h-15 w-15 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800">
-              <PanelLeftOpen className="h-7 w-7 text-zinc-600 dark:text-zinc-400" />
-            </div>
-            <div className="flex flex-col gap-1">
-              <h1 className="mb-1 text-xl font-semibold text-black dark:text-white">
-                Welcome to Northstar
-              </h1>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                Create your account to get started.
-              </p>
-            </div>
+            <h1
+              className="mb-1 font-serif text-[24px] font-medium"
+              style={{ fontOpticalSizing: "auto" }}
+            >
+              Begin
+            </h1>
+            <p className="text-[13px] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+              Create your account to start tracking.
+            </p>
           </div>
 
-          <div className="space-y-4">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="flex gap-3">
-                <div className="flex-1">
-                  <label className="mb-2 block text-sm font-medium text-black dark:text-white">
-                    First Name
-                  </label>
-                  <input
-                    type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="John"
-                    required
-                    className="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-4 py-3 text-black placeholder-zinc-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-white dark:placeholder-zinc-500 dark:focus:ring-zinc-600"
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="mb-2 block text-sm font-medium text-black dark:text-white">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Doe"
-                    required
-                    className="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-4 py-3 text-black placeholder-zinc-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-white dark:placeholder-zinc-500 dark:focus:ring-zinc-600"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium text-black dark:text-white">
-                  Email
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <label htmlFor="firstName" className={labelClass}>
+                  First name
                 </label>
                 <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@email.com"
+                  id="firstName"
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="John"
                   required
-                  className="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-4 py-3 text-black placeholder-zinc-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-white dark:placeholder-zinc-500 dark:focus:ring-zinc-600"
+                  className={inputClass}
                 />
               </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium text-black dark:text-white">
-                  Password
+              <div className="flex-1">
+                <label htmlFor="lastName" className={labelClass}>
+                  Last name
                 </label>
                 <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Min. 8 characters"
+                  id="lastName"
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="Doe"
                   required
-                  className="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-4 py-3 text-black placeholder-zinc-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-white dark:placeholder-zinc-500 dark:focus:ring-zinc-600"
+                  className={inputClass}
                 />
               </div>
+            </div>
 
-              {error && (
-                <div className="rounded-xl bg-red-500/10 p-3 text-sm text-red-400">
-                  {error}
-                </div>
-              )}
+            <div>
+              <label htmlFor="email" className={labelClass}>
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@email.com"
+                required
+                className={inputClass}
+              />
+            </div>
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full rounded-xl bg-black py-3 font-medium text-white transition-colors hover:bg-zinc-800 disabled:opacity-50 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
-              >
-                {isLoading ? "Creating account..." : "Sign Up"}
-              </button>
-            </form>
-          </div>
+            <div>
+              <label htmlFor="password" className={labelClass}>
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Min. 8 characters"
+                required
+                className={inputClass}
+              />
+            </div>
 
-          <div className="mt-4 space-y-3">
+            {error && (
+              <div className="rounded-[6px] border border-[var(--color-ember)]/30 bg-[var(--color-ember)]/8 px-3 py-2 text-[12px] text-[var(--color-ember)]">
+                {error}
+              </div>
+            )}
+
             <button
-              type="button"
-              onClick={handleGoogleSignIn}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-300 bg-zinc-100 py-3 font-medium text-black transition-colors hover:bg-zinc-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:hover:bg-zinc-700"
+              type="submit"
+              disabled={isLoading}
+              className="w-full rounded-[6px] bg-[var(--color-ink)] py-2.5 text-[13px] font-medium text-[var(--color-paper)] hover:bg-black disabled:opacity-50 dark:bg-[var(--color-ink-dark)] dark:text-[var(--color-paper-dark)] dark:hover:bg-white"
             >
-              <svg className="h-5 w-5" viewBox="0 0 24 24">
-                <path
-                  fill="currentColor"
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                />
-                <path
-                  fill="currentColor"
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                />
-                <path
-                  fill="currentColor"
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                />
-                <path
-                  fill="currentColor"
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                />
-              </svg>
-              Sign up with Google
+              {isLoading ? "Creating account…" : "Create account"}
             </button>
+          </form>
+
+          <div className="my-5 flex items-center gap-3 text-[10px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
+            <div className="h-px flex-1 bg-black/8 dark:bg-white/8" />
+            or
+            <div className="h-px flex-1 bg-black/8 dark:bg-white/8" />
           </div>
 
-          <p className="mt-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
-            Already have an account?{" "}
-            <Link
-              href="/signin"
-              className="font-medium text-black hover:underline dark:text-white"
-            >
-              Sign in
-            </Link>
-          </p>
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            className="flex w-full items-center justify-center gap-2 rounded-[6px] border border-black/8 bg-transparent py-2.5 text-[13px] font-medium text-[var(--color-ink)] hover:border-black/16 dark:border-white/8 dark:text-[var(--color-ink-dark)] dark:hover:border-white/16"
+          >
+            <svg className="h-4 w-4" viewBox="0 0 24 24">
+              <path
+                fill="currentColor"
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+              />
+              <path
+                fill="currentColor"
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+              />
+              <path
+                fill="currentColor"
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+              />
+              <path
+                fill="currentColor"
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+              />
+            </svg>
+            Continue with Google
+          </button>
         </div>
-      </main>
-    </div>
+
+        <p className="mt-6 text-center text-[13px] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+          Already have an account?{" "}
+          <Link
+            href="/signin"
+            className="text-[var(--color-ink)] hover:underline dark:text-[var(--color-ink-dark)]"
+          >
+            Sign in
+          </Link>
+        </p>
+      </div>
+    </main>
   );
 }
