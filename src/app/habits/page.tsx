@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, X } from "@phosphor-icons/react";
+import { Feather, Plus, X } from "@phosphor-icons/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -203,6 +203,11 @@ export default function HabitsPage() {
             />
           ) : (
             <div className="rounded-[12px] border border-black/8 bg-[var(--color-paper-raised)] p-12 text-center dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)]">
+              <Feather
+                size={32}
+                weight="duotone"
+                className="mx-auto mb-4 text-[var(--color-ember)]"
+              />
               <h2
                 className="mb-2 font-serif text-[22px] font-medium"
                 style={{ fontOpticalSizing: "auto" }}

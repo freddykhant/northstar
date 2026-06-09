@@ -33,13 +33,13 @@ export function Confetti({ trigger }: ConfettiProps) {
         ...defaults,
         particleCount,
         origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-        colors: ["#3b82f6", "#ef4444", "#a855f7", "#eab308", "#22c55e"],
+        colors: ["#5b7a99", "#b5553a", "#6f8a5e", "#c2410c", "#d4b675"],
       });
       confetti({
         ...defaults,
         particleCount,
         origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-        colors: ["#3b82f6", "#ef4444", "#a855f7", "#eab308", "#22c55e"],
+        colors: ["#5b7a99", "#b5553a", "#6f8a5e", "#c2410c", "#d4b675"],
       });
     }, 250);
 

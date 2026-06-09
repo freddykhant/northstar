@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
+import { Compass } from "@phosphor-icons/react";
 import { ActivityGraph } from "~/_components/ui/activity-graph";
 import { CategoryStatCard } from "~/_components/ui/category-stat-card";
 import { CheckinList } from "~/_components/ui/checkin-list";
@@ -152,6 +153,11 @@ export default function HomePage() {
               </div>
             ) : (
               <div className="rounded-[12px] border border-black/8 bg-[var(--color-paper-raised)] p-12 text-center dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)]">
+                <Compass
+                  size={32}
+                  weight="duotone"
+                  className="mx-auto mb-4 text-[var(--color-ember)]"
+                />
                 <h2
                   className="mb-2 font-serif text-[22px] font-medium text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]"
                   style={{ fontOpticalSizing: "auto" }}
