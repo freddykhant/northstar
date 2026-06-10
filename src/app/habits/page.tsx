@@ -168,10 +168,10 @@ export default function HabitsPage() {
           )}
 
           {/* Page header */}
-          <header className="mb-12 flex items-end justify-between">
+          <header className="mb-12 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h1
-                className="font-serif text-[40px] leading-[1.05] font-medium"
+                className="font-serif text-[36px] leading-[1.05] font-medium sm:text-[40px]"
                 style={{
                   fontOpticalSizing: "auto",
                   letterSpacing: "-0.02em",
@@ -185,7 +185,7 @@ export default function HabitsPage() {
             </div>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-2 rounded-[6px] bg-[var(--color-ink)] px-4 py-2.5 text-[13px] font-medium text-[var(--color-paper)] hover:bg-black dark:bg-[var(--color-ink-dark)] dark:text-[var(--color-paper-dark)] dark:hover:bg-white"
+              className="inline-flex w-fit items-center gap-2 rounded-[6px] bg-[var(--color-ink)] px-4 py-2.5 text-[13px] font-medium text-[var(--color-paper)] hover:bg-black dark:bg-[var(--color-ink-dark)] dark:text-[var(--color-paper-dark)] dark:hover:bg-white"
             >
               <Plus size={14} weight="bold" />
               New habit

@@ -96,7 +96,7 @@ export default function HomePage() {
           {/* Greeting */}
           <header className="mb-12">
             <h1
-              className="font-serif text-[40px] leading-[1.05] font-medium text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]"
+              className="font-serif text-[36px] leading-[1.05] font-medium text-[var(--color-ink)] sm:text-[40px] dark:text-[var(--color-ink-dark)]"
               style={{
                 fontOpticalSizing: "auto",
                 letterSpacing: "-0.02em",
