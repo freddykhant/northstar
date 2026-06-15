@@ -4,7 +4,8 @@
       "Bash(pnpm typecheck:*)",
       "Bash(npx tsc:*)",
       "Bash(pnpm build:*)",
-      "Bash(pnpm next:*)"
+      "Bash(pnpm next:*)",
+      "Bash(pnpm lint *)"
     ]
   }
 }
