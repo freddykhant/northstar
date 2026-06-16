@@ -154,7 +154,7 @@ export default function HabitsPage() {
       <Sidebar user={session?.user} />
 
       <main className="relative flex-1 md:ml-64">
-        <div className="mx-auto max-w-3xl px-6 py-16">
+        <div className="max-w-3xl px-6 py-16 sm:pl-16 lg:pl-24">
           {mutationError && (
             <div className="mb-6 flex items-center justify-between rounded-[6px] border border-[var(--color-ember)]/30 bg-[var(--color-ember)]/8 px-3 py-2 text-[12px] text-[var(--color-ember)]">
               <span>{mutationError}</span>

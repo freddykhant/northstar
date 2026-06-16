@@ -405,7 +405,7 @@ export default function HomePage() {
       <Sidebar user={session.user} />
 
       <div className="relative flex-1 md:ml-64">
-        <main className="mx-auto max-w-5xl px-6 pt-12 pb-32 sm:px-12 sm:pt-16">
+        <main className="max-w-5xl px-6 pt-12 pb-32 sm:pt-16 sm:pl-16 sm:pr-12 lg:pl-24">
           {/* Folio chrome */}
           <div className="mb-16 flex items-baseline justify-between">
             <CompassOrnament />
