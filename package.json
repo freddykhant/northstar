@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "next build",
-    "check": "next lint && tsc --noEmit",
+    "check": "next lint && tsc --noEmit && pnpm check:palette",
+    "check:palette": "tsx scripts/check-palette.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
