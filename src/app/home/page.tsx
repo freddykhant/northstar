@@ -492,7 +492,6 @@ export default function HomePage() {
                 <CheckinList
                   habits={habitsWithStatus}
                   onToggle={handleToggle}
-                  justCompleted={justCompleted}
                   isLoading={toggleMutation.isPending}
                 />
               ) : (
