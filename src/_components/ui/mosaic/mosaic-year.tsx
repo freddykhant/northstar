@@ -81,16 +81,19 @@ export function MosaicYear({
             <div key={i} className="flex flex-col" style={{ gap: GAP }}>
               {col.map((date) => {
                 const key = formatDateAsLocal(date);
-                const future = date > today;
+                // The grid pads back to the Sunday before Jan 1 so every column is a full
+                // week; those leading days belong to the previous year and must hold grid
+                // position without rendering.
+                const outOfRange = date > today || date.getFullYear() !== today.getFullYear();
                 const categories = completionMap.get(key) ?? EMPTY;
                 return (
-                  <div key={key} style={{ opacity: future ? 0 : 1 }}>
+                  <div key={key} style={{ opacity: outOfRange ? 0 : 1 }}>
                     <MosaicTile
                       categories={categories}
                       size={TILE}
                       radius={2}
                       pulse={pulseToday && key === todayKey}
-                      onEnter={(e) => !future && onHover?.(date, categories, e)}
+                      onEnter={(e) => !outOfRange && onHover?.(date, categories, e)}
                       onLeave={onLeave}
                     />
                   </div>
