@@ -2,13 +2,15 @@
 
 export type CategoryId = "mind" | "body" | "soul";
 
+export interface DayCategories {
+  mind: boolean;
+  body: boolean;
+  soul: boolean;
+}
+
 export interface DayData {
   date: string;
-  categories: {
-    mind: boolean;
-    body: boolean;
-    soul: boolean;
-  };
+  categories: DayCategories;
 }
 
 export interface MonthLabel {
