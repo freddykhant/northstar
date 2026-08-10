@@ -33,7 +33,7 @@ const completions = pgTable(createTable("completion"), {
   createdAt: timestamp({ withTimezone: true }).notNull(),
 });
 
-const sql = neon(env.DATABASE_URL);
+const sql = neon(env.STORAGE_DATABASE_URL);
 const db = drizzle({ client: sql });
 
 async function clear() {

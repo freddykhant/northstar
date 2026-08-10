@@ -6,7 +6,7 @@ import { completions, habits } from "~/server/db/schema";
 
 // drizzle returns dates in different formats depending on the driver
 // this ensures we always get YYYY-MM-DD strings for consistency
-function normalizeDateString(date: string | Date | unknown): string {
+function normalizeDateString(date: string | Date): string {
   if (date instanceof Date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -235,7 +235,7 @@ export const completionRouter = createTRPCRouter({
     const now = new Date();
     const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
     let currentStreak = 0;
-    let checkDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const checkDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     while (true) {
       const dateStr = `${checkDate.getFullYear()}-${String(checkDate.getMonth() + 1).padStart(2, "0")}-${String(checkDate.getDate()).padStart(2, "0")}`;

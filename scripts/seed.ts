@@ -44,7 +44,7 @@ const users = pgTable(createTable("user"), {
   id: varchar({ length: 255 }).primaryKey(),
 });
 
-const sql = neon(env.DATABASE_URL);
+const sql = neon(env.STORAGE_DATABASE_URL);
 const db = drizzle({ client: sql });
 
 async function seed() {
