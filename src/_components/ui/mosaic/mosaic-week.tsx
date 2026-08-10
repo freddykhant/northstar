@@ -1,0 +1,53 @@
+"use client";
+
+import { useMemo } from "react";
+import { CATEGORY_IDS, CATEGORY_LABELS } from "~/lib/constants";
+import type { DayCategories } from "~/lib/mosaic";
+import { formatDateAsLocal } from "~/lib/utils";
+import { MosaicTile } from "./mosaic-tile";
+
+const EMPTY: DayCategories = { mind: false, body: false, soul: false };
+
+interface MosaicWeekProps {
+  completionMap: Map<string, DayCategories>;
+}
+
+export function MosaicWeek({ completionMap }: MosaicWeekProps) {
+  const days = useMemo(() => {
+    const out: Date[] = [];
+    const now = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      out.push(d);
+    }
+    return out;
+  }, []);
+
+  return (
+    <div>
+      <div className="flex flex-wrap gap-3">
+        {days.map((date) => {
+          const key = formatDateAsLocal(date);
+          const categories = completionMap.get(key) ?? EMPTY;
+          const kept = CATEGORY_IDS.filter((id) => categories[id])
+            .map((id) => CATEGORY_LABELS[id])
+            .join(", ");
+          return (
+            <div key={key} className="text-center">
+              <MosaicTile
+                categories={categories}
+                size={60}
+                radius={12}
+                title={kept || "Nothing kept"}
+              />
+              <div className="mt-2 text-[10px] font-bold tracking-[0.1em] text-[var(--color-ink-muted)] uppercase">
+                {date.toLocaleDateString("en-US", { weekday: "short" })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
