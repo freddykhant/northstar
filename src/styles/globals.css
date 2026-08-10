@@ -22,6 +22,9 @@
   --color-ink-dark-muted: #9a9489;
   --color-ember: #b94a1f;
   --color-ember-soft: #d9683b;
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
   /* END DEPRECATED */
 
   /* Surfaces — light */
