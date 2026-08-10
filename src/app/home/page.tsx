@@ -5,8 +5,8 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
-import { ActivityGraph } from "~/_components/ui/activity-graph";
 import { CheckinList } from "~/_components/ui/checkin-list";
+import { Mosaic } from "~/_components/ui/mosaic";
 import { MoodTracker } from "~/_components/ui/mood-tracker";
 import { Sidebar } from "~/_components/ui/sidebar";
 import { useGraphData } from "~/hooks/use-graph-data";
@@ -476,7 +476,7 @@ export default function HomePage() {
               title="The year so far"
             />
             <SectionBody>
-              <ActivityGraph completions={graphData} />
+              <Mosaic completions={graphData} />
             </SectionBody>
           </section>
 
