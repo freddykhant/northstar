@@ -52,7 +52,10 @@ export function Mosaic({ completions, todayKey, pulseToday }: MosaicProps) {
           {VIEWS.map((v) => (
             <button
               key={v.id}
-              onClick={() => setView(v.id)}
+              onClick={() => {
+                setView(v.id);
+                setHovered(null);
+              }}
               className={`rounded-[8px] px-3 py-1 text-[12px] font-semibold ${
                 view === v.id
                   ? "bg-[var(--color-surface)] text-[var(--color-ink)] shadow-[var(--shadow-card)]"
