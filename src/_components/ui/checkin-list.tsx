@@ -80,17 +80,26 @@ export function CheckinList({ habits, onToggle, isLoading }: CheckinListProps) {
                 />
 
                 <span className="min-w-0 flex-1">
-                  <span className="relative inline-block text-[14px] font-semibold text-[var(--color-ink)]">
-                    <span style={{ opacity: done ? 0.45 : 1 }}>
+                  {/* Both layers share one grid cell so they wrap identically —
+                      the base text stays fully visible; the invisible overlay
+                      carries the animated line-through, which (unlike an
+                      absolutely-positioned bar) follows every wrapped line. */}
+                  <span className="grid grid-cols-1">
+                    <span
+                      className="col-start-1 row-start-1 text-[14px] font-semibold text-[var(--color-ink)]"
+                      style={{ opacity: done ? 0.45 : 1 }}
+                    >
                       {habit.name}
                     </span>
                     <motion.span
                       aria-hidden
-                      className="absolute top-1/2 left-0 h-[1.5px] bg-[var(--color-ink-faint)]"
+                      className="col-start-1 row-start-1 text-[14px] font-semibold text-transparent [text-decoration-color:var(--color-ink-faint)] [text-decoration-line:line-through] [text-decoration-thickness:1.5px]"
                       initial={false}
-                      animate={{ width: done ? "100%" : "0%" }}
+                      animate={{ clipPath: done ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)" }}
                       transition={reduce ? { duration: 0 } : { duration: 0.22 }}
-                    />
+                    >
+                      {habit.name}
+                    </motion.span>
                   </span>
                   {habit.description && (
                     <span className="mt-0.5 block text-[12px] text-[var(--color-ink-muted)]">
