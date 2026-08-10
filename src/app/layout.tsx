@@ -1,18 +1,20 @@
 import "~/styles/globals.css";
 
 import { type Metadata } from "next";
-import { Fraunces, Inter } from "next/font/google";
+import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
 import { AuthProvider } from "~/_components/auth-provider";
 import { ThemeProvider } from "~/_components/theme-provider";
 import { TRPCReactProvider } from "~/trpc/react";
 
-const inter = Inter({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
+  weight: ["400", "500", "600", "700", "800"],
 });
 
+// DEPRECATED — retained for out-of-scope surfaces only. See globals.css.
 const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-serif",
@@ -33,7 +35,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${fraunces.variable}`}
+      className={`${jakarta.variable} ${fraunces.variable}`}
     >
       <body className="font-sans">
         <ThemeProvider

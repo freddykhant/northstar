@@ -3,59 +3,96 @@
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
-  /* Typography */
+  /* Typography — one family. */
   --font-sans:
     var(--font-sans), ui-sans-serif, -apple-system, BlinkMacSystemFont,
     system-ui, sans-serif;
+
+  /* DEPRECATED — retained only so the out-of-scope surfaces (landing,
+     /habits, /signin, /signup) keep rendering. No in-scope file may use
+     font-serif or any color-paper/ink-dark/ember token. Removed in the
+     follow-up pass that migrates those pages. */
   --font-serif:
     var(--font-serif), ui-serif, Georgia, Cambria, "Times New Roman", serif;
-
-  /* Warm paper palette (light) */
   --color-paper: #f6f3ec;
   --color-paper-raised: #fbf9f3;
-  --color-ink: #1a1714;
-  --color-ink-muted: #6b645b;
-  --color-hairline: rgba(0, 0, 0, 0.08);
-
-  /* Warm paper palette (dark) */
   --color-paper-dark: #14110d;
   --color-paper-dark-raised: #1c1814;
   --color-ink-dark: #ece7dd;
   --color-ink-dark-muted: #9a9489;
-  --color-hairline-dark: rgba(255, 255, 255, 0.08);
-
-  /* Single accent — muted ember */
   --color-ember: #b94a1f;
   --color-ember-soft: #d9683b;
+  /* END DEPRECATED */
 
-  /* Earthy category palette (content only — not chrome) */
-  --color-mind: #5b7a99;
-  --color-body: #b5553a;
-  --color-soul: #6f8a5e;
+  /* Surfaces — light */
+  --color-canvas: #f4f3f8;
+  --color-surface: #ffffff;
+  --color-sunken: #edebf4;
+  --color-hairline: #e7e5ef;
+  --color-ink: #191822;
+  --color-ink-muted: #6e6c82;
+  --color-ink-faint: #a9a7b8;
 
-  /* Radii — smaller, more architectural */
-  --radius-sm: 4px;
-  --radius: 8px;
-  --radius-lg: 12px;
+  /* Categories — light */
+  --color-mind: #6c5ce7;
+  --color-body: #f2542d;
+  --color-soul: #0fa47f;
 
-  /* Single elevation */
-  --shadow-card: 0 1px 0 rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.04);
+  /* Category-as-text — darker variants meeting 4.5:1 on white */
+  --color-mind-ink: #5346b8;
+  --color-body-ink: #b83c1c;
+  --color-soul-ink: #0a7a5e;
 
-  /* Motion — single fade-in only */
-  --animate-fade-in: fade-in 0.4s ease-out;
-  --animate-fade-in-up: fade-in-up 0.5s ease-out;
+  /* The empty tile. Separate token from --color-sunken so the mosaic's
+     contrast floor can be tuned without moving every sunken surface. */
+  --color-tile-empty: #e7e4f1;
+
+  /* Elevation */
+  --shadow-card: 0 1px 2px rgba(25, 24, 34, 0.04),
+    0 6px 18px -6px rgba(25, 24, 34, 0.1);
+  --shadow-lift: 0 2px 4px rgba(25, 24, 34, 0.05),
+    0 12px 28px -8px rgba(25, 24, 34, 0.16);
+
+  /* Radii */
+  --radius-tile-year: 2px;
+  --radius-tile-month: 8px;
+  --radius-tile-week: 12px;
+  --radius-control: 12px;
+  --radius-card: 16px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 140ms;
+  --duration-base: 220ms;
+  --duration-slow: 420ms;
 }
 
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+/* Dark — retuned values, never an inversion. */
+.dark {
+  --color-canvas: #131219;
+  --color-surface: #1c1b25;
+  --color-sunken: #26242f;
+  --color-hairline: #2a2836;
+  --color-ink: #edecf5;
+  --color-ink-muted: #9694ac;
+  --color-ink-faint: #6e6c82;
+
+  --color-mind: #9c8fff;
+  --color-body: #ff7d5c;
+  --color-soul: #35c9a3;
+
+  --color-mind-ink: #b3a8ff;
+  --color-body-ink: #ff9a80;
+  --color-soul-ink: #5fd8b8;
+
+  --color-tile-empty: #26242f;
+
+  /* Shadows read poorly on near-black; depth comes from borders. */
+  --shadow-card: 0 6px 18px -6px rgba(0, 0, 0, 0.5);
+  --shadow-lift: 0 12px 28px -8px rgba(0, 0, 0, 0.6);
 }
 
-@keyframes fade-in-up {
+@keyframes rise-in {
   from {
     opacity: 0;
     transform: translateY(12px);
@@ -66,15 +103,10 @@
   }
 }
 
-.animate-fade-in {
-  animation: fade-in 0.4s ease-out;
+.animate-rise-in {
+  animation: rise-in var(--duration-slow) var(--ease-out) both;
 }
 
-.animate-fade-in-up {
-  animation: fade-in-up 0.5s ease-out;
-}
-
-/* Interactive elements get a snappy hover/focus transition only */
 a,
 button,
 input,
@@ -82,10 +114,10 @@ select,
 textarea,
 [role="button"] {
   transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease,
-    opacity 0.15s ease;
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    opacity var(--duration-fast) var(--ease-out);
 }
 
 html {
@@ -93,17 +125,30 @@ html {
 }
 
 body {
-  background-color: var(--color-paper);
+  background-color: var(--color-canvas);
   color: var(--color-ink);
-  font-feature-settings: "ss01", "cv11";
 }
 
-.dark body {
-  background-color: var(--color-paper-dark);
-  color: var(--color-ink-dark);
-}
-
-/* Tabular numerals where we render numbers */
 .tabular {
   font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-rise-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

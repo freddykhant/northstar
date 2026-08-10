@@ -18,11 +18,23 @@ export const CATEGORY_LABELS: Record<CategoryId, string> = {
 
 // Muted earthy tokens — slate-blue / terracotta / sage
 // Hex values mirror the CSS vars in globals.css so they can be used inline.
-export const CATEGORY_HEX: Record<CategoryId, string> = {
-  mind: "#5b7a99",
-  body: "#b5553a",
-  soul: "#6f8a5e",
+// Per-theme category hexes, mirroring the CSS vars in globals.css. Needed only
+// where a real hex is required (canvas, image export); prefer var(--color-mind)
+// in markup so theme switching is automatic.
+export const CATEGORY_HEX_LIGHT: Record<CategoryId, string> = {
+  mind: "#6c5ce7",
+  body: "#f2542d",
+  soul: "#0fa47f",
 } as const;
+
+export const CATEGORY_HEX_DARK: Record<CategoryId, string> = {
+  mind: "#9c8fff",
+  body: "#ff7d5c",
+  soul: "#35c9a3",
+} as const;
+
+/** @deprecated Use CATEGORY_HEX_LIGHT/DARK or var(--color-<id>). */
+export const CATEGORY_HEX = CATEGORY_HEX_LIGHT;
 
 export const CATEGORY_DESCRIPTIONS: Record<CategoryId, string> = {
   mind: "Mental & intellectual growth",
