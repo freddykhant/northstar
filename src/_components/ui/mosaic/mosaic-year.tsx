@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import type { DayCategories } from "~/lib/mosaic";
+import { keptLabel, type DayCategories } from "~/lib/mosaic";
 import { formatDateAsLocal } from "~/lib/utils";
 import { MosaicTile } from "./mosaic-tile";
 
@@ -11,16 +11,16 @@ const GAP = 3;
 
 interface MosaicYearProps {
   completionMap: Map<string, DayCategories>;
-  onHover?: (date: Date, c: DayCategories, e: React.MouseEvent<HTMLElement>) => void;
-  onLeave?: () => void;
+  onShow?: (date: Date, c: DayCategories, e: React.SyntheticEvent<HTMLElement>) => void;
+  onHide?: () => void;
   todayKey?: string;
   pulseToday?: boolean;
 }
 
 export function MosaicYear({
   completionMap,
-  onHover,
-  onLeave,
+  onShow,
+  onHide,
   todayKey,
   pulseToday = false,
 }: MosaicYearProps) {
@@ -86,15 +86,24 @@ export function MosaicYear({
                 // position without rendering.
                 const outOfRange = date > today || date.getFullYear() !== today.getFullYear();
                 const categories = completionMap.get(key) ?? EMPTY;
+                const label = outOfRange
+                  ? undefined
+                  : `${date.toLocaleDateString("en-US", {
+                      weekday: "short",
+                      day: "numeric",
+                      month: "short",
+                    })} — ${keptLabel(categories)}`;
                 return (
-                  <div key={key} style={{ opacity: outOfRange ? 0 : 1 }}>
+                  <div key={key} style={{ opacity: outOfRange ? 0 : 1 }} aria-hidden={outOfRange}>
                     <MosaicTile
                       categories={categories}
                       size={TILE}
                       radius="var(--radius-tile-year)"
                       pulse={pulseToday && key === todayKey}
-                      onEnter={(e) => !outOfRange && onHover?.(date, categories, e)}
-                      onLeave={onLeave}
+                      title={label}
+                      focusable={!outOfRange}
+                      onShow={(e) => !outOfRange && onShow?.(date, categories, e)}
+                      onHide={onHide}
                     />
                   </div>
                 );

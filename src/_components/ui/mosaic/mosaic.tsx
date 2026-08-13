@@ -28,6 +28,7 @@ interface MosaicProps {
 interface Hovered {
   date: Date;
   categories: DayCategories;
+  /** Anchor point for the tooltip, in viewport coordinates (fixed positioning). */
   x: number;
   y: number;
 }
@@ -67,15 +68,18 @@ export function Mosaic({
           completionMap={completionMap}
           todayKey={todayKey}
           pulseToday={pulseToday}
-          onHover={(date, categories, e) =>
+          onShow={(date, categories, e) => {
+            // Anchor from the tile's own box rather than clientX/clientY so this works
+            // for focus events (keyboard/screen-reader), not just mouse events.
+            const rect = e.currentTarget.getBoundingClientRect();
             setHovered({
               date,
               categories,
-              x: e.clientX,
-              y: e.clientY,
-            })
-          }
-          onLeave={() => setHovered(null)}
+              x: rect.left + rect.width / 2,
+              y: rect.top,
+            });
+          }}
+          onHide={() => setHovered(null)}
         />
       )}
       {view === "month" && <MosaicMonth completionMap={completionMap} />}

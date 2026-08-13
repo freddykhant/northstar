@@ -29,13 +29,19 @@ export function MosaicWeek({ completionMap }: MosaicWeekProps) {
         {days.map((date) => {
           const key = formatDateAsLocal(date);
           const categories = completionMap.get(key) ?? EMPTY;
+          const label = `${date.toLocaleDateString("en-US", {
+            weekday: "short",
+            day: "numeric",
+            month: "short",
+          })} — ${keptLabel(categories)}`;
           return (
             <div key={key} className="text-center">
               <MosaicTile
                 categories={categories}
                 size={60}
                 radius="var(--radius-tile-week)"
-                title={keptLabel(categories)}
+                title={label}
+                focusable
               />
               <div className="mt-2 text-eyebrow text-[var(--color-ink-muted)] uppercase">
                 {date.toLocaleDateString("en-US", { weekday: "short" })}

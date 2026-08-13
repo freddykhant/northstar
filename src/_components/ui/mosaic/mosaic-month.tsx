@@ -42,6 +42,11 @@ export function MosaicMonth({ completionMap }: MosaicMonthProps) {
           const key = formatDateAsLocal(date);
           const future = date > today;
           const categories = completionMap.get(key) ?? EMPTY;
+          const label = `${date.toLocaleDateString("en-US", {
+            weekday: "short",
+            day: "numeric",
+            month: "short",
+          })} — ${keptLabel(categories)}`;
           return (
             <div
               key={key}
@@ -52,7 +57,8 @@ export function MosaicMonth({ completionMap }: MosaicMonthProps) {
                 categories={categories}
                 size={34}
                 radius="var(--radius-tile-month)"
-                title={keptLabel(categories)}
+                title={label}
+                focusable
               />
               <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-[11px] font-bold text-[var(--color-ink)] mix-blend-luminosity">
                 {date.getDate()}

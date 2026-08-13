@@ -11,9 +11,14 @@ interface MosaicTileProps {
   radius: number | string;
   /** Pulse once — used when today's tile gains a band. */
   pulse?: boolean;
+  /** Human-readable description, e.g. "Sat 9 Aug — Mind, Soul". Used as the native
+   *  hover tooltip and, when `focusable`, as the accessible name. */
   title?: string;
-  onEnter?: (e: React.MouseEvent<HTMLElement>) => void;
-  onLeave?: () => void;
+  /** Whether this tile represents a real day and should be a tab stop. Tiles that
+   *  only hold grid position (out-of-range padding) must stay out of the tab order. */
+  focusable?: boolean;
+  onShow?: (e: React.SyntheticEvent<HTMLElement>) => void;
+  onHide?: () => void;
 }
 
 export function MosaicTile({
@@ -22,8 +27,9 @@ export function MosaicTile({
   radius,
   pulse = false,
   title,
-  onEnter,
-  onLeave,
+  focusable = false,
+  onShow,
+  onHide,
 }: MosaicTileProps) {
   const reduce = useReducedMotion();
   const perfect = isPerfectDay(categories);
@@ -31,8 +37,13 @@ export function MosaicTile({
   return (
     <motion.div
       title={title}
-      onMouseEnter={onEnter}
-      onMouseLeave={onLeave}
+      tabIndex={focusable ? 0 : undefined}
+      role={focusable ? "button" : undefined}
+      aria-label={focusable ? title : undefined}
+      onMouseEnter={onShow}
+      onMouseLeave={onHide}
+      onFocus={focusable ? onShow : undefined}
+      onBlur={focusable ? onHide : undefined}
       animate={reduce || !pulse ? {} : { scale: [1, 1.18, 1] }}
       transition={{ type: "spring", stiffness: 420, damping: 26 }}
       style={{
