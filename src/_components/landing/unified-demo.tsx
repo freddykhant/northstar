@@ -101,7 +101,7 @@ export function UnifiedDemo() {
             <div className="h-3 w-3 rounded-full bg-yellow-400" />
             <div className="h-3 w-3 rounded-full bg-green-400" />
           </div>
-          <div className="ml-3 flex-1 rounded-lg bg-zinc-100 px-4 py-1.5 dark:bg-zinc-800">
+          <div className="ml-3 flex-1 rounded-[var(--radius-control)] bg-zinc-100 px-4 py-1.5 dark:bg-zinc-800">
             <span className="text-xs text-zinc-500 dark:text-zinc-400">
               northstar.app/home
             </span>
@@ -144,7 +144,7 @@ export function UnifiedDemo() {
                       return (
                         <motion.div
                           key={dayIndex}
-                          className={`relative h-8 w-8 rounded-lg border-2 transition-colors ${
+                          className={`relative h-8 w-8 rounded-[var(--radius-control)] border-2 transition-colors ${
                             isFilled
                               ? `${colors.bg} ${colors.border}`
                               : isToday
@@ -243,7 +243,7 @@ export function UnifiedDemo() {
                     <div className="flex items-center gap-4">
                       {/* Checkbox */}
                       <motion.div
-                        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border-2 transition-all ${
+                        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--radius-control)] border-2 transition-all ${
                           isCompleted
                             ? `${colors.bg} ${colors.border}`
                             : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-700"
@@ -286,7 +286,7 @@ export function UnifiedDemo() {
 
                       {/* Category indicator */}
                       <div
-                        className={`rounded-lg px-3 py-1 text-xs font-medium capitalize ${
+                        className={`rounded-[var(--radius-control)] px-3 py-1 text-xs font-medium capitalize ${
                           isCompleted
                             ? `${colors.bg} text-white`
                             : "bg-zinc-100 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300"

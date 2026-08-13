@@ -1,7 +1,7 @@
 import "~/styles/globals.css";
 
 import { type Metadata } from "next";
-import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 
 import { AuthProvider } from "~/_components/auth-provider";
 import { ThemeProvider } from "~/_components/theme-provider";
@@ -14,14 +14,6 @@ const jakarta = Plus_Jakarta_Sans({
   weight: ["400", "500", "600", "700", "800"],
 });
 
-// DEPRECATED — retained for out-of-scope surfaces only. See globals.css.
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-serif",
-  display: "swap",
-  axes: ["opsz"],
-});
-
 export const metadata: Metadata = {
   title: "northstar",
   description: "habit tracker for the locked in",
@@ -32,11 +24,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={`${jakarta.variable} ${fraunces.variable}`}
-    >
+    <html lang="en" suppressHydrationWarning className={jakarta.variable}>
       <body className="font-sans">
         <ThemeProvider
           attribute="class"

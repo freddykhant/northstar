@@ -80,7 +80,7 @@ export function LandingFooter() {
           className="flex flex-col items-center justify-center gap-4 border-t border-zinc-200 pt-8 sm:flex-row sm:justify-between dark:border-white/10"
         >
           <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-lg">
+            <div className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-[var(--radius-control)]">
               <Image
                 src="/northstar-logo.png"
                 alt="Northstar"

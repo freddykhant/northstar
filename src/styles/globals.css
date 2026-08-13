@@ -8,25 +8,6 @@
     var(--font-sans), ui-sans-serif, -apple-system, BlinkMacSystemFont,
     system-ui, sans-serif;
 
-  /* DEPRECATED — retained only so the out-of-scope surfaces (landing,
-     /habits, /signin, /signup) keep rendering. No in-scope file may use
-     font-serif or any color-paper/ink-dark/ember token. Removed in the
-     follow-up pass that migrates those pages. */
-  --font-serif:
-    var(--font-serif), ui-serif, Georgia, Cambria, "Times New Roman", serif;
-  --color-paper: #f6f3ec;
-  --color-paper-raised: #fbf9f3;
-  --color-paper-dark: #14110d;
-  --color-paper-dark-raised: #1c1814;
-  --color-ink-dark: #ece7dd;
-  --color-ink-dark-muted: #9a9489;
-  --color-ember: #b94a1f;
-  --color-ember-soft: #d9683b;
-  --radius-sm: 4px;
-  --radius: 8px;
-  --radius-lg: 12px;
-  /* END DEPRECATED */
-
   /* Surfaces — light */
   --color-canvas: #f4f3f8;
   --color-surface: #ffffff;
@@ -56,10 +37,10 @@
   --color-perfect: #d4a017;
 
   /* Elevation */
-  --shadow-card: 0 1px 2px rgba(25, 24, 34, 0.04),
-    0 6px 18px -6px rgba(25, 24, 34, 0.1);
-  --shadow-lift: 0 2px 4px rgba(25, 24, 34, 0.05),
-    0 12px 28px -8px rgba(25, 24, 34, 0.16);
+  --shadow-card:
+    0 1px 2px rgba(25, 24, 34, 0.04), 0 6px 18px -6px rgba(25, 24, 34, 0.1);
+  --shadow-lift:
+    0 2px 4px rgba(25, 24, 34, 0.05), 0 12px 28px -8px rgba(25, 24, 34, 0.16);
 
   /* Radii */
   --radius-tile-year: 2px;
