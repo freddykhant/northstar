@@ -44,6 +44,16 @@ export function tileBackground(c: DayCategories): string {
   return `linear-gradient(135deg, ${stops.join(", ")})`;
 }
 
+/**
+ * Background for a tile too small to render three bands legibly. Perfect days
+ * collapse to a single tone (no information is lost — all three were kept);
+ * every other state renders exactly as `tileBackground`.
+ */
+export function tileBackgroundCompact(c: DayCategories): string {
+  if (isPerfectDay(c)) return "var(--color-perfect)";
+  return tileBackground(c);
+}
+
 /** Human-readable list of kept categories, e.g. "Mind, Soul". */
 export function keptLabel(c: DayCategories): string {
   const kept = activeCategories(c)

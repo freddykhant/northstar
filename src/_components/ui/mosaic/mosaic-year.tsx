@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { keptLabel, type DayCategories } from "~/lib/mosaic";
+import { keptLabel, tileBackgroundCompact, type DayCategories } from "~/lib/mosaic";
 import { formatDateAsLocal } from "~/lib/utils";
 import { MosaicTile } from "./mosaic-tile";
 
@@ -97,6 +97,7 @@ export function MosaicYear({
                   <div key={key} style={{ opacity: outOfRange ? 0 : 1 }} aria-hidden={outOfRange}>
                     <MosaicTile
                       categories={categories}
+                      background={tileBackgroundCompact(categories)}
                       size={TILE}
                       radius="var(--radius-tile-year)"
                       pulse={pulseToday && key === todayKey}

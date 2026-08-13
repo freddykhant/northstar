@@ -50,6 +50,11 @@
      contrast floor can be tuned without moving every sunken surface. */
   --color-tile-empty: #e7e4f1;
 
+  /* Perfect day — a fourth meaning, not a blend of mind/body/soul. Used only
+     where a tile is too small to render a true three-way split (year view);
+     the ring still marks the day as perfect. */
+  --color-perfect: #d4a017;
+
   /* Elevation */
   --shadow-card: 0 1px 2px rgba(25, 24, 34, 0.04),
     0 6px 18px -6px rgba(25, 24, 34, 0.1);
@@ -109,6 +114,8 @@
   --color-soul-ink: #5fd8b8;
 
   --color-tile-empty: #26242f;
+
+  --color-perfect: #ffce54;
 
   /* Shadows read poorly on near-black; depth comes from borders. */
   --shadow-card: 0 6px 18px -6px rgba(0, 0, 0, 0.5);

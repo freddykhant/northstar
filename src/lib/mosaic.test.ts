@@ -4,6 +4,7 @@ import {
   isPerfectDay,
   keptLabel,
   tileBackground,
+  tileBackgroundCompact,
   type DayCategories,
 } from "./mosaic";
 
@@ -42,6 +43,30 @@ describe("tileBackground", () => {
     expect(tileBackground(day(true, true, true))).toBe(
       "linear-gradient(135deg, var(--color-mind) 0% 33.333%, var(--color-body) 33.333% 66.667%, var(--color-soul) 66.667% 100%)",
     );
+  });
+});
+
+describe("tileBackgroundCompact", () => {
+  it("collapses a perfect day to the perfect token", () => {
+    expect(tileBackgroundCompact(day(true, true, true))).toBe(
+      "var(--color-perfect)",
+    );
+  });
+
+  it("matches tileBackground exactly for every non-perfect state", () => {
+    const nonPerfectDays: DayCategories[] = [
+      day(false, false, false),
+      day(true, false, false),
+      day(false, true, false),
+      day(false, false, true),
+      day(true, true, false),
+      day(true, false, true),
+      day(false, true, true),
+    ];
+
+    for (const c of nonPerfectDays) {
+      expect(tileBackgroundCompact(c)).toBe(tileBackground(c));
+    }
   });
 });
 

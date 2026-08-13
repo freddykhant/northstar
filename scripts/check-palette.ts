@@ -17,6 +17,7 @@ const THEMES = {
     mindInk: "#5346b8",
     bodyInk: "#b83c1c",
     soulInk: "#0a7a5e",
+    perfect: "#d4a017",
   },
   dark: {
     mind: "#9c8fff",
@@ -27,6 +28,7 @@ const THEMES = {
     mindInk: "#b3a8ff",
     bodyInk: "#ff9a80",
     soulInk: "#5fd8b8",
+    perfect: "#ffce54",
   },
 } as const;
 
@@ -108,6 +110,25 @@ for (const [themeName, t] of Object.entries(THEMES)) {
         `${themeName}: ${name} vs empty tile dL* ${dl.toFixed(1)} < ${MIN_DELTA_L}`,
       );
     }
+  }
+
+  // `perfect` is a fourth meaning (all three categories kept), not a member
+  // of the category set — it must still read as distinct from each of them,
+  // and from the empty tile, by the same rules.
+  for (const [name, hex] of cats) {
+    const d = deltaE(t.perfect, hex);
+    if (d < MIN_DELTA_E) {
+      failures.push(
+        `${themeName}: perfect vs ${name} dE ${d.toFixed(1)} < ${MIN_DELTA_E}`,
+      );
+    }
+  }
+
+  const perfectDl = Math.abs(lightness(t.perfect) - lightness(t.tileEmpty));
+  if (perfectDl < MIN_DELTA_L) {
+    failures.push(
+      `${themeName}: perfect vs empty tile dL* ${perfectDl.toFixed(1)} < ${MIN_DELTA_L}`,
+    );
   }
 
   const inks = [

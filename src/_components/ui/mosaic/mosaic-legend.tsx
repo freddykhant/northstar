@@ -12,8 +12,7 @@ export function MosaicLegend() {
           aria-hidden
           className="h-3 w-3 rounded-[3px]"
           style={{
-            background:
-              "linear-gradient(135deg, var(--color-mind) 0% 33.333%, var(--color-body) 33.333% 66.667%, var(--color-soul) 66.667% 100%)",
+            background: "var(--color-perfect)",
             boxShadow:
               "0 0 0 1.5px var(--color-canvas), 0 0 0 2.5px color-mix(in srgb, var(--color-ink) 30%, transparent)",
           }}

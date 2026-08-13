@@ -5,6 +5,11 @@ import { isPerfectDay, tileBackground, type DayCategories } from "~/lib/mosaic";
 
 interface MosaicTileProps {
   categories: DayCategories;
+  /** CSS `background` value for the tile. Callers compute this — via
+   *  `tileBackground` (month/week) or `tileBackgroundCompact` (year) — so
+   *  this component stays dumb about which rendering rule applies. Defaults
+   *  to `tileBackground(categories)` when omitted. */
+  background?: string;
   /** px; the tile is square */
   size: number;
   /** Any valid CSS `border-radius` value, e.g. `8` (px) or `"var(--radius-tile-month)"`. */
@@ -23,6 +28,7 @@ interface MosaicTileProps {
 
 export function MosaicTile({
   categories,
+  background,
   size,
   radius,
   pulse = false,
@@ -49,7 +55,7 @@ export function MosaicTile({
         width: size,
         height: size,
         borderRadius: radius,
-        background: tileBackground(categories),
+        background: background ?? tileBackground(categories),
         boxShadow: perfect
           ? "0 0 0 1.5px var(--color-canvas), 0 0 0 2.5px color-mix(in srgb, var(--color-ink) 30%, transparent)"
           : undefined,
