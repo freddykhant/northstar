@@ -38,13 +38,13 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
-  // Resolve the display name once: covers null/undefined *and* an empty
-  // string, so every site that shows the user's name (avatar initials, alt
-  // text, sidebar label, dropdown header) falls back consistently instead of
-  // rendering blank. `??` would not catch `user.name === ""`, so `||` is
-  // required here, not just idiomatic.
+  // Resolve the display name once: covers null/undefined, an empty string,
+  // and a whitespace-only string, so every site that shows the user's name
+  // (avatar initials, alt text, sidebar label, dropdown header) falls back
+  // consistently instead of rendering blank. `??` would not catch `""` or
+  // `" "`, so `||` on the trimmed value is required here, not just idiomatic.
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-  const displayName = user.name || "User";
+  const displayName = user.name?.trim() || "User";
 
   const initials = displayName
     .split(" ")
