@@ -377,3 +377,53 @@ At 11px a three-way split compresses its middle band to a sliver. A perfect
 day keeps all three categories, so a single tone loses no information, and the
 ring still marks it. Month and week keep true splits."
 ```
+
+---
+
+## Lessons from execution — read this before continuing
+
+Written down because they were learned expensively and would otherwise live only in a
+conversation that ends.
+
+**1. Diff review cannot catch runtime animation bugs. Drive a browser.**
+Three defects on this work were found *only* because an agent opened a real browser, and every
+one had passed multiple careful diff reviews:
+- `scale: [1, 0.88, 1]` is three keyframes, and framer-motion supports only two with a `spring`
+  transition. It **throws and aborts the whole animation batch**, silently freezing unrelated
+  animations elsewhere on the page. This shipped **twice** — once in `Checkbox`, once in the
+  mosaic tile pulse. If you write a keyframe array, its transition must be a `tween`.
+- The mosaic tooltip used `position: fixed` inside a `.animate-rise-in` ancestor. A transformed
+  ancestor becomes the containing block for fixed positioning, and `animation-fill-mode: both`
+  makes the final `translateY(0)` persist forever — so the tooltip was permanently
+  mispositioned, for mouse users, from the day it shipped.
+
+**2. The type scale absorbs accidental duplication, not deliberate local sizing.**
+A caption was converted to `text-eyebrow` when it had been sized at 11px specifically to sit
+level with the `Pill`s beside it. It had to be reverted. If a site's size differs from the
+token and the difference looks intentional given its neighbours, leave it.
+
+**3. Verification gates are worthless until you prove they run.**
+`tsconfig.json` set an `ignoreDeprecations` value invalid for the installed TypeScript, so `tsc`
+aborted on the config and **had never typechecked this repo**. Every task's "verified" gate was
+theatre until that was fixed. Check that a gate can fail before trusting that it passes.
+
+**4. Lint rules must not drive runtime behaviour.**
+Chasing `prefer-nullish-coalescing` converted `||` to `??` at three sites, and since `??` does
+not catch empty strings, a user with a blank name would have rendered blank labels. Satisfying a
+linter is never worth a behaviour change.
+
+**5. Most defects found were in the plan, not the implementations.**
+Dropped radius tokens, an unguarded date range, a dependency array that stranded a timer, a type
+scale specified but never built, a legend fix that ignored two of three views. Write briefs
+knowing this: state the *intent* behind an instruction so an implementer can notice when the
+literal instruction contradicts it. Several did, and were right to push back.
+
+**6. Ask implementers for evidence, not agreement.**
+When a review finding looked wrong, sending it back as "verify this empirically, refute it if I'm
+wrong" produced a correct refutation with a browser trace — and no code was changed to fix a
+non-bug. A finding is a hypothesis until someone checks it.
+
+**7. Never claim verification you did not perform.**
+Agents repeatedly hit signed-out sessions and correctly declined to submit sign-in forms with
+credentials that weren't theirs. Those honest "couldn't reach it" reports were far more useful
+than a confident guess would have been.
