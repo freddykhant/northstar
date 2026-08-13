@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { keptLabel, tileBackgroundCompact, type DayCategories } from "~/lib/mosaic";
+import { dayLabel, tileBackgroundCompact, type DayCategories } from "~/lib/mosaic";
 import { formatDateAsLocal } from "~/lib/utils";
 import { MosaicTile } from "./mosaic-tile";
 
@@ -86,13 +86,7 @@ export function MosaicYear({
                 // position without rendering.
                 const outOfRange = date > today || date.getFullYear() !== today.getFullYear();
                 const categories = completionMap.get(key) ?? EMPTY;
-                const label = outOfRange
-                  ? undefined
-                  : `${date.toLocaleDateString("en-US", {
-                      weekday: "short",
-                      day: "numeric",
-                      month: "short",
-                    })} — ${keptLabel(categories)}`;
+                const label = outOfRange ? undefined : dayLabel(date, categories);
                 return (
                   <div key={key} style={{ opacity: outOfRange ? 0 : 1 }} aria-hidden={outOfRange}>
                     <MosaicTile

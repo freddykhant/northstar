@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { CATEGORY_IDS, CATEGORY_LABELS } from "~/lib/constants";
-import type { DayCategories } from "~/lib/mosaic";
+import { formatDay, type DayCategories } from "~/lib/mosaic";
 import type { DayData } from "~/lib/types";
 import { Card, SegmentedControl } from "../primitives";
 import { MosaicLegend } from "./mosaic-legend";
@@ -115,11 +115,7 @@ export function Mosaic({
           >
             <div className="rounded-[var(--radius-control)] border border-[var(--color-hairline)] bg-[var(--color-surface)] px-3 py-2 shadow-[var(--shadow-lift)]">
               <p className="mb-1.5 text-[12px] font-bold text-[var(--color-ink)]">
-                {hovered.date.toLocaleDateString("en-US", {
-                  weekday: "short",
-                  month: "short",
-                  day: "numeric",
-                })}
+                {formatDay(hovered.date)}
               </p>
               <div className="flex flex-col gap-1">
                 {CATEGORY_IDS.map((id) => (

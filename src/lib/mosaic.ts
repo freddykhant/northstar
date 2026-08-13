@@ -62,6 +62,23 @@ export function keptLabel(c: DayCategories): string {
   return kept || "Nothing kept";
 }
 
+/** e.g. "Sat, Aug 9". Shared by every surface that names a day, so the
+ *  mosaic tile's accessible name and the hover tooltip never drift apart. */
+export function formatDay(date: Date): string {
+  return date.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  });
+}
+
+/** Full day label for a mosaic tile, e.g. "Sat, Aug 9 — Mind, Soul". Used as
+ *  both the native hover tooltip and, when focusable, the tile's
+ *  `aria-label` — the two accessible names for a single day must agree. */
+export function dayLabel(date: Date, c: DayCategories): string {
+  return `${formatDay(date)} — ${keptLabel(c)}`;
+}
+
 /** Trims trailing zeros so 50.000 renders as 50 and 33.333 stays 33.333. */
 function fmt(n: number): string {
   return String(Number(n.toFixed(3)));

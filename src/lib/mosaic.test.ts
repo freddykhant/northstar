@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   activeCategories,
+  dayLabel,
+  formatDay,
   isPerfectDay,
   keptLabel,
   tileBackground,
@@ -104,5 +106,32 @@ describe("keptLabel", () => {
 
   it("joins all three kept categories in mind/body/soul order", () => {
     expect(keptLabel(day(true, true, true))).toBe("Mind, Body, Soul");
+  });
+});
+
+describe("formatDay", () => {
+  it("formats as weekday, month day", () => {
+    // 2026-08-09 is a Sunday.
+    expect(formatDay(new Date(2026, 7, 9))).toBe("Sun, Aug 9");
+  });
+});
+
+describe("dayLabel", () => {
+  it("combines the formatted date with the kept-categories label", () => {
+    expect(dayLabel(new Date(2026, 7, 9), day(true, false, true))).toBe(
+      "Sun, Aug 9 — Mind, Soul",
+    );
+  });
+
+  it("uses 'Nothing kept' for an empty day", () => {
+    expect(dayLabel(new Date(2026, 7, 9), day(false, false, false))).toBe(
+      "Sun, Aug 9 — Nothing kept",
+    );
+  });
+
+  it("agrees with formatDay's date portion, so the tile's accessible name and the hover tooltip never disagree", () => {
+    const date = new Date(2026, 7, 9);
+    const c = day(true, true, false);
+    expect(dayLabel(date, c).startsWith(formatDay(date))).toBe(true);
   });
 });

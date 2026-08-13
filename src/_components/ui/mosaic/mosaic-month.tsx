@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { keptLabel, type DayCategories } from "~/lib/mosaic";
+import { dayLabel, type DayCategories } from "~/lib/mosaic";
 import { formatDateAsLocal } from "~/lib/utils";
 import { MosaicTile } from "./mosaic-tile";
 
@@ -42,11 +42,7 @@ export function MosaicMonth({ completionMap }: MosaicMonthProps) {
           const key = formatDateAsLocal(date);
           const future = date > today;
           const categories = completionMap.get(key) ?? EMPTY;
-          const label = `${date.toLocaleDateString("en-US", {
-            weekday: "short",
-            day: "numeric",
-            month: "short",
-          })} — ${keptLabel(categories)}`;
+          const label = dayLabel(date, categories);
           return (
             <div
               key={key}
