@@ -55,22 +55,29 @@ export default function HomePage() {
     habitsWithStatus?.filter((h) => h.isCompleted).length ?? 0;
   const [pulseToday, setPulseToday] = useState(false);
   const prevCompleted = useRef<number | null>(null);
+  const hasLoaded = habitsWithStatus !== undefined;
 
   useEffect(() => {
-    if (habitsWithStatus === undefined) return; // not loaded yet
+    if (!hasLoaded) return; // not loaded yet
     if (prevCompleted.current === null) {
       // first real load: seed, don't pulse
       prevCompleted.current = completedToday;
       return;
     }
-    if (completedToday > prevCompleted.current) {
-      setPulseToday(true);
-      const t = setTimeout(() => setPulseToday(false), 500);
-      prevCompleted.current = completedToday;
-      return () => clearTimeout(t);
-    }
+    const increased = completedToday > prevCompleted.current;
     prevCompleted.current = completedToday;
-  }, [completedToday, habitsWithStatus]);
+
+    if (!increased) {
+      // decrease (or a same-count re-render, e.g. a background refetch):
+      // clear any in-flight pulse so it can't get stranded on.
+      setPulseToday(false);
+      return;
+    }
+
+    setPulseToday(true);
+    const t = setTimeout(() => setPulseToday(false), 500);
+    return () => clearTimeout(t);
+  }, [completedToday, hasLoaded]);
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/signin");
