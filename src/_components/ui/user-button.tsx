@@ -38,13 +38,20 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
-  const initials =
-    user.name
-      ?.split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2) || "U"; // eslint-disable-line @typescript-eslint/prefer-nullish-coalescing -- an empty-string name should still fall back to "U", not render blank
+  // Resolve the display name once: covers null/undefined *and* an empty
+  // string, so every site that shows the user's name (avatar initials, alt
+  // text, sidebar label, dropdown header) falls back consistently instead of
+  // rendering blank. `??` would not catch `user.name === ""`, so `||` is
+  // required here, not just idiomatic.
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+  const displayName = user.name || "User";
+
+  const initials = displayName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 
   const isSidebar = position === "sidebar";
 
@@ -56,7 +63,7 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
       {user.image ? (
         <Image
           src={user.image}
-          alt={user.name ?? "User"}
+          alt={displayName}
           width={size}
           height={size}
           className="rounded-full"
@@ -83,7 +90,7 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
           <>
             <Avatar size={28} />
             <span className="min-w-0 flex-1 truncate text-left text-[13px] text-[var(--color-ink)]">
-              {user.name ?? "User"}
+              {displayName}
             </span>
             <CaretDown
               size={12}
@@ -117,7 +124,7 @@ export function UserButton({ user, position = "right" }: UserButtonProps) {
                 <Avatar size={32} />
                 <div className="min-w-0 flex-1 overflow-hidden">
                   <p className="truncate text-[13px] text-[var(--color-ink)]">
-                    {user.name ?? "User"}
+                    {displayName}
                   </p>
                   <p className="truncate text-[11px] text-[var(--color-ink-muted)]">
                     {user.email}
