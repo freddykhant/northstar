@@ -15,7 +15,7 @@ export function Checkbox({ checked, category, disabled }: CheckboxProps) {
     <motion.span
       aria-hidden
       animate={reduce ? {} : { scale: checked ? [1, 0.88, 1] : 1 }}
-      transition={{ type: "spring", stiffness: 420, damping: 26 }}
+      transition={{ type: "tween", duration: 0.28, times: [0, 0.4, 1], ease: "easeOut" }}
       className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-[7px] border-2"
       style={{
         borderColor: checked
