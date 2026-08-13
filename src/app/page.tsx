@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LandingFooter } from "~/_components/landing/landing-footer";
 import { UnifiedDemo } from "~/_components/landing/unified-demo";
+import { Card } from "~/_components/ui/primitives";
 import { auth } from "~/server/auth";
 
 // ─────────────────────────────────────────────────────────────
@@ -50,14 +51,14 @@ function Rule({
       style={{ animationDelay: `${delay}ms`, animationFillMode: "both" }}
     >
       <span
-        className="block h-px bg-[var(--color-ink-muted)]/35 dark:bg-[var(--color-ink-dark-muted)]/35"
+        className="block h-px bg-[var(--color-ink-muted)]/35"
         style={{ width }}
       />
       <svg
         width="8"
         height="8"
         viewBox="0 0 10 10"
-        className="shrink-0 text-[var(--color-ember)]"
+        className="shrink-0 text-[var(--color-mind)]"
       >
         <path
           d="M5 0 L6 4 L10 5 L6 6 L5 10 L4 6 L0 5 L4 4 Z"
@@ -65,7 +66,7 @@ function Rule({
         />
       </svg>
       <span
-        className="block h-px bg-[var(--color-ink-muted)]/35 dark:bg-[var(--color-ink-dark-muted)]/35"
+        className="block h-px bg-[var(--color-ink-muted)]/35"
         style={{ width }}
       />
     </div>
@@ -106,8 +107,8 @@ export default async function LandingPage() {
   const romanYear = toRoman(year);
 
   return (
-    <div className="min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)] selection:bg-[var(--color-ember)]/20 dark:bg-[var(--color-paper-dark)] dark:text-[var(--color-ink-dark)]">
-      {/* Subtle paper grain on the title page — pure CSS, no asset */}
+    <div className="min-h-screen bg-[var(--color-canvas)] text-[var(--color-ink)] selection:bg-[var(--color-mind)]/20">
+      {/* Subtle grain on the title page — pure CSS, no asset */}
       <div
         aria-hidden
         className="pointer-events-none fixed inset-0 opacity-[0.025] mix-blend-multiply dark:opacity-[0.04] dark:mix-blend-screen"
@@ -120,7 +121,7 @@ export default async function LandingPage() {
       <nav className="fixed top-6 right-6 z-50 sm:top-8 sm:right-8">
         <Link
           href="/signin"
-          className="text-[11px] tracking-[0.18em] text-[var(--color-ink-muted)] uppercase hover:text-[var(--color-ink)] dark:text-[var(--color-ink-dark-muted)] dark:hover:text-[var(--color-ink-dark)]"
+          className="text-[11px] tracking-[0.18em] text-[var(--color-ink-muted)] uppercase hover:text-[var(--color-ink)]"
         >
           Sign in
         </Link>
@@ -135,7 +136,7 @@ export default async function LandingPage() {
           <Compass
             size={28}
             weight="duotone"
-            className="text-[var(--color-ember)]"
+            className="text-[var(--color-mind)]"
           />
         </Stagger>
 
@@ -144,9 +145,8 @@ export default async function LandingPage() {
         {/* Wordmark */}
         <Stagger delay={150}>
           <h1
-            className="font-serif text-[14px] font-medium text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]"
+            className="text-[14px] font-medium text-[var(--color-ink)]"
             style={{
-              fontOpticalSizing: "auto",
               letterSpacing: "0.42em",
               textIndent: "0.42em",
             }}
@@ -160,9 +160,8 @@ export default async function LandingPage() {
         {/* Subtitle — stacked like an old title page */}
         <Stagger delay={250}>
           <p
-            className="font-serif text-[28px] leading-[1.15] italic text-[var(--color-ink)] sm:text-[32px] dark:text-[var(--color-ink-dark)]"
+            className="text-[28px] leading-[1.15] font-medium text-[var(--color-ink)] sm:text-[32px]"
             style={{
-              fontOpticalSizing: "auto",
               letterSpacing: "-0.01em",
               textWrap: "balance",
             }}
@@ -174,7 +173,7 @@ export default async function LandingPage() {
             of becoming
           </p>
           <p
-            className="mt-5 font-serif text-[13px] leading-[1.7] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]"
+            className="mt-5 text-[13px] leading-[1.7] text-[var(--color-ink-muted)]"
             style={{ textWrap: "balance" }}
           >
             being a small record of one&apos;s daily practice
@@ -187,19 +186,18 @@ export default async function LandingPage() {
 
         {/* Volume + Roman year */}
         <Stagger delay={400}>
-          <p className="text-[10px] tracking-[0.32em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
+          <p className="text-[10px] tracking-[0.32em] text-[var(--color-ink-muted)] uppercase">
             Vol. I
           </p>
           <p
-            className="mt-2 font-serif text-[40px] leading-none font-medium text-[var(--color-ink)] sm:text-[48px] dark:text-[var(--color-ink-dark)]"
+            className="mt-2 text-[40px] leading-none font-medium text-[var(--color-ink)] sm:text-[48px]"
             style={{
-              fontOpticalSizing: "auto",
               letterSpacing: "0.06em",
             }}
           >
             {romanYear}
           </p>
-          <p className="mt-3 tabular text-[10px] tracking-[0.32em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
+          <p className="tabular mt-3 text-[10px] tracking-[0.32em] text-[var(--color-ink-muted)] uppercase">
             {year}
           </p>
         </Stagger>
@@ -208,23 +206,23 @@ export default async function LandingPage() {
 
         {/* CTA — framed as a printed instruction */}
         <Stagger delay={550}>
-          <p className="mb-4 text-[10px] tracking-[0.32em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
+          <p className="mb-4 text-[10px] tracking-[0.32em] text-[var(--color-ink-muted)] uppercase">
             To begin
           </p>
           <Link
             href="/signup"
-            className="group relative inline-flex items-center gap-3 border border-[var(--color-ember)] bg-[var(--color-ember)] px-7 py-3 text-[12px] tracking-[0.24em] text-[#fbf9f3] uppercase transition-all hover:bg-transparent hover:text-[var(--color-ember)]"
+            className="group relative inline-flex items-center gap-3 border border-[var(--color-mind)] bg-[var(--color-mind)] px-7 py-3 text-[12px] tracking-[0.24em] text-[var(--color-surface)] uppercase transition-all hover:bg-transparent hover:text-[var(--color-mind)]"
           >
             <span>Start tracking</span>
             <span aria-hidden className="text-[10px]">
               ✦
             </span>
           </Link>
-          <p className="mt-4 text-[11px] tracking-[0.04em] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+          <p className="mt-4 text-[11px] tracking-[0.04em] text-[var(--color-ink-muted)]">
             or{" "}
             <Link
               href="#inside"
-              className="italic underline decoration-[var(--color-ink-muted)]/40 underline-offset-4 hover:text-[var(--color-ink)] hover:decoration-[var(--color-ember)] dark:hover:text-[var(--color-ink-dark)]"
+              className="underline decoration-[var(--color-ink-muted)]/40 underline-offset-4 hover:text-[var(--color-ink)] hover:decoration-[var(--color-mind)]"
             >
               look inside
             </Link>
@@ -237,12 +235,12 @@ export default async function LandingPage() {
         <Stagger delay={700}>
           <figure>
             <blockquote
-              className="font-serif text-[14px] leading-[1.55] italic text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]"
-              style={{ fontOpticalSizing: "auto", textWrap: "balance" }}
+              className="text-[14px] leading-[1.55] text-[var(--color-ink-muted)]"
+              style={{ textWrap: "balance" }}
             >
               &ldquo;{EPIGRAPH.line}&rdquo;
             </blockquote>
-            <figcaption className="mt-2 text-[10px] tracking-[0.18em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
+            <figcaption className="mt-2 text-[10px] tracking-[0.18em] text-[var(--color-ink-muted)] uppercase">
               — {EPIGRAPH.by}
             </figcaption>
           </figure>
@@ -252,7 +250,7 @@ export default async function LandingPage() {
 
         {/* Contents — Mind / Body / Soul as a TOC */}
         <Stagger delay={850}>
-          <p className="mb-4 text-[10px] tracking-[0.32em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
+          <p className="mb-4 text-[10px] tracking-[0.32em] text-[var(--color-ink-muted)] uppercase">
             Contents
           </p>
           <ol className="space-y-2 text-left">
@@ -265,14 +263,13 @@ export default async function LandingPage() {
             ).map(([num, title, sub]) => (
               <li
                 key={num}
-                className="flex items-baseline gap-4 font-serif text-[13px] text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]"
-                style={{ fontOpticalSizing: "auto" }}
+                className="flex items-baseline gap-4 text-[13px] text-[var(--color-ink)]"
               >
-                <span className="tabular w-6 shrink-0 text-right text-[var(--color-ember)] italic">
+                <span className="tabular w-6 shrink-0 text-right text-[var(--color-mind)]">
                   {num}.
                 </span>
-                <span className="italic">{title}</span>
-                <span className="text-[11px] text-[var(--color-ink-muted)] not-italic dark:text-[var(--color-ink-dark-muted)]">
+                <span>{title}</span>
+                <span className="text-[11px] text-[var(--color-ink-muted)]">
                   {sub}
                 </span>
               </li>
@@ -288,7 +285,7 @@ export default async function LandingPage() {
             width="14"
             height="14"
             viewBox="0 0 10 10"
-            className="text-[var(--color-ember)]"
+            className="text-[var(--color-mind)]"
           >
             <path
               d="M5 0 L6 4 L10 5 L6 6 L5 10 L4 6 L0 5 L4 4 Z"
@@ -303,44 +300,42 @@ export default async function LandingPage() {
       {/* ─────────────────────────────────────────────────────── */}
       <section
         id="inside"
-        className="border-t border-black/8 px-6 py-24 sm:py-32 dark:border-white/8"
+        className="border-t border-[var(--color-hairline)] px-6 py-24 sm:py-32"
       >
         <div className="mx-auto max-w-4xl">
           <div className="mb-12 flex items-baseline justify-between">
-            <p className="text-[10px] tracking-[0.32em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
+            <p className="text-[10px] tracking-[0.32em] text-[var(--color-ink-muted)] uppercase">
               A look inside
             </p>
-            <p className="tabular text-[10px] tracking-[0.18em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
+            <p className="tabular text-[10px] tracking-[0.18em] text-[var(--color-ink-muted)] uppercase">
               p. 002
             </p>
           </div>
 
           <h2
-            className="mb-3 max-w-2xl font-serif text-[36px] leading-[1.1] font-medium italic text-[var(--color-ink)] sm:text-[44px] dark:text-[var(--color-ink-dark)]"
+            className="mb-3 max-w-2xl text-[36px] leading-[1.1] font-medium text-[var(--color-ink)] sm:text-[44px]"
             style={{
-              fontOpticalSizing: "auto",
               letterSpacing: "-0.02em",
               textWrap: "balance",
             }}
           >
-            <span className="text-[var(--color-ember)] not-italic">§</span> A
-            quiet place to keep your daily practice.
+            <span className="text-[var(--color-mind)]">§</span> A quiet place
+            to keep your daily practice.
           </h2>
-          <p className="mb-12 max-w-xl text-[14px] leading-[1.6] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+          <p className="mb-12 max-w-xl text-[14px] leading-[1.6] text-[var(--color-ink-muted)]">
             One page, three categories, no streak shame. Northstar is shaped
             like a paper journal &mdash; quiet enough to actually use.
           </p>
 
-          <div className="rounded-[12px] border border-black/8 bg-[var(--color-paper-raised)] p-6 dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)]">
+          <Card className="p-6">
             <UnifiedDemo />
-          </div>
+          </Card>
 
           <div className="mt-12 flex flex-col items-center gap-4">
             <Rule width={60} />
             <Link
               href="/signup"
-              className="group inline-flex items-baseline gap-2 font-serif text-[16px] italic text-[var(--color-ink)] hover:text-[var(--color-ember)] dark:text-[var(--color-ink-dark)]"
-              style={{ fontOpticalSizing: "auto" }}
+              className="group inline-flex items-baseline gap-2 text-[16px] font-medium text-[var(--color-ink)] hover:text-[var(--color-mind)]"
             >
               Begin your own volume
               <span
