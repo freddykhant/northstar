@@ -92,7 +92,7 @@ export function Mosaic({
       {view === "week" && <MosaicWeek completionMap={completionMap} />}
 
       <div className="mt-4 border-t border-[var(--color-hairline)] pt-4">
-        <MosaicLegend />
+        <MosaicLegend view={view} />
       </div>
 
       {completions.length === 0 && !isLoading && (
