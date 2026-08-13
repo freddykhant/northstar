@@ -22,8 +22,11 @@ export default function HomePage() {
   const today = useMemo(() => getTodayDate(), []);
   const dateRange = useMemo(() => getCurrentYearRange(), []);
 
-  const { data: habitsWithStatus, isError: habitsError } =
-    api.completion.getForDate.useQuery({ date: today }, { enabled: !!today });
+  const {
+    data: habitsWithStatus,
+    isError: habitsError,
+    isLoading: habitsLoading,
+  } = api.completion.getForDate.useQuery({ date: today }, { enabled: !!today });
 
   const { data: stats } = api.completion.getStatsForDate.useQuery(
     { date: today },
@@ -51,9 +54,15 @@ export default function HomePage() {
   const completedToday =
     habitsWithStatus?.filter((h) => h.isCompleted).length ?? 0;
   const [pulseToday, setPulseToday] = useState(false);
-  const prevCompleted = useRef(completedToday);
+  const prevCompleted = useRef<number | null>(null);
 
   useEffect(() => {
+    if (habitsWithStatus === undefined) return; // not loaded yet
+    if (prevCompleted.current === null) {
+      // first real load: seed, don't pulse
+      prevCompleted.current = completedToday;
+      return;
+    }
     if (completedToday > prevCompleted.current) {
       setPulseToday(true);
       const t = setTimeout(() => setPulseToday(false), 500);
@@ -61,13 +70,13 @@ export default function HomePage() {
       return () => clearTimeout(t);
     }
     prevCompleted.current = completedToday;
-  }, [completedToday]);
+  }, [completedToday, habitsWithStatus]);
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/signin");
   }, [status, router]);
 
-  if (status === "loading") {
+  if (status === "loading" || habitsLoading) {
     return (
       <div className="flex min-h-screen bg-[var(--color-canvas)]">
         <div className="flex-1 md:ml-60">
