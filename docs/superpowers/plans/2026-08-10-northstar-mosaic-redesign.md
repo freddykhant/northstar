@@ -2178,3 +2178,169 @@ Recorded so they are not silently lost:
 2. Then delete the `DEPRECATED` block in `globals.css`, remove Fraunces from `layout.tsx`, and drop `CATEGORY_COLORS` and `CATEGORY_HEX` if they survived Task 14.
 3. Restyle `progress-bar`, `stats-cards`, `category-stat-card`, `category-badge` and `habits-list`, which are used only by out-of-scope pages.
 4. Revisit year-view legibility with real long-term data; build the dominant-tone fallback only if it proves necessary.
+
+---
+
+## Task 15: Build the type scale and adopt the primitives
+
+**Added after the final whole-branch review, which found the spec's §2.2 type scale was
+specified but never built — so its literal class strings were copy-pasted instead, and have
+already diverged. Approved by the repo owner for this branch.**
+
+**Files:**
+- Modify: `src/styles/globals.css`, `src/_components/ui/home/home-header.tsx`, `src/app/home/page.tsx`, `src/_components/ui/primitives/stat.tsx`, `src/_components/ui/mosaic/mosaic.tsx`, `src/_components/ui/mosaic/mosaic-year.tsx`, `src/_components/ui/mosaic/mosaic-month.tsx`, `src/_components/ui/mosaic/mosaic-week.tsx`, `src/_components/ui/mosaic/mosaic-legend.tsx`, `src/_components/ui/checkin-list.tsx`, `src/_components/ui/mood-tracker.tsx`, `src/_components/ui/home/home-empty.tsx`, `src/hooks/use-graph-data.ts`
+
+- [ ] **Step 1: Add the type scale to `@theme`**
+
+Tailwind v4 generates a `text-*` utility from a `--text-*` entry, including its paired
+line-height, letter-spacing and weight. Add to the `@theme` block in `globals.css`:
+
+```css
+  /* Type scale — spec §2.2. These replace ~15 copy-pasted literal class strings. */
+  --text-eyebrow: 10px;
+  --text-eyebrow--line-height: 1;
+  --text-eyebrow--letter-spacing: 0.1em;
+  --text-eyebrow--font-weight: 700;
+
+  --text-title: 22px;
+  --text-title--line-height: 1.2;
+  --text-title--letter-spacing: -0.02em;
+  --text-title--font-weight: 700;
+
+  --text-stat: 30px;
+  --text-stat--line-height: 1;
+  --text-stat--letter-spacing: -0.04em;
+  --text-stat--font-weight: 800;
+
+  --text-display: 34px;
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.03em;
+  --text-display--font-weight: 800;
+```
+
+Colour and `uppercase` stay at the call site, since they vary.
+
+- [ ] **Step 2: Sweep the call sites**
+
+Replace every occurrence of the literal strings with the new utility. Colour classes stay.
+
+- `text-[10px] font-bold tracking-[0.1em] ... uppercase` → `text-eyebrow uppercase` (7 sites:
+  `home/page.tsx`, `home-header.tsx`, `stat.tsx`, `mosaic-year.tsx`, `mosaic-month.tsx`,
+  `mosaic-week.tsx`, and the legend)
+- `text-[22px] ... font-bold tracking-[-0.02em]` → `text-title` (5 sites: `mosaic.tsx`,
+  `home-empty.tsx`, `checkin-list.tsx`, and two in `mood-tracker.tsx`)
+- `text-[30px] leading-none font-extrabold tracking-[-0.04em]` → `text-stat` (3 sites)
+- The `/home` greeting's `text-[28px] sm:text-[34px]` keeps its responsive step: use
+  `text-[28px] sm:text-display`.
+
+**Resolve the existing divergence deliberately:** three title sites carry `leading-tight` and
+two do not. `--text-title--line-height: 1.2` is close to `leading-tight` (1.25), so drop the
+stray `leading-tight` classes and let the token govern. Note the change in the report.
+
+- [ ] **Step 3: Use the `Stat` primitive instead of reimplementing it**
+
+`Stat` is currently used at only one of its three natural call sites.
+
+- `home-header.tsx` reimplements it verbatim including the accent — replace with
+  `<Stat value={streak} label="day streak" accent />`.
+- `src/app/home/page.tsx`'s category-breakdown cards reimplement the value half — use `Stat`
+  where it fits. If a call site genuinely needs markup `Stat` can't express, **do not**
+  contort `Stat` with new props: leave that site alone and say why in your report.
+
+- [ ] **Step 4: Fix two small consistency defects the review found**
+
+- `mood-tracker.tsx` uses `h3` for card headings while every sibling card uses `h2` under the
+  page `h1` — a heading-level skip. Change to `h2`.
+- `src/hooks/use-graph-data.ts` re-declares the `{ mind, body, soul }` object literal instead
+  of importing `DayCategories` from `~/lib/types` — the exact drift that type exists to
+  prevent. Import it.
+
+- [ ] **Step 5: Verify**
+
+`pnpm check` exits 0, `pnpm test` 6/6, `pnpm build` succeeds.
+
+Then confirm the sweep is complete — these should return nothing:
+
+```bash
+grep -rn 'text-\[10px\].*tracking-\[0\.1em\]' src
+grep -rn 'text-\[22px\].*tracking-\[-0\.02em\]' src
+grep -rn 'text-\[30px\].*tracking-\[-0\.04em\]' src
+```
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add -A src docs
+git commit -m "refactor(design): build the type scale as tokens and adopt Stat
+
+The spec defined a six-step scale to replace ad-hoc pixel sizes, but it was
+never built, so the literal strings were copy-pasted across ~15 call sites and
+had already diverged on line-height."
+```
+
+---
+
+## Task 16: One segmented control, month tooltips, and orphan cleanup
+
+**Also added after the final whole-branch review. Approved by the repo owner.**
+
+**Files:**
+- Create: `src/_components/ui/primitives/segmented-control.tsx`
+- Modify: `src/_components/ui/primitives/index.ts`, `src/_components/ui/mosaic/mosaic.tsx`, `src/_components/ui/mood-tracker.tsx`, `src/_components/ui/mosaic/mosaic-month.tsx`, `src/_components/ui/mosaic/mosaic-week.tsx`, `src/lib/mosaic.ts`, `src/lib/mosaic.test.ts`, `src/hooks/use-habit-completion.ts`, `src/lib/constants.ts`, `src/styles/globals.css`
+- Delete: `src/_components/ui/index.ts`
+
+- [ ] **Step 1: Extract the segmented control**
+
+It is currently built twice, in `mosaic.tsx` and `mood-tracker.tsx`. Create one primitive:
+
+```tsx
+interface SegmentedControlProps<T extends string> {
+  options: { id: T; label: string }[];
+  value: T;
+  onChange: (id: T) => void;
+}
+```
+
+It must keep the existing visuals exactly (`bg-[var(--color-sunken)]` container, `rounded-[var(--radius-control)]`, active segment `bg-[var(--color-surface)]` with `shadow-[var(--shadow-card)]`), and keep the `aria-pressed` and `type="button"` added in the last fix wave. Adopt it in both call sites.
+
+Note `mosaic.tsx` also clears hover state on switch — preserve that behaviour by doing it in the `onChange` handler, not inside the primitive.
+
+- [ ] **Step 2: Give the month view a tooltip, and de-duplicate the "kept" text**
+
+`MosaicWeek` computes a human-readable list of kept categories inline; `MosaicMonth` has no
+tooltip at all, despite being the view where a user is most likely to interrogate a specific
+day. Move that computation into `src/lib/mosaic.ts`:
+
+```ts
+/** Human-readable list of kept categories, e.g. "Mind, Soul". */
+export function keptLabel(c: DayCategories): string
+```
+
+Return `"Nothing kept"` when none are set. Add unit tests for it in `mosaic.test.ts` covering
+none / one / two / all three. Use it in both `MosaicWeek` and `MosaicMonth` as the tile `title`.
+
+- [ ] **Step 3: Clear the orphans the review found**
+
+Each is dead; verify before removing and report what you found:
+
+- `src/hooks/use-habit-completion.ts` — `justCompleted` state, its `setTimeout`, and its
+  return value have had no consumer since `CheckinList` dropped the prop. Remove all three.
+- `src/lib/constants.ts` — `CATEGORY_HEX_DARK` is exported and never read.
+- `src/styles/globals.css` — `--radius-tile-year/month/week` are unused (the views hard-code
+  the numbers) and `--duration-base` is unused. **Prefer wiring the radius tokens up** at
+  `mosaic-year.tsx`, `mosaic-month.tsx` and `mosaic-week.tsx` rather than deleting them —
+  that is what they were for. Delete `--duration-base` if nothing uses it.
+- `src/_components/ui/index.ts` — has zero consumers (`grep 'from "~/_components/ui"'`
+  returns nothing). Delete the file rather than maintain a barrel nobody imports.
+
+- [ ] **Step 4: Verify**
+
+`pnpm check` exits 0, `pnpm test` passes (now more than 6 — report the count), `pnpm build`
+succeeds. Confirm `grep -rn "justCompleted\|CATEGORY_HEX_DARK" src` returns nothing.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add -A src docs
+git commit -m "refactor(ui): share the segmented control, add month tooltips, drop orphans"
+```
