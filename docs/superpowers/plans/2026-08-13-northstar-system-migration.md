@@ -427,3 +427,47 @@ non-bug. A finding is a hypothesis until someone checks it.
 Agents repeatedly hit signed-out sessions and correctly declined to submit sign-in forms with
 credentials that weren't theirs. Those honest "couldn't reach it" reports were far more useful
 than a confident guess would have been.
+
+---
+
+## Deferred follow-ups (branch merged 2026-08-13)
+
+Reviewed, judged non-blocking, and deliberately not fixed. Recorded here because the execution
+ledger they lived in is gone.
+
+**Accessibility**
+1. **Focus indicators are border-colour-only** across `/signin`, `/signup` and `/habits`
+   (`focus:outline-none` plus a border swap). Computed to *pass* SC 1.4.11 — light 4.86:1, dark
+   6.32:1, with a real luminance jump — so not a violation, but materially weaker than a ring on
+   the forms standing between a user and their account. **Fix all three together**; a ring on auth
+   alone would create a fresh inconsistency.
+2. **The mosaic year grid has ~225 focusable tiles**, i.e. ~225 tab stops. Focusability was the
+   sanctioned partial fix; roving tabindex with arrow-key navigation is the proper answer.
+3. **The habits modal has no `role="dialog"`, `aria-modal`, focus trap, or Escape handler.**
+   Pre-existing. The migration rewrote its styling and would have been a natural moment.
+
+**Design system**
+4. **No shared `Banner` primitive.** The error banner has two different treatments across
+   `/habits` (`/10`, `px-4 py-3`, 13px) and the auth pages (`/8`, `px-3 py-2`, 12px). A primitive
+   alongside `Card`/`Pill` would close it. This is a symptom of per-task scoping — see below.
+5. **`--color-soul-ink` is defined, gated, and never consumed.** Set completeness, not a defect.
+6. **`body`/`soul` are ungated as button backgrounds** in `scripts/check-palette.ts`. Deliberate:
+   nothing uses them that way since the habits button moved to `--color-ink`, and no single
+   foreground clears 4.5:1 against all of mind/body/soul/ink in both themes. The gate's comment
+   documents this. **Anyone adding a category-coloured button must pick a foreground and gate it.**
+7. **The landing CTA's hover state is 4.40:1** in light mode (`src/app/page.tsx`) — marginally
+   under 4.5. Dark is 6.90:1.
+8. **The three date-grid builders** in `mosaic-year/month/week.tsx` remain inline and untested —
+   the highest-risk untested logic in the app (year boundaries, padding, `date > today`
+   comparisons). Extracting them to `~/lib/mosaic` with an injectable `now` would make them
+   testable cheaply.
+
+**Landing page** — items are in `docs/superpowers/specs/2026-08-13-landing-page-uplift-brief.md` §8,
+including a verified defect: `unified-demo.tsx`'s category gradients are built by string
+interpolation, so Tailwind never generates them and they have **never rendered**.
+
+**Process note from the final review**, worth acting on next time: per-task reviews caught
+everything *inside* a task and missed everything *between* tasks — two primary buttons disagreeing
+on their foreground token, a label builder triplicated across three files, the banner divergence
+above. **Add an explicit "reconcile shared patterns" task after any set of parallel migration
+tasks.** It is far cheaper than finding those seams at the merge gate.
