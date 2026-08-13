@@ -145,6 +145,21 @@ for (const [themeName, t] of Object.entries(THEMES)) {
       );
     }
   }
+
+  // Primary-button pairing (e.g. signin/signup "Sign in", habits "Create
+  // habit"): bg-[var(--color-mind)] with text-[var(--color-surface)]. Unlike
+  // the ink/surface pair, --color-mind's luminance does NOT track opposite
+  // --color-surface's across themes in a fixed way, so this pairing must be
+  // checked explicitly rather than assumed safe by convention. A hardcoded
+  // `text-white` on this background previously passed light mode (4.86:1)
+  // while failing dark mode (2.70:1) silently — this gate exists to catch
+  // that class of bug on any future accent-background button.
+  const buttonFgRatio = contrast(t.surface, t.mind);
+  if (buttonFgRatio < MIN_TEXT_CONTRAST) {
+    failures.push(
+      `${themeName}: primary button text (surface) on mind ${buttonFgRatio.toFixed(2)}:1 < ${MIN_TEXT_CONTRAST}:1`,
+    );
+  }
 }
 
 if (failures.length > 0) {
