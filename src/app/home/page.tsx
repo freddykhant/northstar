@@ -33,11 +33,14 @@ export default function HomePage() {
     { enabled: !!today },
   );
 
-  const { data: completionsData, isError: completionsError } =
-    api.completion.getMyCompletions.useQuery({
-      startDate: dateRange.startDate,
-      endDate: dateRange.endDate,
-    });
+  const {
+    data: completionsData,
+    isError: completionsError,
+    isLoading: completionsLoading,
+  } = api.completion.getMyCompletions.useQuery({
+    startDate: dateRange.startDate,
+    endDate: dateRange.endDate,
+  });
 
   const { data: overallStats, isError: statsError } =
     api.completion.getOverallStats.useQuery();
@@ -115,7 +118,10 @@ export default function HomePage() {
       <div className="flex-1 md:ml-60">
         <main className="mx-auto flex max-w-4xl flex-col gap-3 px-5 pt-8 pb-24 sm:px-6 lg:px-8">
           {hasError && (
-            <div className="rounded-[var(--radius-control)] border border-[var(--color-body)]/30 bg-[var(--color-body)]/10 px-4 py-3 text-[13px] font-semibold text-[var(--color-body-ink)]">
+            <div
+              role="alert"
+              className="rounded-[var(--radius-control)] border border-[var(--color-body)]/30 bg-[var(--color-body)]/10 px-4 py-3 text-[13px] font-semibold text-[var(--color-body-ink)]"
+            >
               Something went wrong loading your data. Please refresh the page.
             </div>
           )}
@@ -144,6 +150,7 @@ export default function HomePage() {
               completions={graphData}
               todayKey={today}
               pulseToday={pulseToday}
+              isLoading={completionsLoading}
             />
           </div>
 

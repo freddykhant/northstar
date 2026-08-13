@@ -22,6 +22,7 @@ interface MosaicProps {
   completions: DayData[];
   todayKey?: string;
   pulseToday?: boolean;
+  isLoading?: boolean;
 }
 
 interface Hovered {
@@ -31,7 +32,12 @@ interface Hovered {
   y: number;
 }
 
-export function Mosaic({ completions, todayKey, pulseToday }: MosaicProps) {
+export function Mosaic({
+  completions,
+  todayKey,
+  pulseToday,
+  isLoading,
+}: MosaicProps) {
   const [view, setView] = useState<ViewMode>("year");
   const [hovered, setHovered] = useState<Hovered | null>(null);
 
@@ -52,6 +58,8 @@ export function Mosaic({ completions, todayKey, pulseToday }: MosaicProps) {
           {VIEWS.map((v) => (
             <button
               key={v.id}
+              type="button"
+              aria-pressed={view === v.id}
               onClick={() => {
                 setView(v.id);
                 setHovered(null);
@@ -91,7 +99,7 @@ export function Mosaic({ completions, todayKey, pulseToday }: MosaicProps) {
         <MosaicLegend />
       </div>
 
-      {completions.length === 0 && (
+      {completions.length === 0 && !isLoading && (
         <p className="mt-4 text-[13px] text-[var(--color-ink-muted)]">
           Nothing marked yet. Check off a habit and today lights up.
         </p>

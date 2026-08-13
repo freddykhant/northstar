@@ -258,6 +258,7 @@ export function MoodTracker() {
                 <button
                   key={mode}
                   type="button"
+                  aria-pressed={viewMode === mode}
                   onClick={() => setViewMode(mode)}
                   className={`rounded-[8px] px-3 py-1 text-[12px] font-semibold capitalize ${
                     viewMode === mode
