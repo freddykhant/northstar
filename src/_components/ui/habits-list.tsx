@@ -89,13 +89,7 @@ export function HabitsList({
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span
-                      className={`text-eyebrow uppercase ${
-                        habit.isActive
-                          ? "text-[var(--color-ink-muted)]"
-                          : "text-[var(--color-ink-faint)]"
-                      }`}
-                    >
+                    <span className="text-eyebrow text-[var(--color-ink-muted)] uppercase">
                       {habit.isActive ? "Active" : "Paused"}
                     </span>
 

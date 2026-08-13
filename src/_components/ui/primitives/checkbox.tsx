@@ -34,7 +34,13 @@ export function Checkbox({ checked, category, disabled }: CheckboxProps) {
       >
         <motion.path
           d="M2 6.2 L4.8 9 L10 3"
-          stroke="#fff"
+          /* Fixed literal, not a token: the fill is always one of the three
+           * category colours, which themselves flip between themes. #191822
+           * (the light-mode --color-ink value) is the only foreground here
+           * that clears the 3:1 SC 1.4.11 graphical-object floor against all
+           * three categories in both themes (min 3.62:1, vs 2.09:1 for
+           * white) — see scripts/check-palette.ts for the gate. */
+          stroke="#191822"
           strokeWidth="2.2"
           strokeLinecap="round"
           strokeLinejoin="round"

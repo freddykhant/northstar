@@ -253,6 +253,7 @@ export default function HabitsPage() {
                       <button
                         key={cat}
                         type="button"
+                        aria-pressed={isSelected}
                         onClick={() =>
                           setFormData({ ...formData, categoryId: cat })
                         }
@@ -349,12 +350,7 @@ export default function HabitsPage() {
                     createMutation.isPending ||
                     updateMutation.isPending
                   }
-                  style={{
-                    backgroundColor: editingHabit
-                      ? "var(--color-ink)"
-                      : `var(--color-${formData.categoryId})`,
-                  }}
-                  className="ml-auto rounded-[var(--radius-control)] px-5 py-2.5 text-[13px] font-bold text-white hover:opacity-90 disabled:opacity-40"
+                  className="ml-auto rounded-[var(--radius-control)] bg-[var(--color-ink)] px-5 py-2.5 text-[13px] font-bold text-[var(--color-canvas)] hover:opacity-90 disabled:opacity-40"
                 >
                   {createMutation.isPending || updateMutation.isPending
                     ? "Saving…"

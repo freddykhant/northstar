@@ -44,6 +44,7 @@ export function MosaicTile({
     <motion.div
       title={title}
       tabIndex={focusable ? 0 : undefined}
+      role={focusable ? "img" : undefined}
       aria-label={focusable ? title : undefined}
       onMouseEnter={onShow}
       onMouseLeave={onHide}

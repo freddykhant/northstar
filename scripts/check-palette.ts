@@ -14,6 +14,8 @@ const THEMES = {
     soul: "#0fa47f",
     tileEmpty: "#e7e4f1",
     surface: "#ffffff",
+    canvas: "#f4f3f8",
+    ink: "#191822",
     mindInk: "#5346b8",
     bodyInk: "#b83c1c",
     soulInk: "#0a7a5e",
@@ -25,6 +27,8 @@ const THEMES = {
     soul: "#35c9a3",
     tileEmpty: "#26242f",
     surface: "#1c1b25",
+    canvas: "#131219",
+    ink: "#edecf5",
     mindInk: "#b3a8ff",
     bodyInk: "#ff9a80",
     soulInk: "#5fd8b8",
@@ -32,9 +36,16 @@ const THEMES = {
   },
 } as const;
 
+// Fixed literal used for the Checkbox's checkmark stroke (checkbox.tsx). It is
+// deliberately NOT a token — the fill it sits on is always a category colour,
+// and those flip between themes, so a token that also flipped could land back
+// on a failing pairing. This is the light-mode --color-ink value, pinned.
+const CHECKBOX_STROKE = "#191822";
+
 const MIN_DELTA_E = 40; // between category colours
 const MIN_DELTA_L = 18; // between a category colour and the empty tile
-const MIN_TEXT_CONTRAST = 4.5; // category-as-text on surface
+const MIN_TEXT_CONTRAST = 4.5; // category-as-text on surface, and accent-button text
+const MIN_GRAPHICAL_CONTRAST = 3; // SC 1.4.11 floor for non-text graphical objects (e.g. checkbox stroke)
 
 function hexToRgb(hex: string): RGB {
   const h = hex.replace("#", "");
@@ -146,19 +157,50 @@ for (const [themeName, t] of Object.entries(THEMES)) {
     }
   }
 
-  // Primary-button pairing (e.g. signin/signup "Sign in", habits "Create
-  // habit"): bg-[var(--color-mind)] with text-[var(--color-surface)]. Unlike
-  // the ink/surface pair, --color-mind's luminance does NOT track opposite
-  // --color-surface's across themes in a fixed way, so this pairing must be
-  // checked explicitly rather than assumed safe by convention. A hardcoded
-  // `text-white` on this background previously passed light mode (4.86:1)
-  // while failing dark mode (2.70:1) silently — this gate exists to catch
-  // that class of bug on any future accent-background button.
-  const buttonFgRatio = contrast(t.surface, t.mind);
-  if (buttonFgRatio < MIN_TEXT_CONTRAST) {
+  // Accent-button pairings actually used in the app, both checked explicitly
+  // rather than assumed safe by convention — accent/ink luminance does NOT
+  // track opposite the foreground's across themes in a fixed way. A
+  // hardcoded `text-white` on bg-mind previously passed light mode (4.86:1)
+  // while failing dark mode (2.70:1) silently; the same bug independently
+  // shipped on the habits Save button (bg-ink/text-white: 17.9:1 light,
+  // 1.05:1 dark) because this gate did not yet cover that pairing. Both are
+  // covered now.
+  //
+  // bg-[var(--color-mind)] + text-[var(--color-surface)]: signin/signup
+  // submit, landing CTA, home-empty "Create your first habit".
+  const mindButtonRatio = contrast(t.surface, t.mind);
+  if (mindButtonRatio < MIN_TEXT_CONTRAST) {
     failures.push(
-      `${themeName}: primary button text (surface) on mind ${buttonFgRatio.toFixed(2)}:1 < ${MIN_TEXT_CONTRAST}:1`,
+      `${themeName}: primary button text (surface) on mind ${mindButtonRatio.toFixed(2)}:1 < ${MIN_TEXT_CONTRAST}:1`,
     );
+  }
+
+  // bg-[var(--color-ink)] + text-[var(--color-canvas)]: habits "New habit",
+  // "Create your first habit", modal Save/Create, mood-tracker submit.
+  const inkButtonRatio = contrast(t.canvas, t.ink);
+  if (inkButtonRatio < MIN_TEXT_CONTRAST) {
+    failures.push(
+      `${themeName}: ink button text (canvas) on ink ${inkButtonRatio.toFixed(2)}:1 < ${MIN_TEXT_CONTRAST}:1`,
+    );
+  }
+  // body and soul are deliberately NOT gated as full-opacity button
+  // backgrounds: nothing in the app currently uses them that way (only as
+  // translucent /8–/10 badge tints, which this contrast model doesn't
+  // apply to). If a future accent button adopts bg-body or bg-soul, add its
+  // real foreground pairing here rather than guessing one — no single fixed
+  // foreground clears 4.5:1 against mind, body, soul AND ink in both
+  // themes, so the right foreground depends on which background is chosen.
+
+  // Checkbox checkmark stroke (checkbox.tsx) against each category fill —
+  // the fill is always mind, body, or soul, so the stroke must clear the
+  // graphical-object floor against all three, in both themes.
+  for (const cat of ["mind", "body", "soul"] as const) {
+    const ratio = contrast(CHECKBOX_STROKE, t[cat]);
+    if (ratio < MIN_GRAPHICAL_CONTRAST) {
+      failures.push(
+        `${themeName}: checkbox stroke on ${cat} ${ratio.toFixed(2)}:1 < ${MIN_GRAPHICAL_CONTRAST}:1`,
+      );
+    }
   }
 }
 

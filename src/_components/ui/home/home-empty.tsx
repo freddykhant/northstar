@@ -24,7 +24,7 @@ export function HomeEmpty() {
 
       <Link
         href="/habits"
-        className="mt-5 inline-block rounded-[var(--radius-control)] bg-[var(--color-mind)] px-5 py-2.5 text-[13px] font-bold text-white"
+        className="mt-5 inline-block rounded-[var(--radius-control)] bg-[var(--color-mind)] px-5 py-2.5 text-[13px] font-bold text-[var(--color-surface)]"
       >
         Create your first habit
       </Link>
