@@ -47,7 +47,7 @@ function Rule({
   return (
     <div
       aria-hidden
-      className="animate-fade-in flex items-center justify-center gap-3"
+      className="animate-rise-in flex items-center justify-center gap-3"
       style={{ animationDelay: `${delay}ms`, animationFillMode: "both" }}
     >
       <span
@@ -82,7 +82,7 @@ function Stagger({
 }) {
   return (
     <div
-      className="animate-fade-in-up"
+      className="animate-rise-in"
       style={{ animationDelay: `${delay}ms`, animationFillMode: "both" }}
     >
       {children}
