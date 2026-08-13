@@ -1,4 +1,4 @@
-import { Card } from "../primitives";
+import { Card, Stat } from "../primitives";
 
 interface HomeHeaderProps {
   name: string;
@@ -19,25 +19,20 @@ export function HomeHeader({ name, streak }: HomeHeaderProps) {
   return (
     <div className="flex flex-wrap items-start justify-between gap-4">
       <div>
-        <p className="text-[10px] font-bold tracking-[0.1em] text-[var(--color-ink-muted)] uppercase">
+        <p className="text-eyebrow text-[var(--color-ink-muted)] uppercase">
           {today.toLocaleDateString("en-US", {
             weekday: "long",
             day: "numeric",
             month: "long",
           })}
         </p>
-        <h1 className="mt-1 text-[28px] leading-[1.05] font-extrabold tracking-[-0.03em] text-[var(--color-ink)] sm:text-[34px]">
+        <h1 className="mt-1 text-[28px] leading-[1.05] font-extrabold tracking-[-0.03em] text-[var(--color-ink)] sm:text-display">
           Good {timeOfDay()}, {name}
         </h1>
       </div>
 
       <Card className="shrink-0 text-center">
-        <div className="tabular text-[30px] leading-none font-extrabold tracking-[-0.04em] text-[var(--color-mind-ink)]">
-          {streak}
-        </div>
-        <div className="mt-1 text-[10px] font-bold tracking-[0.1em] text-[var(--color-ink-muted)] uppercase">
-          day streak
-        </div>
+        <Stat value={streak} label="day streak" accent />
       </Card>
     </div>
   );

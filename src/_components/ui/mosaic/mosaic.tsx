@@ -50,9 +50,7 @@ export function Mosaic({
   return (
     <Card>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-[22px] leading-tight font-bold tracking-[-0.02em] text-[var(--color-ink)]">
-          Your year
-        </h2>
+        <h2 className="text-title text-[var(--color-ink)]">Your year</h2>
 
         <div className="flex items-center gap-1 rounded-[var(--radius-control)] bg-[var(--color-sunken)] p-1">
           {VIEWS.map((v) => (

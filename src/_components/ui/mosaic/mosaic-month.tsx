@@ -30,7 +30,7 @@ export function MosaicMonth({ completionMap }: MosaicMonthProps) {
         {WEEKDAYS.map((d, i) => (
           <div
             key={i}
-            className="text-center text-[10px] font-bold tracking-[0.1em] text-[var(--color-ink-muted)] uppercase"
+            className="text-center text-eyebrow text-[var(--color-ink-muted)] uppercase"
           >
             {d}
           </div>

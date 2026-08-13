@@ -216,9 +216,9 @@ export function MoodTracker() {
 
       {!hasSubmitted ? (
         <div>
-          <h3 className="mb-4 text-[22px] font-bold tracking-[-0.02em] text-[var(--color-ink)]">
+          <h2 className="text-title mb-4 text-[var(--color-ink)]">
             How are you feeling today?
-          </h3>
+          </h2>
 
           <div className="mb-5 flex justify-between gap-2">
             {([1, 2, 3, 4, 5] as MoodLevel[]).map((level) => (
@@ -250,9 +250,7 @@ export function MoodTracker() {
       ) : (
         <div>
           <div className="mb-5 flex items-center justify-between">
-            <h3 className="text-[22px] font-bold tracking-[-0.02em] text-[var(--color-ink)]">
-              Your mood
-            </h3>
+            <h2 className="text-title text-[var(--color-ink)]">Your mood</h2>
             <div className="flex items-center gap-1 rounded-[var(--radius-control)] bg-[var(--color-sunken)] p-1">
               {(["week", "year"] as const).map((mode) => (
                 <button

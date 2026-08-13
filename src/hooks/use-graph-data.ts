@@ -3,7 +3,7 @@
 "use client";
 
 import { useMemo } from "react";
-import type { CategoryId, DayData } from "~/lib/types";
+import type { CategoryId, DayCategories, DayData } from "~/lib/types";
 
 interface CompletionData {
   completedDate: string;
@@ -21,10 +21,7 @@ export function useGraphData(
     if (!completionsData) return [];
 
     // group completions by date and category
-    const dataByDate = new Map<
-      string,
-      { mind: boolean; body: boolean; soul: boolean }
-    >();
+    const dataByDate = new Map<string, DayCategories>();
 
     completionsData.forEach((completion) => {
       const dateKey = completion.completedDate;

@@ -7,7 +7,7 @@ export function MosaicLegend() {
       {CATEGORY_IDS.map((id) => (
         <Pill key={id} category={id} />
       ))}
-      <span className="ml-1 inline-flex items-center gap-1.5 text-[11px] font-bold text-[var(--color-ink-muted)]">
+      <span className="text-eyebrow ml-1 inline-flex items-center gap-1.5 text-[var(--color-ink-muted)]">
         <span
           aria-hidden
           className="h-3 w-3 rounded-[3px]"

@@ -5,9 +5,7 @@ import { Card, Pill } from "../primitives";
 export function HomeEmpty() {
   return (
     <Card>
-      <h2 className="text-[22px] leading-tight font-bold tracking-[-0.02em] text-[var(--color-ink)]">
-        Start with one habit
-      </h2>
+      <h2 className="text-title text-[var(--color-ink)]">Start with one habit</h2>
       <p className="mt-2 text-[14px] text-[var(--color-ink-muted)]">
         Northstar tracks three parts of your life. Every day you show up for one
         of them, that day lights up in your mosaic.

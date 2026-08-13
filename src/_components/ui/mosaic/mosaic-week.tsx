@@ -41,7 +41,7 @@ export function MosaicWeek({ completionMap }: MosaicWeekProps) {
                 radius={12}
                 title={kept || "Nothing kept"}
               />
-              <div className="mt-2 text-[10px] font-bold tracking-[0.1em] text-[var(--color-ink-muted)] uppercase">
+              <div className="mt-2 text-eyebrow text-[var(--color-ink-muted)] uppercase">
                 {date.toLocaleDateString("en-US", { weekday: "short" })}
               </div>
             </div>

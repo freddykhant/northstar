@@ -68,7 +68,7 @@ export function MosaicYear({
           {monthLabels.map((m) => (
             <span
               key={`${m.label}-${m.index}`}
-              className="absolute text-[10px] font-bold tracking-[0.1em] text-[var(--color-ink-muted)] uppercase"
+              className="absolute text-eyebrow text-[var(--color-ink-muted)] uppercase"
               style={{ left: m.index * (TILE + GAP) }}
             >
               {m.label}

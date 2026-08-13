@@ -34,9 +34,7 @@ export function CheckinList({ habits, onToggle, isLoading }: CheckinListProps) {
       <Confetti trigger={celebrate} onDone={() => setCelebrate(false)} />
 
       <div className="mb-3 flex items-baseline justify-between">
-        <h2 className="text-[22px] leading-tight font-bold tracking-[-0.02em] text-[var(--color-ink)]">
-          Today
-        </h2>
+        <h2 className="text-title text-[var(--color-ink)]">Today</h2>
         <span className="tabular text-[12px] font-bold text-[var(--color-ink-muted)]">
           {completedCount} of {totalCount}
         </span>

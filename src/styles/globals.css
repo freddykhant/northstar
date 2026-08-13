@@ -68,6 +68,27 @@
   --duration-fast: 140ms;
   --duration-base: 220ms;
   --duration-slow: 420ms;
+
+  /* Type scale — spec §2.2. These replace ~15 copy-pasted literal class strings. */
+  --text-eyebrow: 10px;
+  --text-eyebrow--line-height: 1;
+  --text-eyebrow--letter-spacing: 0.1em;
+  --text-eyebrow--font-weight: 700;
+
+  --text-title: 22px;
+  --text-title--line-height: 1.2;
+  --text-title--letter-spacing: -0.02em;
+  --text-title--font-weight: 700;
+
+  --text-stat: 30px;
+  --text-stat--line-height: 1;
+  --text-stat--letter-spacing: -0.04em;
+  --text-stat--font-weight: 800;
+
+  --text-display: 34px;
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.03em;
+  --text-display--font-weight: 800;
 }
 
 /* Dark — retuned values, never an inversion. */

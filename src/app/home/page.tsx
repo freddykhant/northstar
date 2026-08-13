@@ -181,13 +181,11 @@ export default function HomePage() {
                     className="h-2 w-2 rounded-full"
                     style={{ backgroundColor: `var(--color-${id})` }}
                   />
-                  <span className="text-[10px] font-bold tracking-[0.1em] text-[var(--color-ink-muted)] uppercase">
+                  <span className="text-eyebrow text-[var(--color-ink-muted)] uppercase">
                     {CATEGORY_LABELS[id]}
                   </span>
                 </div>
-                <div className="tabular text-[30px] leading-none font-extrabold tracking-[-0.04em]">
-                  {counts[id]}
-                </div>
+                <div className="tabular text-stat">{counts[id]}</div>
               </Card>
             ))}
           </div>
