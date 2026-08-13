@@ -38,14 +38,13 @@ export function MosaicTile({
     <motion.div
       title={title}
       tabIndex={focusable ? 0 : undefined}
-      role={focusable ? "button" : undefined}
       aria-label={focusable ? title : undefined}
       onMouseEnter={onShow}
       onMouseLeave={onHide}
       onFocus={focusable ? onShow : undefined}
       onBlur={focusable ? onHide : undefined}
       animate={reduce || !pulse ? {} : { scale: [1, 1.18, 1] }}
-      transition={{ type: "spring", stiffness: 420, damping: 26 }}
+      transition={{ type: "tween", duration: 0.42, times: [0, 0.4, 1], ease: "easeOut" }}
       style={{
         width: size,
         height: size,
