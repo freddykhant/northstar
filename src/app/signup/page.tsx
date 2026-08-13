@@ -4,6 +4,7 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Card } from "~/_components/ui/primitives";
 import { api } from "~/trpc/react";
 
 export default function SignUpPage() {
@@ -56,12 +57,12 @@ export default function SignUpPage() {
   };
 
   const inputClass =
-    "w-full rounded-[6px] border border-black/8 bg-transparent px-3 py-2.5 text-[14px] text-[var(--color-ink)] placeholder-[var(--color-ink-muted)]/60 focus:border-[var(--color-ember)] focus:outline-none dark:border-white/8 dark:text-[var(--color-ink-dark)]";
+    "w-full rounded-[var(--radius-control)] border border-[var(--color-hairline)] bg-transparent px-3 py-2.5 text-[14px] text-[var(--color-ink)] placeholder-[var(--color-ink-faint)] focus:border-[var(--color-mind)] focus:outline-none";
   const labelClass =
-    "mb-1.5 block text-[11px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]";
+    "mb-1.5 block text-[11px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase";
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[var(--color-paper)] px-4 py-12 text-[var(--color-ink)] dark:bg-[var(--color-paper-dark)] dark:text-[var(--color-ink-dark)]">
+    <main className="flex min-h-screen items-center justify-center bg-[var(--color-canvas)] px-4 py-12 text-[var(--color-ink)]">
       <div className="w-full max-w-sm">
         <Link
           href="/"
@@ -69,25 +70,15 @@ export default function SignUpPage() {
         >
           <span
             aria-hidden
-            className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-ember)]"
+            className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-mind)]"
           />
-          <span
-            className="font-serif text-[22px] italic tracking-tight"
-            style={{ fontOpticalSizing: "auto" }}
-          >
-            northstar
-          </span>
+          <span className="text-title">northstar</span>
         </Link>
 
-        <div className="rounded-[12px] border border-black/8 bg-[var(--color-paper-raised)] p-8 dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)]">
+        <Card className="p-8">
           <div className="mb-6">
-            <h1
-              className="mb-1 font-serif text-[24px] font-medium"
-              style={{ fontOpticalSizing: "auto" }}
-            >
-              Begin
-            </h1>
-            <p className="text-[13px] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+            <h1 className="mb-1 text-title text-[var(--color-ink)]">Begin</h1>
+            <p className="text-[13px] text-[var(--color-ink-muted)]">
               Create your account to start tracking.
             </p>
           </div>
@@ -155,7 +146,7 @@ export default function SignUpPage() {
             </div>
 
             {error && (
-              <div className="rounded-[6px] border border-[var(--color-ember)]/30 bg-[var(--color-ember)]/8 px-3 py-2 text-[12px] text-[var(--color-ember)]">
+              <div className="rounded-[var(--radius-control)] border border-[var(--color-body)]/30 bg-[var(--color-body)]/8 px-3 py-2 text-[12px] text-[var(--color-body-ink)]">
                 {error}
               </div>
             )}
@@ -163,22 +154,22 @@ export default function SignUpPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full rounded-[6px] bg-[var(--color-ink)] py-2.5 text-[13px] font-medium text-[var(--color-paper)] hover:bg-black disabled:opacity-50 dark:bg-[var(--color-ink-dark)] dark:text-[var(--color-paper-dark)] dark:hover:bg-white"
+              className="w-full rounded-[var(--radius-control)] bg-[var(--color-mind)] py-2.5 text-[13px] font-bold text-white hover:opacity-90 disabled:opacity-50"
             >
               {isLoading ? "Creating account…" : "Create account"}
             </button>
           </form>
 
-          <div className="my-5 flex items-center gap-3 text-[10px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
-            <div className="h-px flex-1 bg-black/8 dark:bg-white/8" />
+          <div className="my-5 flex items-center gap-3 text-[10px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase">
+            <div className="h-px flex-1 bg-[var(--color-hairline)]" />
             or
-            <div className="h-px flex-1 bg-black/8 dark:bg-white/8" />
+            <div className="h-px flex-1 bg-[var(--color-hairline)]" />
           </div>
 
           <button
             type="button"
             onClick={handleGoogleSignIn}
-            className="flex w-full items-center justify-center gap-2 rounded-[6px] border border-black/8 bg-transparent py-2.5 text-[13px] font-medium text-[var(--color-ink)] hover:border-black/16 dark:border-white/8 dark:text-[var(--color-ink-dark)] dark:hover:border-white/16"
+            className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-control)] border border-[var(--color-hairline)] bg-transparent py-2.5 text-[13px] font-medium text-[var(--color-ink)] hover:border-[var(--color-ink-faint)]"
           >
             <svg className="h-4 w-4" viewBox="0 0 24 24">
               <path
@@ -200,13 +191,13 @@ export default function SignUpPage() {
             </svg>
             Continue with Google
           </button>
-        </div>
+        </Card>
 
-        <p className="mt-6 text-center text-[13px] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+        <p className="mt-6 text-center text-[13px] text-[var(--color-ink-muted)]">
           Already have an account?{" "}
           <Link
             href="/signin"
-            className="text-[var(--color-ink)] hover:underline dark:text-[var(--color-ink-dark)]"
+            className="text-[var(--color-ink)] hover:underline"
           >
             Sign in
           </Link>
