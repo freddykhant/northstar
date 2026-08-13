@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   activeCategories,
   isPerfectDay,
+  keptLabel,
   tileBackground,
   type DayCategories,
 } from "./mosaic";
@@ -57,5 +58,26 @@ describe("activeCategories", () => {
     expect(activeCategories(day(false, true, true))).toEqual(["body", "soul"]);
     expect(activeCategories(day(true, false, false))).toEqual(["mind"]);
     expect(activeCategories(day(false, false, false))).toEqual([]);
+  });
+});
+
+describe("keptLabel", () => {
+  it("returns 'Nothing kept' when none are set", () => {
+    expect(keptLabel(day(false, false, false))).toBe("Nothing kept");
+  });
+
+  it("labels a single kept category", () => {
+    expect(keptLabel(day(true, false, false))).toBe("Mind");
+    expect(keptLabel(day(false, true, false))).toBe("Body");
+    expect(keptLabel(day(false, false, true))).toBe("Soul");
+  });
+
+  it("joins two kept categories in mind/body/soul order", () => {
+    expect(keptLabel(day(true, false, true))).toBe("Mind, Soul");
+    expect(keptLabel(day(false, true, true))).toBe("Body, Soul");
+  });
+
+  it("joins all three kept categories in mind/body/soul order", () => {
+    expect(keptLabel(day(true, true, true))).toBe("Mind, Body, Soul");
   });
 });

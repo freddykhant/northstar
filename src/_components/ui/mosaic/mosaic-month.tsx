@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import type { DayCategories } from "~/lib/mosaic";
+import { keptLabel, type DayCategories } from "~/lib/mosaic";
 import { formatDateAsLocal } from "~/lib/utils";
 import { MosaicTile } from "./mosaic-tile";
 
@@ -48,7 +48,12 @@ export function MosaicMonth({ completionMap }: MosaicMonthProps) {
               className="relative"
               style={{ opacity: future ? 0.35 : 1 }}
             >
-              <MosaicTile categories={categories} size={34} radius={8} />
+              <MosaicTile
+                categories={categories}
+                size={34}
+                radius="var(--radius-tile-month)"
+                title={keptLabel(categories)}
+              />
               <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-[11px] font-bold text-[var(--color-ink)] mix-blend-luminosity">
                 {date.getDate()}
               </span>

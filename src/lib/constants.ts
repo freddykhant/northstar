@@ -27,13 +27,7 @@ export const CATEGORY_HEX_LIGHT: Record<CategoryId, string> = {
   soul: "#0fa47f",
 } as const;
 
-export const CATEGORY_HEX_DARK: Record<CategoryId, string> = {
-  mind: "#9c8fff",
-  body: "#ff7d5c",
-  soul: "#35c9a3",
-} as const;
-
-/** @deprecated Use CATEGORY_HEX_LIGHT/DARK or var(--color-<id>). */
+/** @deprecated Use CATEGORY_HEX_LIGHT or var(--color-<id>). */
 export const CATEGORY_HEX = CATEGORY_HEX_LIGHT;
 
 export const CATEGORY_DESCRIPTIONS: Record<CategoryId, string> = {

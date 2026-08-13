@@ -66,7 +66,6 @@
   /* Motion */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-fast: 140ms;
-  --duration-base: 220ms;
   --duration-slow: 420ms;
 
   /* Type scale — spec §2.2. These replace ~15 copy-pasted literal class strings. */

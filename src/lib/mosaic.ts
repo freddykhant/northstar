@@ -7,6 +7,7 @@
 // merely reinforces it — that is what keeps tiles readable at 11px and for
 // colourblind users.
 
+import { CATEGORY_LABELS } from "./constants";
 import type { CategoryId, DayCategories } from "./types";
 
 export type { DayCategories };
@@ -41,6 +42,14 @@ export function tileBackground(c: DayCategories): string {
   });
 
   return `linear-gradient(135deg, ${stops.join(", ")})`;
+}
+
+/** Human-readable list of kept categories, e.g. "Mind, Soul". */
+export function keptLabel(c: DayCategories): string {
+  const kept = activeCategories(c)
+    .map((id) => CATEGORY_LABELS[id])
+    .join(", ");
+  return kept || "Nothing kept";
 }
 
 /** Trims trailing zeros so 50.000 renders as 50 and 33.333 stays 33.333. */

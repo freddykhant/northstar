@@ -7,7 +7,8 @@ interface MosaicTileProps {
   categories: DayCategories;
   /** px; the tile is square */
   size: number;
-  radius: number;
+  /** Any valid CSS `border-radius` value, e.g. `8` (px) or `"var(--radius-tile-month)"`. */
+  radius: number | string;
   /** Pulse once — used when today's tile gains a band. */
   pulse?: boolean;
   title?: string;

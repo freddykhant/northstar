@@ -3,9 +3,14 @@
 import { useEffect, useState } from "react";
 import { formatDateAsLocal } from "~/lib/utils";
 import { api } from "~/trpc/react";
-import { Card } from "./primitives";
+import { Card, SegmentedControl } from "./primitives";
 
 type MoodLevel = 1 | 2 | 3 | 4 | 5;
+
+const VIEWS: { id: "week" | "year"; label: string }[] = [
+  { id: "week", label: "Week" },
+  { id: "year", label: "Year" },
+];
 
 const MOOD_EMOJIS: Record<MoodLevel, string> = {
   1: "😢",
@@ -251,23 +256,11 @@ export function MoodTracker() {
         <div>
           <div className="mb-5 flex items-center justify-between">
             <h2 className="text-title text-[var(--color-ink)]">Your mood</h2>
-            <div className="flex items-center gap-1 rounded-[var(--radius-control)] bg-[var(--color-sunken)] p-1">
-              {(["week", "year"] as const).map((mode) => (
-                <button
-                  key={mode}
-                  type="button"
-                  aria-pressed={viewMode === mode}
-                  onClick={() => setViewMode(mode)}
-                  className={`rounded-[8px] px-3 py-1 text-[12px] font-semibold capitalize ${
-                    viewMode === mode
-                      ? "bg-[var(--color-surface)] text-[var(--color-ink)] shadow-[var(--shadow-card)]"
-                      : "text-[var(--color-ink-muted)]"
-                  }`}
-                >
-                  {mode}
-                </button>
-              ))}
-            </div>
+            <SegmentedControl
+              options={VIEWS}
+              value={viewMode}
+              onChange={setViewMode}
+            />
           </div>
 
           {viewMode === "week" ? (

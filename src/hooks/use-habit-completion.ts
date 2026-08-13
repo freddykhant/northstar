@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { api } from "~/trpc/react";
 
 interface UseHabitCompletionOptions {
@@ -15,7 +14,6 @@ export function useHabitCompletion({
   today,
   dateRange,
 }: UseHabitCompletionOptions) {
-  const [justCompleted, setJustCompleted] = useState<Set<number>>(new Set());
   const utils = api.useUtils();
 
   const toggleMutation = api.completion.toggle.useMutation({
@@ -123,18 +121,6 @@ export function useHabitCompletion({
         }
       }
 
-      if (isCompleting) {
-        // show animation for 1 second
-        setJustCompleted((prev) => new Set(prev).add(habitId));
-        setTimeout(() => {
-          setJustCompleted((prev) => {
-            const next = new Set(prev);
-            next.delete(habitId);
-            return next;
-          });
-        }, 1000);
-      }
-
       return { previousHabits, previousStats, previousCompletions };
     },
     onError: (err, variables, context) => {
@@ -178,6 +164,5 @@ export function useHabitCompletion({
   return {
     toggleMutation,
     handleToggle,
-    justCompleted,
   };
 }

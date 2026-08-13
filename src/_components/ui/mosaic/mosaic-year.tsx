@@ -91,7 +91,7 @@ export function MosaicYear({
                     <MosaicTile
                       categories={categories}
                       size={TILE}
-                      radius={2}
+                      radius="var(--radius-tile-year)"
                       pulse={pulseToday && key === todayKey}
                       onEnter={(e) => !outOfRange && onHover?.(date, categories, e)}
                       onLeave={onLeave}

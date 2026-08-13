@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { CATEGORY_IDS, CATEGORY_LABELS } from "~/lib/constants";
 import type { DayCategories } from "~/lib/mosaic";
 import type { DayData } from "~/lib/types";
-import { Card } from "../primitives";
+import { Card, SegmentedControl } from "../primitives";
 import { MosaicLegend } from "./mosaic-legend";
 import { MosaicMonth } from "./mosaic-month";
 import { MosaicWeek } from "./mosaic-week";
@@ -52,26 +52,14 @@ export function Mosaic({
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-title text-[var(--color-ink)]">Your year</h2>
 
-        <div className="flex items-center gap-1 rounded-[var(--radius-control)] bg-[var(--color-sunken)] p-1">
-          {VIEWS.map((v) => (
-            <button
-              key={v.id}
-              type="button"
-              aria-pressed={view === v.id}
-              onClick={() => {
-                setView(v.id);
-                setHovered(null);
-              }}
-              className={`rounded-[8px] px-3 py-1 text-[12px] font-semibold ${
-                view === v.id
-                  ? "bg-[var(--color-surface)] text-[var(--color-ink)] shadow-[var(--shadow-card)]"
-                  : "text-[var(--color-ink-muted)]"
-              }`}
-            >
-              {v.label}
-            </button>
-          ))}
-        </div>
+        <SegmentedControl
+          options={VIEWS}
+          value={view}
+          onChange={(v) => {
+            setView(v);
+            setHovered(null);
+          }}
+        />
       </div>
 
       {view === "year" && (
