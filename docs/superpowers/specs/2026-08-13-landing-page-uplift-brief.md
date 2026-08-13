@@ -109,3 +109,47 @@ These come from the shipped design system and are not open for re-litigation:
 
 **Prerequisite:** the `design/system-migration` branch should land first, so this starts from
 the new design system rather than migrating and redesigning simultaneously.
+
+---
+
+## 8. Findings from the migration — inputs to this job
+
+Surfaced by the final review of `design/system-migration` and verified against the build. These
+are not blockers for that branch; they are material for this one.
+
+**A. The page is now half-migrated, and the seam shows.**
+`src/app/page.tsx:325` wraps `<UnifiedDemo />` in a `<Card>` — a `--color-surface` /
+`--color-hairline` / `--shadow-card` container. Its immediate child (`unified-demo.tsx:96`) is
+`rounded-3xl border-zinc-200 bg-white shadow-2xl`: a second card, in a different palette,
+nested inside the first. `landing-footer.tsx` is likewise still zinc/black/white throughout.
+
+The migration was deliberately scoped to unblock deleting the paper compatibility layer, and
+those two sub-components carried no old tokens so were left alone. The result is defensible as
+a waypoint but reads worse than either skin alone — a token card inside a hardcoded card, on
+the only public page. **Deciding whether these two components are rebuilt, restyled or replaced
+is part of this job** (it is open question §5.4).
+
+**B. The demo's category gradients have never rendered — verified.**
+`unified-demo.tsx:238` builds class names by interpolation:
+
+```
+from-${habit.category === "mind" ? "blue" : habit.category === "body" ? "red" : "purple"}-50
+```
+
+Tailwind scans source text for complete class names and cannot see a name assembled at runtime,
+so these are never generated. Checked against the built stylesheet: of
+`from-blue-50`, `from-red-50`, `from-purple-50` and their `-950/30` dark counterparts, **none is
+present**. The only `from-*` utilities that ship are `.from-blue-500` and `.from-zinc-50`.
+
+So the selected-habit highlight in the landing demo has been silently dead since it was written.
+Nothing catches this: it is not a type error, not a lint error, and `pnpm build` succeeds.
+
+Whatever replaces or repairs this component must use complete literal class names (or inline
+styles / CSS custom properties) rather than interpolation. Worth grepping the whole file for the
+same pattern before trusting any of its other conditional styling.
+
+**C. Its colour vocabulary is independent of the product's.**
+The demo carries a local `CATEGORY_COLORS` map (blue/red/purple) that has no relationship to the
+real category tokens — mind is violet `#6c5ce7`, body coral `#f2542d`, soul teal `#0fa47f`. So
+the landing page currently advertises the product in colours the product does not use. If the
+hero leans on the mosaic (§5.1), this matters more than it looks.
