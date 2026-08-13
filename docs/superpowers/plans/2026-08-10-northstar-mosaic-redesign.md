@@ -2344,3 +2344,44 @@ succeeds. Confirm `grep -rn "justCompleted\|CATEGORY_HEX_DARK" src` returns noth
 git add -A src docs
 git commit -m "refactor(ui): share the segmented control, add month tooltips, drop orphans"
 ```
+
+---
+
+## Outstanding after merge
+
+Recorded here so they survive in git rather than only in the execution scratchpad.
+
+**1. Manual browser verification — never performed.** The checkbox squish fix
+(`primitives/checkbox.tsx`, tween instead of spring) is verified only statically. The agent
+that attempted the runtime check hit a signed-out session and correctly declined to submit a
+sign-in form with credentials that were not its own; no dev/test account exists, because
+`scripts/seed.ts` requires an already-registered user. Confirm, signed in:
+   - the checkbox squish visibly animates on click;
+   - the console is free of framer-motion's "Only two keyframes currently supported with
+     spring animations" warning;
+   - **the progress bar and the strikethrough both animate on a live click** — this was the
+     original symptom, so it is the real proof;
+   - reduced motion still fully disables movement.
+
+   This matters more than it sounds: the bug it fixes was invisible to four separate diff
+   reviews and only surfaced when an agent drove a real browser.
+
+**2. Year-view legibility at real density.** Three-way tile splits at 11px were reviewed at
+mock scale and approved, never with a full year of real data. If they read as mud, the agreed
+fallback — already decided, not built — is that the year view collapses to a dominant category
+tone while month and week keep true splits.
+
+**3. Four dead components, pre-existing.** `category-badge.tsx`, `category-stat-card.tsx`,
+`progress-bar.tsx` and `stats-cards.tsx` have no consumers. Verified dead at merge-base
+`548dc47` too, so this branch did not orphan them — deleting the unused `ui/index.ts` barrel
+merely made it visible. `habits-list.tsx` is still live (used by `/habits`).
+
+**4. Remaining accessibility gaps.** Mosaic tiles are hover-only, with no keyboard path to the
+per-day tooltip (pre-existing — the old graph had the same gap), and the sidebar's active nav
+link has no `aria-current` (also pre-existing). The `aria-pressed`, `type="button"` and
+`role="alert"` gaps found in review were fixed.
+
+**5. The DEPRECATED block still stands.** `globals.css` retains the paper tokens and
+`layout.tsx` retains Fraunces, because the landing page, `/habits`, `/signin` and `/signup`
+still consume them. They come out in the pass that migrates those four surfaces — which is
+also when the type scale built in Task 15 gets its real test.
