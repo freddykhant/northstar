@@ -283,3 +283,97 @@ Not clearable without an authenticated session, carried over from the previous p
 
 1. **Manual browser verification of the checkbox squish** — that it animates, the console is free of framer-motion's keyframes warning, and the progress bar and strikethrough both animate on a live click.
 2. **Year-view legibility at real density** — whether three-way tile splits read at 11px with a full year of real data. The agreed fallback, decided but not built, is that the year view collapses to a dominant category tone while month and week keep true splits.
+
+---
+
+## Task 6: Make perfect days legible in the year view
+
+**Added during execution. A live browser check with real data confirmed the risk accepted at
+spec time (design spec §3.3): at 11px, two-way tile splits stay legible but three-way splits
+turn to mud — the middle band compresses to a sliver. Approved by the repo owner as a targeted
+fix rather than the blanket fallback.**
+
+**Files:**
+- Modify: `src/lib/mosaic.ts`, `src/lib/mosaic.test.ts`, `src/_components/ui/mosaic/mosaic-year.tsx`, `src/styles/globals.css`, `scripts/check-palette.ts`
+
+**Why this shape.** The blanket fallback in the spec collapsed *every* multi-category day to a
+dominant tone. The browser check showed that overshoots: two-way splits read fine. Only the
+three-way case needs help. And a perfect day means all three categories were kept — so
+rendering it as a single tone loses **no** information, unlike collapsing a two-way tile.
+Perfect days also already carry a ring, so they remain the most identifiable tile on the grid.
+
+- [ ] **Step 1: Add a `--color-perfect` token**
+
+In the `@theme` block of `globals.css` (not the DEPRECATED block), add a light value, and a
+dark counterpart in the `.dark` block. It must be visually distinct from all three category
+colours and from the empty tile — it is a fourth meaning, not a blend of the other three.
+Avoid literally averaging mind/body/soul: that produces exactly the mud this whole redesign
+removed.
+
+- [ ] **Step 2: Extend the palette gate to cover it**
+
+In `scripts/check-palette.ts`, add `perfect` to each theme and assert the same rules the
+category colours already satisfy: pairwise CIE76 ΔE ≥ 40 against `mind`, `body` and `soul`,
+and ΔL* ≥ 18 against `tileEmpty`. If your chosen colour fails, change the colour — do not
+weaken the thresholds. Run `pnpm check:palette` and paste the output.
+
+- [ ] **Step 3: Add a compact rendering to the pure module**
+
+In `src/lib/mosaic.ts`, add a variant that the year view uses:
+
+```ts
+/**
+ * Background for a tile too small to render three bands legibly. Perfect days
+ * collapse to a single tone (no information is lost — all three were kept);
+ * every other state renders exactly as `tileBackground`.
+ */
+export function tileBackgroundCompact(c: DayCategories): string
+```
+
+A perfect day returns `var(--color-perfect)`. Every other state — empty, one category, any
+two-category pair — must return **exactly** what `tileBackground` returns. Delegate rather
+than duplicating the gradient construction.
+
+- [ ] **Step 4: Test it**
+
+Add cases to `src/lib/mosaic.test.ts` asserting: the perfect-day case returns the new token;
+and all seven non-perfect states return output identical to `tileBackground` for the same
+input. Assert that equivalence by comparing the two functions' outputs directly, so the two
+can never drift apart.
+
+- [ ] **Step 5: Use it in the year view only**
+
+`mosaic-year.tsx` uses the compact variant. `mosaic-month.tsx` and `mosaic-week.tsx` keep
+`tileBackground` and its true three-band splits — at 34px and 60px they are legible, and that
+is where a user goes to interrogate a specific day.
+
+`MosaicTile` will need to accept which background to use. Prefer passing the computed
+background string, or a small explicit flag, over the tile deciding for itself — the tile
+should stay dumb.
+
+The perfect-day ring must still render in the year view. Confirm it does.
+
+- [ ] **Step 6: Update the legend**
+
+`mosaic-legend.tsx` shows a three-band swatch for "Perfect day". In the year view that no
+longer matches what is drawn. Make the legend honest — the simplest correct option is to show
+the `--color-perfect` swatch with its ring, since the legend sits directly beneath the graph.
+
+- [ ] **Step 7: Verify**
+
+`pnpm check` exits 0 (including the extended palette gate), `pnpm test` passes with the new
+cases, `pnpm build` succeeds.
+
+**If a browser session is available**, look at the year view again and confirm perfect days now
+read clearly and two-way splits are unchanged. If not, say so plainly rather than claiming it.
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add -A src scripts docs
+git commit -m "feat(mosaic): render perfect days as a solid tone in the year view
+
+At 11px a three-way split compresses its middle band to a sliver. A perfect
+day keeps all three categories, so a single tone loses no information, and the
+ring still marks it. Month and week keep true splits."
+```
