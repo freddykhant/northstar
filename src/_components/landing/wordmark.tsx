@@ -8,15 +8,10 @@ interface WordmarkProps {
  * edge rather than a stem — done by overlaying a canvas-coloured block on the
  * ascender, which keeps the word selectable and screen-reader-legible.
  */
-const BASE_CLASSNAME =
-  "relative text-[19px] leading-none font-extrabold tracking-[-0.03em] text-[var(--color-ink)]";
-
 export function Wordmark({ className = "" }: WordmarkProps) {
   return (
     <span
-      className={
-        className ? `${BASE_CLASSNAME} ${className}` : BASE_CLASSNAME
-      }
+      className={`relative text-[19px] leading-none font-extrabold tracking-[-0.03em] text-[var(--color-ink)] ${className}`}
     >
       northstar
       <span
