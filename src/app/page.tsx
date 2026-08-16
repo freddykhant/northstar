@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { Comparison } from "~/_components/landing/comparison";
 import { Hero } from "~/_components/landing/hero";
 import { LandingFooter } from "~/_components/landing/landing-footer";
 import { LandingNav } from "~/_components/landing/landing-nav";
@@ -16,6 +17,7 @@ export default async function LandingPage() {
     <div className="min-h-screen bg-[var(--color-canvas)] text-[var(--color-ink)] selection:bg-[var(--color-mind)]/20">
       <LandingNav />
       <Hero referenceDate={referenceDate} />
+      <Comparison referenceDate={referenceDate} />
       <LandingFooter />
     </div>
   );
