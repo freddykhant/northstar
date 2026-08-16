@@ -74,6 +74,10 @@
   --text-display--line-height: 1.05;
   --text-display--letter-spacing: -0.03em;
   --text-display--font-weight: 800;
+
+  /* Landing wash — marketing surface only. Not an app token. */
+  --color-wash-from: #d9d2f7;
+  --color-wash-to: #f4f3f8;
 }
 
 /* Dark — retuned values, never an inversion. */
@@ -98,6 +102,11 @@
 
   --color-perfect: #ffce54;
 
+  /* Independently tuned, not an inversion — a deep aubergine that keeps the
+     violet family without lifting the page off the near-black canvas. */
+  --color-wash-from: #2a2440;
+  --color-wash-to: #131219;
+
   /* Shadows read poorly on near-black; depth comes from borders. */
   --shadow-card: 0 6px 18px -6px rgba(0, 0, 0, 0.5);
   --shadow-lift: 0 12px 28px -8px rgba(0, 0, 0, 0.6);
@@ -116,6 +125,29 @@
 
 .animate-rise-in {
   animation: rise-in var(--duration-slow) var(--ease-out) both;
+}
+
+.font-display {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+  font-variation-settings:
+    "opsz" 144,
+    "WONK" 1,
+    "SOFT" 35;
+}
+
+/* Section reveal. Sections start hidden and are revealed by adding
+   .is-revealed via IntersectionObserver. */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity var(--duration-slow) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+}
+
+.reveal.is-revealed {
+  opacity: 1;
+  transform: none;
 }
 
 a,
@@ -153,6 +185,12 @@ body {
     animation: none;
     opacity: 1;
     transform: none;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 
   *,
