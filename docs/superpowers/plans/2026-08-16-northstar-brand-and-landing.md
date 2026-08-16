@@ -42,7 +42,7 @@
 | `src/_components/landing/categories.tsx` | Three category cards. |
 | `src/_components/landing/landing-cta.tsx` | Closing CTA. |
 | `src/_components/landing/landing-footer.tsx` | **Rebuilt** on tokens. |
-| `src/_components/landing/unified-demo.tsx` | **Deleted** in Task 11. |
+| `src/_components/landing/unified-demo.tsx` | **Deleted** in Task 3. |
 | `src/_components/landing/reveal-on-scroll.tsx` | Progressive-enhancement scroll reveals. |
 | `src/app/icon.svg` | The mark as favicon, in literal hexes. |
 | `src/app/layout.tsx` | Fraunces wiring; drops the overriding `metadata.icons`. |
@@ -95,6 +95,16 @@ describe("buildDemoYear", () => {
     const counts = [...map.values()].map((d) => activeCategories(d).length);
     expect(counts.some((n) => n === 0)).toBe(true);
     expect(counts.some((n) => n === 3)).toBe(true);
+  });
+
+  it("gives a date the same value regardless of window size", () => {
+    // The hero asks for 140 days, the comparison 182, the lopsided month 365.
+    // All three render on one page, so a date must not change between them.
+    const short = buildDemoYear(REF, HERO_DAYS);
+    const long = buildDemoYear(REF, 365);
+    for (const [key, value] of short) {
+      expect(long.get(key)).toEqual(value);
+    }
   });
 
   it("suppresses body in the lopsided month, deliberately not by luck", () => {
@@ -173,16 +183,28 @@ const BASE_RATE: Record<keyof DayCategories, number> = {
  *  than a rendering bug. */
 const LOPSIDED_BODY_RATE = 0.08;
 
+/** The generator always walks this many days, then slices. Varying the walk
+ *  length would re-align the PRNG sequence against the calendar, so the same
+ *  date would differ between the hero (140 days), the comparison (182) and the
+ *  lopsided month (365) — three views of one year, disagreeing on one page. */
+const CANONICAL_DAYS = 365;
+
 /**
  * `days` consecutive days ending on (and including) `reference`.
  * Keys are `YYYY-MM-DD` local, matching every other mosaic surface.
+ *
+ * A given date always gets the same value regardless of `days`.
  */
 export function buildDemoYear(
   reference: Date,
   days: number,
 ): Map<string, DayCategories> {
+  if (days < 1 || days > CANONICAL_DAYS) {
+    throw new RangeError(`days must be 1..${CANONICAL_DAYS}, got ${days}`);
+  }
+
   const rand = mulberry32(SEED);
-  const map = new Map<string, DayCategories>();
+  const entries: [string, DayCategories][] = [];
 
   const lopsided = new Date(
     reference.getFullYear(),
@@ -190,7 +212,7 @@ export function buildDemoYear(
     1,
   );
 
-  for (let i = days - 1; i >= 0; i--) {
+  for (let i = CANONICAL_DAYS - 1; i >= 0; i--) {
     const date = new Date(
       reference.getFullYear(),
       reference.getMonth(),
@@ -206,21 +228,24 @@ export function buildDemoYear(
     // pattern of the months after it.
     const rolls = { mind: rand(), body: rand(), soul: rand() };
 
-    map.set(formatDateAsLocal(date), {
-      mind: rolls.mind < BASE_RATE.mind,
-      body: rolls.body < (isLopsided ? LOPSIDED_BODY_RATE : BASE_RATE.body),
-      soul: rolls.soul < BASE_RATE.soul,
-    });
+    entries.push([
+      formatDateAsLocal(date),
+      {
+        mind: rolls.mind < BASE_RATE.mind,
+        body: rolls.body < (isLopsided ? LOPSIDED_BODY_RATE : BASE_RATE.body),
+        soul: rolls.soul < BASE_RATE.soul,
+      },
+    ]);
   }
 
-  return map;
+  return new Map(entries.slice(CANONICAL_DAYS - days));
 }
 ```
 
 - [ ] **Step 4: Run test to verify it passes**
 
 Run: `pnpm vitest run src/lib/landing-seed.test.ts`
-Expected: PASS, 4 tests.
+Expected: PASS, 5 tests.
 
 If the lopsided assertion fails, adjust `LOPSIDED_BODY_RATE` down (not the assertion) — the test encodes the design requirement.
 
@@ -454,11 +479,41 @@ describe("landing components", () => {
 - [ ] **Step 2: Run tests to verify they fail**
 
 Run: `pnpm vitest run src/lib/brand.test.ts src/_components/landing/no-interpolated-classes.test.ts`
-Expected: `brand.test.ts` FAILs (cannot resolve `./brand`). The guard test FAILs on "has files to check" only if the directory is empty — it currently contains `unified-demo.tsx` and `landing-footer.tsx`, so expect `unified-demo.tsx` to **fail** the interpolation check. That failure is correct and expected: it is the real bug. It goes green in Task 11 when the file is deleted.
+Expected: `brand.test.ts` FAILs (cannot resolve `./brand`). The guard test FAILs on
+`unified-demo.tsx` — that failure is correct, and it is the real finding-B bug.
 
-> Do not "fix" `unified-demo.tsx` to make this pass. It is being deleted.
+> Do **not** "fix" `unified-demo.tsx` to make this pass. Delete it, in Step 3.
 
-- [ ] **Step 3: Write the implementation**
+- [ ] **Step 3: Delete the dead demo and its only caller**
+
+The component has never rendered its category highlight (finding B) and advertises the product in
+colours it does not use (finding C). It is being replaced wholesale, so it goes now rather than
+leaving the guard test red across eight tasks.
+
+```bash
+git rm src/_components/landing/unified-demo.tsx
+```
+
+Then in `src/app/page.tsx`, delete the entire `<section id="inside">` block — from the
+`{/* A look inside */}` comment through its closing `</section>` — and remove the now-unused
+imports of `UnifiedDemo` and `Card`. Leave the rest of the almanac page alone; it is replaced in
+Task 6.
+
+Also remove the now-dangling `href="#inside"` "look inside" link in the CTA block (around
+`page.tsx:220`), since its target no longer exists. Leave the `/signup` link above it untouched.
+
+Verify nothing still references it:
+
+```bash
+grep -rn "unified-demo\|UnifiedDemo\|#inside" src/
+```
+
+Expected: **no output**.
+
+Run: `pnpm check`
+Expected: PASS — no unused-import errors.
+
+- [ ] **Step 4: Write the implementation**
 
 Create `src/lib/brand.ts`:
 
@@ -546,19 +601,20 @@ export function Wordmark({ className = "" }: WordmarkProps) {
 > at 19px and at 40px — it is an em-relative value, so it scales, but it is
 > position-sensitive to tracking.
 
-- [ ] **Step 4: Run tests**
+- [ ] **Step 5: Run the whole suite**
 
-Run: `pnpm vitest run src/lib/brand.test.ts`
-Expected: PASS, 4 tests.
+Run: `pnpm vitest run`
+Expected: **everything PASSES**, including the guard test across `brand-mark.tsx`,
+`wordmark.tsx` and `landing-footer.tsx`.
 
-Run: `pnpm vitest run src/_components/landing/no-interpolated-classes.test.ts`
-Expected: `brand-mark.tsx`, `wordmark.tsx`, `landing-footer.tsx` PASS; `unified-demo.tsx` FAILS. Correct for now.
+From this task onward the suite must stay green. A red suite in any later task is a real
+regression, not an expected failure.
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
-git add src/lib/brand.ts src/lib/brand.test.ts src/_components/landing/
-git commit -m "feat(brand): derive the mark from tileBackground, add wordmark"
+git add -A
+git commit -m "feat(brand): derive the mark from tileBackground, delete the dead demo"
 ```
 
 ---
@@ -742,7 +798,7 @@ Run: `pnpm check`
 Expected: PASS — including `Palette check passed.` No category hues changed.
 
 Run: `pnpm vitest run src/_components/landing/no-interpolated-classes.test.ts`
-Expected: `landing-nav.tsx` passes; `unified-demo.tsx` still fails (expected until Task 11).
+Expected: PASS — `landing-nav.tsx` included. The suite has been green since Task 3; a failure here is a real regression.
 
 Run `pnpm dev` and confirm the browser tab shows the three-band mark, not the
 old logo. A stale favicon is usually browser cache — hard-reload before
@@ -1060,9 +1116,9 @@ export default async function LandingPage() {
 }
 ```
 
-> This drops `UnifiedDemo`, the `Card` wrapper, the roman-numeral helper, the
-> `Rule`/`Stagger` components and the epigraph in one edit. `unified-demo.tsx`
-> still exists on disk; it is deleted in Task 11.
+> This drops the roman-numeral helper, the `Rule`/`Stagger` components, the
+> epigraph and the table of contents in one edit. `UnifiedDemo` and its
+> `Card` wrapper were already removed in Task 3.
 
 - [ ] **Step 3: Verify it builds and runs**
 
@@ -1192,7 +1248,7 @@ In `src/app/page.tsx`, import `Comparison` and place it between `<Hero />` and `
 - [ ] **Step 3: Verify**
 
 Run: `pnpm check && pnpm vitest run`
-Expected: PASS (except the known `unified-demo.tsx` guard failure).
+Expected: PASS, whole suite.
 
 - [ ] **Step 4: Commit**
 
@@ -1409,7 +1465,7 @@ Add `<Categories />` then `<LandingCta />` after `<LopsidedMonth />` in `src/app
 - [ ] **Step 3: Verify**
 
 Run: `pnpm check && pnpm vitest run`
-Expected: PASS except the known `unified-demo.tsx` guard failure.
+Expected: PASS, whole suite.
 
 - [ ] **Step 4: Commit**
 
