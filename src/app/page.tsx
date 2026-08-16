@@ -2,8 +2,6 @@ import { Compass } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LandingFooter } from "~/_components/landing/landing-footer";
-import { UnifiedDemo } from "~/_components/landing/unified-demo";
-import { Card } from "~/_components/ui/primitives";
 import { auth } from "~/server/auth";
 
 // ─────────────────────────────────────────────────────────────
@@ -218,15 +216,6 @@ export default async function LandingPage() {
               ✦
             </span>
           </Link>
-          <p className="mt-4 text-[11px] tracking-[0.04em] text-[var(--color-ink-muted)]">
-            or{" "}
-            <Link
-              href="#inside"
-              className="underline decoration-[var(--color-ink-muted)]/40 underline-offset-4 hover:text-[var(--color-ink)] hover:decoration-[var(--color-mind)]"
-            >
-              look inside
-            </Link>
-          </p>
         </Stagger>
 
         <Rule width={100} delay={650} />
@@ -294,60 +283,6 @@ export default async function LandingPage() {
           </svg>
         </Stagger>
       </main>
-
-      {/* ─────────────────────────────────────────────────────── */}
-      {/* A look inside                                           */}
-      {/* ─────────────────────────────────────────────────────── */}
-      <section
-        id="inside"
-        className="border-t border-[var(--color-hairline)] px-6 py-24 sm:py-32"
-      >
-        <div className="mx-auto max-w-4xl">
-          <div className="mb-12 flex items-baseline justify-between">
-            <p className="text-[10px] tracking-[0.32em] text-[var(--color-ink-muted)] uppercase">
-              A look inside
-            </p>
-            <p className="tabular text-[10px] tracking-[0.18em] text-[var(--color-ink-muted)] uppercase">
-              p. 002
-            </p>
-          </div>
-
-          <h2
-            className="mb-3 max-w-2xl text-[36px] leading-[1.1] font-medium text-[var(--color-ink)] sm:text-[44px]"
-            style={{
-              letterSpacing: "-0.02em",
-              textWrap: "balance",
-            }}
-          >
-            <span className="text-[var(--color-mind)]">§</span> A quiet place
-            to keep your daily practice.
-          </h2>
-          <p className="mb-12 max-w-xl text-[14px] leading-[1.6] text-[var(--color-ink-muted)]">
-            One page, three categories, no streak shame. Northstar is shaped
-            like a paper journal &mdash; quiet enough to actually use.
-          </p>
-
-          <Card className="p-6">
-            <UnifiedDemo />
-          </Card>
-
-          <div className="mt-12 flex flex-col items-center gap-4">
-            <Rule width={60} />
-            <Link
-              href="/signup"
-              className="group inline-flex items-baseline gap-2 text-[16px] font-medium text-[var(--color-ink)] hover:text-[var(--color-mind)]"
-            >
-              Begin your own volume
-              <span
-                aria-hidden
-                className="text-[12px] transition-transform group-hover:translate-x-1"
-              >
-                →
-              </span>
-            </Link>
-          </div>
-        </div>
-      </section>
 
       <LandingFooter />
     </div>
