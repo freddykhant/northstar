@@ -8,10 +8,12 @@ const GAP = 3;
 const DAYS = 182; // 26 weeks — a legible half-year at 9px
 const ROWS = 7;
 
-/** GitHub's contribution greens. Deliberately literal and deliberately NOT a
- *  token: this depicts a different product, and must never become part of
- *  Northstar's palette. */
-const CONTRIB_GREENS = ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"] as const;
+/** GitHub's contribution greens, one per reachable state (0-3 categories kept).
+ *  Deliberately literal and deliberately NOT a token: this depicts a different
+ *  product, and must never become part of Northstar's palette. Four entries, not
+ *  five — a day has at most three categories, so a five-step ramp would leave the
+ *  darkest green unreachable and make the comparison look rigged. */
+const CONTRIB_GREENS = ["#ebedf0", "#9be9a8", "#40c463", "#216e39"] as const;
 
 function greenFor(day: DayCategories): string {
   return CONTRIB_GREENS[activeCategories(day).length]!;
