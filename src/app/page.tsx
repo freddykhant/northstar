@@ -6,6 +6,7 @@ import { LandingCta } from "~/_components/landing/landing-cta";
 import { LandingFooter } from "~/_components/landing/landing-footer";
 import { LandingNav } from "~/_components/landing/landing-nav";
 import { LopsidedMonth } from "~/_components/landing/lopsided-month";
+import { RevealOnScroll } from "~/_components/landing/reveal-on-scroll";
 import { auth } from "~/server/auth";
 
 export default async function LandingPage() {
@@ -25,6 +26,7 @@ export default async function LandingPage() {
       <Categories />
       <LandingCta />
       <LandingFooter />
+      <RevealOnScroll />
     </div>
   );
 }

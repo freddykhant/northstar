@@ -136,13 +136,17 @@
 }
 
 /* Section reveal. Sections start hidden and are revealed by adding
-   .is-revealed via IntersectionObserver. */
-.reveal {
-  opacity: 0;
-  transform: translateY(16px);
-  transition:
-    opacity var(--duration-slow) var(--ease-out),
-    transform var(--duration-slow) var(--ease-out);
+   .is-revealed via IntersectionObserver. The hiding half only applies under
+   `scripting: enabled` — with JS disabled or a hydration failure, content
+   stays visible by default instead of being permanently hidden. */
+@media (scripting: enabled) {
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity var(--duration-slow) var(--ease-out),
+      transform var(--duration-slow) var(--ease-out);
+  }
 }
 
 .reveal.is-revealed {
