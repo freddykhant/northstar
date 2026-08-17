@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
+import { Categories } from "~/_components/landing/categories";
 import { Comparison } from "~/_components/landing/comparison";
 import { Hero } from "~/_components/landing/hero";
+import { LandingCta } from "~/_components/landing/landing-cta";
 import { LandingFooter } from "~/_components/landing/landing-footer";
 import { LandingNav } from "~/_components/landing/landing-nav";
 import { LopsidedMonth } from "~/_components/landing/lopsided-month";
@@ -20,6 +22,8 @@ export default async function LandingPage() {
       <Hero referenceDate={referenceDate} />
       <Comparison referenceDate={referenceDate} />
       <LopsidedMonth referenceDate={referenceDate} />
+      <Categories />
+      <LandingCta />
       <LandingFooter />
     </div>
   );
