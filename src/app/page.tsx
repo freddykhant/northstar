@@ -3,6 +3,7 @@ import { Comparison } from "~/_components/landing/comparison";
 import { Hero } from "~/_components/landing/hero";
 import { LandingFooter } from "~/_components/landing/landing-footer";
 import { LandingNav } from "~/_components/landing/landing-nav";
+import { LopsidedMonth } from "~/_components/landing/lopsided-month";
 import { auth } from "~/server/auth";
 
 export default async function LandingPage() {
@@ -18,6 +19,7 @@ export default async function LandingPage() {
       <LandingNav />
       <Hero referenceDate={referenceDate} />
       <Comparison referenceDate={referenceDate} />
+      <LopsidedMonth referenceDate={referenceDate} />
       <LandingFooter />
     </div>
   );
