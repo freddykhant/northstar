@@ -45,7 +45,9 @@ export function hasInterpolatedClassName(source: string): boolean {
     if (name && /cls|class/i.test(name)) literals.push(body ?? "");
   }
 
-  return literals.some((literal) => HYPHEN_ADJACENT_INTERPOLATION.test(literal));
+  return literals.some((literal) =>
+    HYPHEN_ADJACENT_INTERPOLATION.test(literal),
+  );
 }
 
 describe("hasInterpolatedClassName (guard self-test)", () => {
@@ -71,7 +73,8 @@ describe("hasInterpolatedClassName (guard self-test)", () => {
   });
 
   it("does not flag a CSS custom property interpolation in style", () => {
-    const good = "const x = <div style={{ color: `var(--color-${id}-ink)` }} />;";
+    const good =
+      "const x = <div style={{ color: `var(--color-${id}-ink)` }} />;";
     expect(hasInterpolatedClassName(good)).toBe(false);
   });
 

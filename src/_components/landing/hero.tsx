@@ -25,7 +25,11 @@ export function Hero({ referenceDate }: HeroProps) {
         </h1>
         <p
           className="animate-rise-in mx-auto mt-5 max-w-xl text-[16px] leading-[1.6] text-[var(--color-ink-muted)]"
-          style={{ animationDelay: "120ms", animationFillMode: "both", textWrap: "balance" }}
+          style={{
+            animationDelay: "120ms",
+            animationFillMode: "both",
+            textWrap: "balance",
+          }}
         >
           Mind, body, soul &mdash; one square a day. See which part of your life
           you&rsquo;re actually showing up for.

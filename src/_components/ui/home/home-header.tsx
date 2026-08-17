@@ -26,7 +26,7 @@ export function HomeHeader({ name, streak }: HomeHeaderProps) {
             month: "long",
           })}
         </p>
-        <h1 className="mt-1 text-[28px] leading-[1.05] font-extrabold tracking-[-0.03em] text-[var(--color-ink)] sm:text-display">
+        <h1 className="sm:text-display mt-1 text-[28px] leading-[1.05] font-extrabold tracking-[-0.03em] text-[var(--color-ink)]">
           Good {timeOfDay()}, {name}
         </h1>
       </div>

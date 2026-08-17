@@ -10,11 +10,11 @@ import {
   type DayCategories,
 } from "./mosaic";
 
-const day = (
-  mind: boolean,
-  body: boolean,
-  soul: boolean,
-): DayCategories => ({ mind, body, soul });
+const day = (mind: boolean, body: boolean, soul: boolean): DayCategories => ({
+  mind,
+  body,
+  soul,
+});
 
 describe("tileBackground", () => {
   it("renders an empty day as the sunken token", () => {

@@ -5,7 +5,11 @@ import { Wordmark } from "./wordmark";
 export function LandingNav() {
   return (
     <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6">
-      <Link href="/" className="flex items-center gap-2.5" aria-label="Northstar home">
+      <Link
+        href="/"
+        className="flex items-center gap-2.5"
+        aria-label="Northstar home"
+      >
         <BrandMark size={26} />
         <Wordmark />
       </Link>

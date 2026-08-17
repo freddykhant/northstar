@@ -12,12 +12,20 @@ const mapOf = (d: DayCategories) => new Map([["2026-08-16", d]]);
 
 describe("toggleCategory", () => {
   it("turns an unset category on", () => {
-    const next = toggleCategory(mapOf(day(false, false, false)), "2026-08-16", "mind");
+    const next = toggleCategory(
+      mapOf(day(false, false, false)),
+      "2026-08-16",
+      "mind",
+    );
     expect(next.get("2026-08-16")).toEqual(day(true, false, false));
   });
 
   it("turns a set category off", () => {
-    const next = toggleCategory(mapOf(day(true, false, false)), "2026-08-16", "mind");
+    const next = toggleCategory(
+      mapOf(day(true, false, false)),
+      "2026-08-16",
+      "mind",
+    );
     expect(next.get("2026-08-16")).toEqual(day(false, false, false));
   });
 

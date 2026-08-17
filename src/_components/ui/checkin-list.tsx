@@ -91,9 +91,13 @@ export function CheckinList({ habits, onToggle, isLoading }: CheckinListProps) {
                     </span>
                     <motion.span
                       aria-hidden
-                      className="col-start-1 row-start-1 text-[14px] font-semibold text-transparent [text-decoration-color:var(--color-ink-faint)] [text-decoration-line:line-through] [text-decoration-thickness:1.5px]"
+                      className="col-start-1 row-start-1 text-[14px] font-semibold text-transparent [text-decoration-line:line-through] [text-decoration-color:var(--color-ink-faint)] [text-decoration-thickness:1.5px]"
                       initial={false}
-                      animate={{ clipPath: done ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)" }}
+                      animate={{
+                        clipPath: done
+                          ? "inset(0 0% 0 0)"
+                          : "inset(0 100% 0 0)",
+                      }}
                       transition={reduce ? { duration: 0 } : { duration: 0.22 }}
                     >
                       {habit.name}

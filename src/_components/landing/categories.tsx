@@ -1,4 +1,8 @@
-import { CATEGORY_DESCRIPTIONS, CATEGORY_IDS, CATEGORY_LABELS } from "~/lib/constants";
+import {
+  CATEGORY_DESCRIPTIONS,
+  CATEGORY_IDS,
+  CATEGORY_LABELS,
+} from "~/lib/constants";
 
 export function Categories() {
   return (

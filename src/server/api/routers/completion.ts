@@ -235,7 +235,11 @@ export const completionRouter = createTRPCRouter({
     const now = new Date();
     const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
     let currentStreak = 0;
-    const checkDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const checkDate = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+    );
 
     while (true) {
       const dateStr = `${checkDate.getFullYear()}-${String(checkDate.getMonth() + 1).padStart(2, "0")}-${String(checkDate.getDate()).padStart(2, "0")}`;
@@ -273,7 +277,11 @@ export const completionRouter = createTRPCRouter({
 
     // week percentage: how many of the possible completions did they hit?
     // e.g. 3 active habits over 7 days = 21 possible completions
-    const sevenDaysAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+    const sevenDaysAgo = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - 7,
+    );
     const sevenDaysAgoStr = `${sevenDaysAgo.getFullYear()}-${String(sevenDaysAgo.getMonth() + 1).padStart(2, "0")}-${String(sevenDaysAgo.getDate()).padStart(2, "0")}`;
 
     const [weekRow] = await ctx.db

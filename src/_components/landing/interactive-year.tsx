@@ -4,10 +4,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { MosaicTile } from "~/_components/ui/mosaic";
 import { SegmentedControl } from "~/_components/ui/primitives";
 import { CATEGORY_LABELS } from "~/lib/constants";
-import {
-  becamePerfect,
-  toggleCategory,
-} from "~/lib/landing-interaction";
+import { becamePerfect, toggleCategory } from "~/lib/landing-interaction";
 import { buildDemoYear, HERO_DAYS, HERO_WEEKS } from "~/lib/landing-seed";
 import { dayLabel, tileBackground } from "~/lib/mosaic";
 import type { CategoryId, DayCategories } from "~/lib/types";
@@ -71,7 +68,8 @@ export function InteractiveYear({ referenceDate }: InteractiveYearProps) {
   const moveFocus = useCallback((from: number, delta: number) => {
     const next = Math.min(Math.max(from + delta, 0), HERO_DAYS - 1);
     setFocusIndex(next);
-    const el = gridRef.current?.querySelectorAll<HTMLButtonElement>("button")[next];
+    const el =
+      gridRef.current?.querySelectorAll<HTMLButtonElement>("button")[next];
     el?.focus();
   }, []);
 
@@ -93,7 +91,11 @@ export function InteractiveYear({ referenceDate }: InteractiveYearProps) {
 
   return (
     <div className="flex flex-col items-center gap-5">
-      <SegmentedControl options={OPTIONS} value={category} onChange={setCategory} />
+      <SegmentedControl
+        options={OPTIONS}
+        value={category}
+        onChange={setCategory}
+      />
 
       <div
         ref={gridRef}
@@ -106,7 +108,11 @@ export function InteractiveYear({ referenceDate }: InteractiveYearProps) {
       >
         {dates.map((date, index) => {
           const key = formatDateAsLocal(date);
-          const value = days.get(key) ?? { mind: false, body: false, soul: false };
+          const value = days.get(key) ?? {
+            mind: false,
+            body: false,
+            soul: false,
+          };
           return (
             <button
               key={key}

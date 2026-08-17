@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { buildDemoYear, HERO_DAYS, LOPSIDED_MONTH_OFFSET } from "./landing-seed";
+import {
+  buildDemoYear,
+  HERO_DAYS,
+  LOPSIDED_MONTH_OFFSET,
+} from "./landing-seed";
 import { activeCategories } from "./mosaic";
 
 const REF = new Date(2026, 7, 16); // 16 Aug 2026, fixed

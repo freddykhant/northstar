@@ -39,7 +39,7 @@ export function MosaicWeek({ completionMap }: MosaicWeekProps) {
                 title={label}
                 focusable
               />
-              <div className="mt-2 text-eyebrow text-[var(--color-ink-muted)] uppercase">
+              <div className="text-eyebrow mt-2 text-[var(--color-ink-muted)] uppercase">
                 {date.toLocaleDateString("en-US", { weekday: "short" })}
               </div>
             </div>

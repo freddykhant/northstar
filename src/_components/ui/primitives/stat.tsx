@@ -14,7 +14,7 @@ export function Stat({ value, label, accent = false }: StatProps) {
       >
         {value}
       </div>
-      <div className="mt-1 text-eyebrow text-[var(--color-ink-muted)] uppercase">
+      <div className="text-eyebrow mt-1 text-[var(--color-ink-muted)] uppercase">
         {label}
       </div>
     </div>

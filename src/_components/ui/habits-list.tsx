@@ -102,7 +102,7 @@ export function HabitsList({
                         }
                         disabled={isToggling || isDeleting}
                         aria-label="More options"
-                        className="rounded-[var(--radius-control)] p-1.5 opacity-0 hover:bg-[var(--color-sunken)] group-hover:opacity-100 disabled:opacity-30"
+                        className="rounded-[var(--radius-control)] p-1.5 opacity-0 group-hover:opacity-100 hover:bg-[var(--color-sunken)] disabled:opacity-30"
                       >
                         <DotsThree size={16} weight="bold" />
                       </button>

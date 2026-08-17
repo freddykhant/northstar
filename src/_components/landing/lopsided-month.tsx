@@ -25,7 +25,10 @@ export function LopsidedMonth({ referenceDate }: { referenceDate: Date }) {
   const cells = Array.from({ length: daysInMonth }, (_, i) => {
     const date = new Date(first.getFullYear(), first.getMonth(), i + 1);
     const key = formatDateAsLocal(date);
-    return { key, value: all.get(key) ?? { mind: false, body: false, soul: false } };
+    return {
+      key,
+      value: all.get(key) ?? { mind: false, body: false, soul: false },
+    };
   });
 
   return (
