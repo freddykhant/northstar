@@ -25,7 +25,7 @@ export function Hero({ referenceKey }: HeroProps) {
           Your year, in three colours.
         </h1>
         <p
-          className="animate-rise-in mx-auto mt-5 max-w-xl text-[16px] leading-[1.6] text-[var(--color-ink-muted)]"
+          className="animate-rise-in mx-auto mt-5 max-w-xl text-[16px] leading-[1.6] text-[var(--color-ink)]"
           style={{
             animationDelay: "120ms",
             animationFillMode: "both",

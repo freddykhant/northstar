@@ -20,6 +20,7 @@ const THEMES = {
     bodyInk: "#b83c1c",
     soulInk: "#0a7a5e",
     perfect: "#d4a017",
+    wash: "#d9d2f7",
   },
   dark: {
     mind: "#9c8fff",
@@ -33,6 +34,7 @@ const THEMES = {
     bodyInk: "#ff9a80",
     soulInk: "#5fd8b8",
     perfect: "#ffce54",
+    wash: "#2a2440",
   },
 } as const;
 
@@ -183,6 +185,31 @@ for (const [themeName, t] of Object.entries(THEMES)) {
       `${themeName}: ink button text (canvas) on ink ${inkButtonRatio.toFixed(2)}:1 < ${MIN_TEXT_CONTRAST}:1`,
     );
   }
+  // The landing wash (--color-wash-from) is a marketing-only surface, but it
+  // carries the hero's headline AND the sentence that explains the product —
+  // real body text at 16px, with no large-text exemption — so it is gated like
+  // any other text surface. It was left out of this file on the grounds that
+  // the branch added "no new hues", which was simply false: the wash IS a new
+  // hue, in both themes, and leaving it ungated is why a failing pairing
+  // shipped. The top of the gradient is checked, not the midpoint, because
+  // that is the wash's most extreme value.
+  //
+  // KNOWN UN-GATED HOLE, deliberate: --color-ink-muted on the light wash
+  // measures 3.51:1 and MUST NOT be used for text there. It is documented
+  // rather than enforced because no wash value can fix it — #6e6c82 is a
+  // mid-tone, so darkening the wash lowers the ratio monotonically until
+  // --color-ink itself fails, and lightening tops out at 5.08:1 against pure
+  // white, which needs a lavender so pale the gradient stops existing.
+  // Anything placed on the wash uses --color-ink. Asserting ink-muted here
+  // would just tempt the next person to drop MIN_TEXT_CONTRAST to fit it,
+  // which is the exact failure this gate exists to prevent.
+  const washInkRatio = contrast(t.ink, t.wash);
+  if (washInkRatio < MIN_TEXT_CONTRAST) {
+    failures.push(
+      `${themeName}: ink on wash ${washInkRatio.toFixed(2)}:1 < ${MIN_TEXT_CONTRAST}:1`,
+    );
+  }
+
   // body and soul are deliberately NOT gated as full-opacity button
   // backgrounds: nothing in the app currently uses them that way (only as
   // translucent /8–/10 badge tints, which this contrast model doesn't
