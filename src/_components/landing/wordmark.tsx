@@ -1,5 +1,4 @@
 interface WordmarkProps {
-  className?: string;
   size?: number;
 }
 
@@ -12,14 +11,20 @@ interface WordmarkProps {
  * Size is applied as an inline style rather than a Tailwind class: Tailwind v4
  * emits arbitrary-value utilities sorted numerically rather than by source
  * order, so two `text-[Npx]` classes of equal specificity can resolve in an
- * order that ignores which one a caller passed in `className`. An inline
- * style always wins regardless of stylesheet order.
+ * order that ignores which one a caller passed. An inline style always wins
+ * regardless of stylesheet order.
+ *
+ * There is deliberately no `className` prop. Nothing passes one, and the
+ * escape hatch would be a trap: the inline `fontSize` above beats any class,
+ * so a caller passing `text-[Npx]` would be silently ignored — the exact
+ * silent-override bug `size` exists to prevent. Callers needing a different
+ * size pass `size`; callers needing layout wrap this in their own element.
  */
-export function Wordmark({ className = "", size = 19 }: WordmarkProps) {
+export function Wordmark({ size = 19 }: WordmarkProps) {
   return (
     <span
       style={{ fontSize: size }}
-      className={`relative leading-none font-extrabold tracking-[-0.03em] text-[var(--color-ink)] ${className}`}
+      className="relative leading-none font-extrabold tracking-[-0.03em] text-[var(--color-ink)]"
     >
       northstar
       <span
