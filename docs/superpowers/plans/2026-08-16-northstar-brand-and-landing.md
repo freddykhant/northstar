@@ -1666,3 +1666,84 @@ Deferred, recorded so it is not lost: `MosaicYear` calls `new Date()` inside `us
 (`mosaic-year.tsx:31`) while being server-rendered, so it can produce a different grid shape on
 server and client across a timezone or midnight boundary. The landing page sidesteps this with an
 explicit `referenceDate`. The app-side issue is untouched and still open.
+
+---
+
+## Deferred follow-ups from this branch
+
+Recorded at merge. Each was raised by a task review or the final whole-branch review, triaged as
+safe to defer, and deliberately not fixed here. Nothing in this list blocks merge.
+
+### Accessibility
+
+- **The mosaic never announces the payoff.** Completing a day announces
+  `"Sat, Aug 9 — Mind, Body, Soul"`; the gold "perfect day" concept — the product's whole point —
+  is left to inference. `aria-pressed` also refers to the active category, which appears nowhere
+  in the tile's accessible name. Appending the active category to `dayLabel` would close both.
+- **Changing category via the `SegmentedControl` produces no announcement**, only `aria-pressed`
+  on the segment.
+- **The live region is not throttled.** Spec §8 asks for one; `interactive-year.tsx` sets it on
+  every toggle, so rapid clicking queues announcements.
+- **Arrow keys wrap across columns** at the grid edges, and `Home`/`End`/`PageUp`/`PageDown` are
+  unhandled. Wrapping is arguably correct — the grid is a continuous day sequence — so this is
+  noted rather than recommended.
+
+### Design system
+
+- **Radius drift across the landing set.** `hero.tsx` uses `rounded-[28px]`, `categories.tsx`
+  `rounded-[22px]`, `comparison.tsx` a hardcoded `radius: 2` where `--radius-tile-year` is exactly
+  2px, and `interactive-year.tsx` gives each tile button `rounded-[4px]` while the tile inside it
+  is `var(--radius-tile-month)` (8px) — so the focus ring's corners do not match the tile they
+  ring. Four values, no shared constant.
+- **Category cards duplicate most of the `Card` primitive** but hardcode their radius, so a future
+  `--radius-card` change would miss them.
+- **The empty-day literal `{ mind: false, body: false, soul: false }` is duplicated four ways** —
+  `interactive-year.tsx`, `lopsided-month.tsx`, `landing-interaction.ts`, `mosaic-year.tsx`.
+  Export one and import it.
+- **Spec §7's interaction polish is not implemented.** The spec calls for a 140ms `--ease-out`
+  transition on the tile background and a slight scale on press. `MosaicTile` sets `background`
+  inline with no transition, and the global `button` transition rule does not reach it — the
+  background lives on the inner `motion.div`. Harmless (instant change is what §8 mandates under
+  reduced motion anyway), but the normal-motion polish is absent.
+
+### Known holes with no mechanical guard
+
+- **`--color-ink-muted` on the light wash measures 3.51:1 and is not gated.** `#6e6c82` reaches
+  only 5.08:1 against pure white, so no lavender light enough to keep the gradient can fix it.
+  The rule — anything carrying text on the wash uses `--color-ink` — is documented in
+  `scripts/check-palette.ts` but rests on someone reading it.
+- **`--color-ink-muted` on `--color-canvas` is 4.60:1** — clears AA with almost no margin. Future
+  token tuning could push it under.
+- **The interpolated-class guard misses reassignment.** It matches
+  `const/let/var IDENT = \`literal\`` with the backtick immediately after `=`, so
+  `let cls; cls = \`from-${x}-50\`` escapes. It is also scoped to `.tsx` under
+  `src/_components/landing/` only.
+- **The favicon test does not pin the gradient `offset` values**, so desynchronising one half of a
+  pair (e.g. `33.333%` / `50%`) would blend a band edge while still matching the colour assertion.
+- **`.reveal` fails closed if JS is enabled but the bundle fails to load.**
+  `@media (scripting: enabled)` matches on scripting *enabled*, not scripting *succeeded*. An
+  ad-blocker or CDN failure that drops the client chunk leaves four of five sections invisible
+  while the hero renders fine. No-JS and unsupported-feature browsers both fail open correctly.
+
+### Out of scope, still open
+
+- **`MosaicYear` has the timezone defect this branch fixed on the landing page.**
+  `mosaic-year.tsx` calls `new Date()` inside `useMemo` while being server-rendered, so server and
+  client can disagree across a timezone or midnight boundary. Behind auth on `/home`, so lower
+  impact than the public page was — but the same bug, and now the only remaining instance.
+  `parseDayKey` in `src/lib/landing-seed.ts` is the pattern to copy.
+- **The gold `perfect` mark state is used decoratively**, against spec §4.1 ("Signup success;
+  earned, never decorative"). Signup was out of scope, so the only shipped use of the gold mark is
+  the decorative one in `landing-cta.tsx`. Either drop it to `resting` or amend the spec line.
+- **Spec §10 and §5.3 contradict each other.** §10 requires a stranger to understand why the
+  mosaic differs from a contributions graph *without scrolling*; §5.3 assigns that argument to
+  section 2. §5.3 is the more considered decision — §10 should be amended.
+- **Orphaned assets.** `public/northstar-logo.png` lost its last reference when `metadata.icons`
+  was removed. `public/favicon.ico` is the old un-rebranded icon and is still served at
+  `/favicon.ico` alongside the new `app/icon.svg`.
+- **The two comparison figures are now visually asymmetric** — one panelled, one bare, with
+  slightly different block heights. Deliberate, but worth a designer's second look.
+- **The lopsided-month grid has no leading weekday offset**, unlike `MosaicMonth`. Harmless while
+  there are no weekday headers or day numbers; wrong if either is added.
+- **`scripts/check-palette.ts` is prettier-non-compliant** on a pre-existing line in its `toLab`
+  helper. Left alone deliberately, to avoid reformatting the gate file.
