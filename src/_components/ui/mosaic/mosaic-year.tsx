@@ -1,7 +1,11 @@
 "use client";
 
 import { useMemo } from "react";
-import { dayLabel, tileBackgroundCompact, type DayCategories } from "~/lib/mosaic";
+import {
+  dayLabel,
+  tileBackgroundCompact,
+  type DayCategories,
+} from "~/lib/mosaic";
 import { formatDateAsLocal } from "~/lib/utils";
 import { MosaicTile } from "./mosaic-tile";
 
@@ -11,7 +15,11 @@ const GAP = 3;
 
 interface MosaicYearProps {
   completionMap: Map<string, DayCategories>;
-  onShow?: (date: Date, c: DayCategories, e: React.SyntheticEvent<HTMLElement>) => void;
+  onShow?: (
+    date: Date,
+    c: DayCategories,
+    e: React.SyntheticEvent<HTMLElement>,
+  ) => void;
   onHide?: () => void;
   todayKey?: string;
   pulseToday?: boolean;
@@ -68,7 +76,7 @@ export function MosaicYear({
           {monthLabels.map((m) => (
             <span
               key={`${m.label}-${m.index}`}
-              className="absolute text-eyebrow text-[var(--color-ink-muted)] uppercase"
+              className="text-eyebrow absolute text-[var(--color-ink-muted)] uppercase"
               style={{ left: m.index * (TILE + GAP) }}
             >
               {m.label}
@@ -84,11 +92,18 @@ export function MosaicYear({
                 // The grid pads back to the Sunday before Jan 1 so every column is a full
                 // week; those leading days belong to the previous year and must hold grid
                 // position without rendering.
-                const outOfRange = date > today || date.getFullYear() !== today.getFullYear();
+                const outOfRange =
+                  date > today || date.getFullYear() !== today.getFullYear();
                 const categories = completionMap.get(key) ?? EMPTY;
-                const label = outOfRange ? undefined : dayLabel(date, categories);
+                const label = outOfRange
+                  ? undefined
+                  : dayLabel(date, categories);
                 return (
-                  <div key={key} style={{ opacity: outOfRange ? 0 : 1 }} aria-hidden={outOfRange}>
+                  <div
+                    key={key}
+                    style={{ opacity: outOfRange ? 0 : 1 }}
+                    aria-hidden={outOfRange}
+                  >
                     <MosaicTile
                       categories={categories}
                       background={tileBackgroundCompact(categories)}
@@ -97,7 +112,9 @@ export function MosaicYear({
                       pulse={pulseToday && key === todayKey}
                       title={label}
                       focusable={!outOfRange}
-                      onShow={(e) => !outOfRange && onShow?.(date, categories, e)}
+                      onShow={(e) =>
+                        !outOfRange && onShow?.(date, categories, e)
+                      }
                       onHide={onHide}
                     />
                   </div>

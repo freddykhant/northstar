@@ -25,7 +25,9 @@ export function Confetti({ trigger, onDone }: ConfettiProps) {
     wasTriggered.current = trigger;
     if (!rising) return;
 
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     if (reduce) {
       onDoneRef.current?.();
       return;

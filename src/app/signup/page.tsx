@@ -77,7 +77,7 @@ export default function SignUpPage() {
 
         <Card className="p-8">
           <div className="mb-6">
-            <h1 className="mb-1 text-title text-[var(--color-ink)]">Begin</h1>
+            <h1 className="text-title mb-1 text-[var(--color-ink)]">Begin</h1>
             <p className="text-[13px] text-[var(--color-ink-muted)]">
               Create your account to start tracking.
             </p>

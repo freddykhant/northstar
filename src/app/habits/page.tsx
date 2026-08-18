@@ -133,7 +133,12 @@ export default function HabitsPage() {
     }
   };
 
-  const handleEdit = (habit: { id: number; name: string; description: string | null; categoryId: string }) => {
+  const handleEdit = (habit: {
+    id: number;
+    name: string;
+    description: string | null;
+    categoryId: string;
+  }) => {
     setEditingHabit(habit.id);
     setFormData({
       name: habit.name,
@@ -194,7 +199,7 @@ export default function HabitsPage() {
                 weight="duotone"
                 className="mx-auto mb-4 text-[var(--color-mind)]"
               />
-              <h2 className="mb-2 text-title text-[var(--color-ink)]">
+              <h2 className="text-title mb-2 text-[var(--color-ink)]">
                 A blank page
               </h2>
               <p className="mb-6 text-[14px] text-[var(--color-ink-muted)]">
@@ -231,7 +236,7 @@ export default function HabitsPage() {
               <X size={16} />
             </button>
 
-            <h2 className="mb-1 text-title text-[var(--color-ink)]">
+            <h2 className="text-title mb-1 text-[var(--color-ink)]">
               {editingHabit ? "Edit habit" : "New habit"}
             </h2>
             <p className="mb-6 text-[12px] tracking-[0.04em] text-[var(--color-ink-muted)]">
@@ -321,7 +326,8 @@ export default function HabitsPage() {
                   htmlFor="habit-description"
                   className="mb-2 block text-[11px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase"
                 >
-                  Note <span className="text-[10px] normal-case">(optional)</span>
+                  Note{" "}
+                  <span className="text-[10px] normal-case">(optional)</span>
                 </label>
                 <textarea
                   id="habit-description"

@@ -17,7 +17,9 @@ export function MosaicMonth({ completionMap }: MosaicMonthProps) {
     const now = new Date();
     const first = new Date(now.getFullYear(), now.getMonth(), 1);
     const last = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    const out: (Date | null)[] = Array(first.getDay()).fill(null) as (Date | null)[];
+    const out: (Date | null)[] = Array(first.getDay()).fill(
+      null,
+    ) as (Date | null)[];
     for (let d = 1; d <= last.getDate(); d++) {
       out.push(new Date(now.getFullYear(), now.getMonth(), d));
     }
@@ -30,7 +32,7 @@ export function MosaicMonth({ completionMap }: MosaicMonthProps) {
         {WEEKDAYS.map((d, i) => (
           <div
             key={i}
-            className="text-center text-eyebrow text-[var(--color-ink-muted)] uppercase"
+            className="text-eyebrow text-center text-[var(--color-ink-muted)] uppercase"
           >
             {d}
           </div>

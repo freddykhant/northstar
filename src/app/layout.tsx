@@ -1,7 +1,7 @@
 import "~/styles/globals.css";
 
 import { type Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
 import { AuthProvider } from "~/_components/auth-provider";
 import { ThemeProvider } from "~/_components/theme-provider";
@@ -14,17 +14,29 @@ const jakarta = Plus_Jakarta_Sans({
   weight: ["400", "500", "600", "700", "800"],
 });
 
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+  // REQUIRED. Omitting `axes` silently loads the default instance with no
+  // wonk — the font arrives, the character does not, and nothing errors.
+  axes: ["SOFT", "WONK", "opsz"],
+});
+
 export const metadata: Metadata = {
   title: "northstar",
   description: "habit tracker for the locked in",
-  icons: [{ rel: "icon", url: "/northstar-logo.png" }],
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={jakarta.variable}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${jakarta.variable} ${fraunces.variable}`}
+    >
       <body className="font-sans">
         <ThemeProvider
           attribute="class"

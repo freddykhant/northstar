@@ -51,7 +51,12 @@ export function MosaicTile({
       onFocus={focusable ? onShow : undefined}
       onBlur={focusable ? onHide : undefined}
       animate={reduce || !pulse ? {} : { scale: [1, 1.18, 1] }}
-      transition={{ type: "tween", duration: 0.42, times: [0, 0.4, 1], ease: "easeOut" }}
+      transition={{
+        type: "tween",
+        duration: 0.42,
+        times: [0, 0.4, 1],
+        ease: "easeOut",
+      }}
       style={{
         width: size,
         height: size,

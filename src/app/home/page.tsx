@@ -159,10 +159,16 @@ export default function HomePage() {
             style={{ animationDelay: "180ms" }}
           >
             <Card>
-              <Stat value={`${overallStats?.weekPercentage ?? 0}%`} label="This week" />
+              <Stat
+                value={`${overallStats?.weekPercentage ?? 0}%`}
+                label="This week"
+              />
             </Card>
             <Card>
-              <Stat value={overallStats?.totalCompleted ?? 0} label="Total days" />
+              <Stat
+                value={overallStats?.totalCompleted ?? 0}
+                label="Total days"
+              />
             </Card>
             <Card>
               <Stat value={overallStats?.bestStreak ?? 0} label="Best streak" />
