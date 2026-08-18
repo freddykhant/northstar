@@ -1,10 +1,11 @@
 import { InteractiveYear } from "./interactive-year";
 
 interface HeroProps {
-  referenceDate: Date;
+  /** `YYYY-MM-DD`, resolved once on the server. See `parseDayKey`. */
+  referenceKey: string;
 }
 
-export function Hero({ referenceDate }: HeroProps) {
+export function Hero({ referenceKey }: HeroProps) {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-[var(--color-wash-from)] to-[var(--color-wash-to)] px-6 pt-10 pb-28">
       {/* Grain. Pure CSS, no asset — carried over from the previous design. */}
@@ -41,7 +42,7 @@ export function Hero({ referenceDate }: HeroProps) {
         style={{ animationDelay: "240ms", animationFillMode: "both" }}
       >
         <div className="rounded-[28px] border border-[var(--color-hairline)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-lift)] sm:p-8">
-          <InteractiveYear referenceDate={referenceDate} />
+          <InteractiveYear referenceKey={referenceKey} />
         </div>
       </div>
     </section>

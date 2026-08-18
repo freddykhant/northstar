@@ -17,6 +17,24 @@ export const LOPSIDED_MONTH_OFFSET = 3;
 
 const SEED = 0x4e53; // "NS"
 
+const DAY_KEY = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+/**
+ * Rebuilds a local `Date` from a `YYYY-MM-DD` key, at local midnight.
+ *
+ * The landing page threads its reference day across the RSC boundary as this
+ * key rather than as a `Date`. A `Date` crosses that boundary as an INSTANT,
+ * and every consumer then reads it with local `getFullYear`/`getMonth`/
+ * `getDate` — so a server in one zone and a visitor in another disagree about
+ * which calendar day it is, and the whole mosaic subtree fails to hydrate.
+ * A key has no zone, so both sides derive identical calendar fields.
+ */
+export function parseDayKey(key: string): Date {
+  const m = DAY_KEY.exec(key);
+  if (!m) throw new RangeError(`expected a YYYY-MM-DD key, got ${key}`);
+  return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+}
+
 /** Small, fast, well-distributed 32-bit PRNG. Chosen over a hand-rolled LCG
  *  because low-bit correlation in an LCG shows up as visible striping when the
  *  output drives a grid. */

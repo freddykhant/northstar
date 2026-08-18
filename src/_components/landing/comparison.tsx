@@ -1,5 +1,5 @@
 import { MosaicTile } from "~/_components/ui/mosaic";
-import { buildDemoYear } from "~/lib/landing-seed";
+import { buildDemoYear, parseDayKey } from "~/lib/landing-seed";
 import { activeCategories, tileBackgroundCompact } from "~/lib/mosaic";
 import type { DayCategories } from "~/lib/types";
 
@@ -19,8 +19,8 @@ function greenFor(day: DayCategories): string {
   return CONTRIB_GREENS[activeCategories(day).length]!;
 }
 
-export function Comparison({ referenceDate }: { referenceDate: Date }) {
-  const days = [...buildDemoYear(referenceDate, DAYS).values()];
+export function Comparison({ referenceKey }: { referenceKey: string }) {
+  const days = [...buildDemoYear(parseDayKey(referenceKey), DAYS).values()];
 
   const grid = {
     gridTemplateRows: `repeat(${ROWS}, ${TILE}px)`,

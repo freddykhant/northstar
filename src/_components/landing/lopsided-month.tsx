@@ -1,13 +1,18 @@
 import { MosaicTile } from "~/_components/ui/mosaic";
 import { Pill } from "~/_components/ui/primitives";
-import { buildDemoYear, LOPSIDED_MONTH_OFFSET } from "~/lib/landing-seed";
+import {
+  buildDemoYear,
+  LOPSIDED_MONTH_OFFSET,
+  parseDayKey,
+} from "~/lib/landing-seed";
 import { tileBackground } from "~/lib/mosaic";
 import { formatDateAsLocal } from "~/lib/utils";
 
 const TILE = 34;
 const GAP = 6;
 
-export function LopsidedMonth({ referenceDate }: { referenceDate: Date }) {
+export function LopsidedMonth({ referenceKey }: { referenceKey: string }) {
+  const referenceDate = parseDayKey(referenceKey);
   const all = buildDemoYear(referenceDate, 365);
 
   const first = new Date(

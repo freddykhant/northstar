@@ -5,13 +5,18 @@ import { MosaicTile } from "~/_components/ui/mosaic";
 import { SegmentedControl } from "~/_components/ui/primitives";
 import { CATEGORY_LABELS } from "~/lib/constants";
 import { becamePerfect, toggleCategory } from "~/lib/landing-interaction";
-import { buildDemoYear, HERO_DAYS, HERO_WEEKS } from "~/lib/landing-seed";
+import {
+  buildDemoYear,
+  HERO_DAYS,
+  HERO_WEEKS,
+  parseDayKey,
+} from "~/lib/landing-seed";
 import { dayLabel, tileBackground } from "~/lib/mosaic";
 import type { CategoryId, DayCategories } from "~/lib/types";
 import { formatDateAsLocal } from "~/lib/utils";
 
 const TILE = 18;
-const GAP = 4;
+const GAP = 6;
 const ROWS = 7;
 
 const OPTIONS: { id: CategoryId; label: string }[] = [
@@ -21,12 +26,24 @@ const OPTIONS: { id: CategoryId; label: string }[] = [
 ];
 
 interface InteractiveYearProps {
-  /** Passed in from the server so the grid shape is identical on both sides of
-   *  hydration. Never call new Date() in here. */
-  referenceDate: Date;
+  /** The reference day as a `YYYY-MM-DD` key, resolved once on the server.
+   *
+   *  Deliberately a string, not a Date. A Date crosses the RSC boundary as an
+   *  instant, and server and client would each re-read it with local
+   *  getFullYear/getMonth/getDate — so whenever the two zones disagree, every
+   *  tile shifts by a day and the entire subtree fails to hydrate. A key has
+   *  no zone: `parseDayKey` yields the same calendar fields on both sides.
+   *  Never call new Date() in here. */
+  referenceKey: string;
 }
 
-export function InteractiveYear({ referenceDate }: InteractiveYearProps) {
+const GRID_HINT_ID = "demo-mosaic-hint";
+
+export function InteractiveYear({ referenceKey }: InteractiveYearProps) {
+  const referenceDate = useMemo(
+    () => parseDayKey(referenceKey),
+    [referenceKey],
+  );
   const [category, setCategory] = useState<CategoryId>("mind");
   const [days, setDays] = useState<Map<string, DayCategories>>(() =>
     buildDemoYear(referenceDate, HERO_DAYS),
@@ -99,6 +116,9 @@ export function InteractiveYear({ referenceDate }: InteractiveYearProps) {
 
       <div
         ref={gridRef}
+        role="group"
+        aria-label="Demo mosaic, last 20 weeks"
+        aria-describedby={GRID_HINT_ID}
         className="grid grid-flow-col overflow-x-auto"
         style={{
           gridTemplateRows: `repeat(${ROWS}, ${TILE}px)`,
@@ -138,7 +158,10 @@ export function InteractiveYear({ referenceDate }: InteractiveYearProps) {
         })}
       </div>
 
-      <p className="text-[12px] text-[var(--color-ink-muted)]">
+      <p
+        id={GRID_HINT_ID}
+        className="text-[12px] text-[var(--color-ink-muted)]"
+      >
         Pick a category, then click a day. Three in one day turns it gold.
       </p>
 
