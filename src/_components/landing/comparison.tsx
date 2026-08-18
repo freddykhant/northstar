@@ -15,6 +15,23 @@ const ROWS = 7;
  *  darkest green unreachable and make the comparison look rigged. */
 const CONTRIB_GREENS = ["#ebedf0", "#9be9a8", "#40c463", "#216e39"] as const;
 
+/** The panel the greens are painted on. Fixed in BOTH themes, and a local
+ *  literal for the same reason the greens are.
+ *
+ *  The greens are GitHub's LIGHT-mode ramp: CONTRIB_GREENS[0] is its empty
+ *  tile. Painted straight onto Northstar's dark canvas (#131219) they inverted
+ *  the figure's whole argument — an empty day hit 15.87:1 and became the
+ *  brightest object on the page, while a three-category day sank to 2.97:1 and
+ *  nearly vanished. The section is captioned "did you show up?"; it cannot
+ *  render not-showing-up as the loudest thing in it. Light mode had the milder
+ *  version of the same problem, the empty green sitting at 1.06:1 on canvas.
+ *
+ *  So the figure gets its own surface. It depicts another product's light UI,
+ *  and showing it on that product's own surface tone is honest rather than a
+ *  cheat. Only the GitHub grid is wrapped — the Northstar figure uses tokens
+ *  and belongs on canvas by design. */
+const GITHUB_SURFACE = "#f6f8fa";
+
 function greenFor(day: DayCategories): string {
   return CONTRIB_GREENS[activeCategories(day).length]!;
 }
@@ -43,18 +60,23 @@ export function Comparison({ referenceKey }: { referenceKey: string }) {
             <figcaption className="mb-3 text-[13px] font-semibold text-[var(--color-ink-muted)]">
               One colour &mdash; did you show up?
             </figcaption>
-            <div className="grid grid-flow-col overflow-x-auto" style={grid}>
-              {days.map((day, i) => (
-                <div
-                  key={i}
-                  style={{
-                    width: TILE,
-                    height: TILE,
-                    borderRadius: 2,
-                    background: greenFor(day),
-                  }}
-                />
-              ))}
+            <div
+              className="overflow-x-auto rounded-[var(--radius-card)] p-4"
+              style={{ background: GITHUB_SURFACE }}
+            >
+              <div className="grid grid-flow-col" style={grid}>
+                {days.map((day, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      width: TILE,
+                      height: TILE,
+                      borderRadius: 2,
+                      background: greenFor(day),
+                    }}
+                  />
+                ))}
+              </div>
             </div>
           </figure>
 
