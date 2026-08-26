@@ -230,12 +230,21 @@ design pass.
 Expressions live as state inside a single SVG, not as four files, so the mark cannot drift between
 moods.
 
-**The wordmark is outlined SVG, not text with a positioned overlay — deliberately.** The tempting
-approach is to set `squii` in Fraunces and place two navy dots over the `ii`. That is exactly the
-pattern used for the old flat-cut `t`, which the final review of the previous branch named "the most
-fragile element of the brand": a hardcoded em offset tuned to one font's metrics, landing on the
-wrong glyph during the font-swap window. Outlining makes it font-independent and immune to FOUT, at
-the cost of selectable text — acceptable for a logo carrying `role="img"` and `aria-label="squii"`.
+**The wordmark is drawn, not set in a webfont — deliberately.** The tempting approach is to set
+`squii` in Fraunces and place two navy dots over the `ii`. That is exactly the pattern used for the
+old flat-cut `t`, which the final review of the previous branch named "the most fragile element of
+the brand": a hardcoded em offset tuned to one font's metrics, landing on the wrong glyph during the
+font-swap window.
+
+**Revised during planning (2026-08-27):** the drawn form is a **monoline geometric lockup** rather
+than outlined Fraunces. Three reasons, and the first is the one that matters: Tiimo's own wordmark is
+a rounded geometric sans and reserves its serif for headlines, so a geometric `squii` is closer to
+the stated reference than an outlined serif would be. It also suits a vinyl-toy mascot better than an
+editorial serif, and it removes any dependency on font-outlining tooling. Strokes with round caps
+mean there are no filled letterform curves to get wrong.
+
+Font-independent and immune to FOUT either way, at the cost of selectable text — acceptable for a
+logo carrying `role="img"` and `aria-label="squii"`.
 
 **Motion** uses framer-motion, already a dependency and already the pattern in `MosaicTile` (which
 uses `useReducedMotion`). `--ease-squish` goes in `globals.css` beside `--ease-out`.
