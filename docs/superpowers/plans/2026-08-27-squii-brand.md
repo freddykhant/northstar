@@ -103,9 +103,9 @@ import { CATEGORY_HEX_LIGHT } from "./constants";
 
 describe("SQUII colours", () => {
   it("pins the measured brand values", () => {
-    expect(SQUII.body).toBe("#f8a6a0");
+    expect(SQUII.body).toBe("#fdb6c0");
     expect(SQUII.ink).toBe("#31356b");
-    expect(SQUII.ground).toBe("#b5a0e5");
+    expect(SQUII.ground).toBe("#be9fe0");
     expect(SQUII.gold).toBe("#d4a017");
   });
 
@@ -148,12 +148,20 @@ Create `src/lib/squii.ts`:
 // carries meaning — see scripts/check-palette.ts for the enforced separation.
 
 export const SQUII = {
-  /** The body. Measured at dE 51.6 from body coral, clearing the gate's 40 floor. */
-  body: "#f8a6a0",
-  /** Eyes, and available as a display ink. 11.34:1 on white. */
+  /** The body. Sampled from public/squid.png (mid-tone; the render is shaded
+   *  from #febfcb lit to #fdacba shadowed). dE 62.6 from body coral, well clear
+   *  of the gate's 40 floor. */
+  body: "#fdb6c0",
+  /** Eyes, and available as a display ink. The render's eyes sample at #444273,
+   *  which measures only 4.06:1 on the ground and so cannot be used as text.
+   *  Deepened to #31356b (4.98:1 on ground, 9.24 -> 11.34:1 on white) so ONE
+   *  token serves both the eyes and any text use. Visually near-identical at
+   *  eye size. */
   ink: "#31356b",
-  /** His lavender ground. Carries --color-ink at 7.64:1. */
-  ground: "#b5a0e5",
+  /** His lavender ground, sampled from public/squid.png.
+   *  MUST match the PNG exactly: the file is RGB with NO alpha channel, so the
+   *  lavender is baked in. Any mismatch renders the hero as a visible square. */
+  ground: "#be9fe0",
   /** Perfect-day state. Deliberately the existing gold token's light value, so
    *  a gold Squii and a gold tile are the same colour rather than two golds. */
   gold: "#d4a017",
@@ -176,9 +184,9 @@ export function tierForSize(size: number): MarkTier {
 In `scripts/check-palette.ts`, add to the `THEMES` map for **both** themes:
 
 ```ts
-    squii: "#f8a6a0",
+    squii: "#fdb6c0",
     squiiInk: "#31356b",
-    squiiGround: "#b5a0e5",
+    squiiGround: "#be9fe0",
 ```
 
 Then, inside the existing per-theme loop, after the `perfect` checks, add:
@@ -199,8 +207,10 @@ Then, inside the existing per-theme loop, after the `perfect` checks, add:
     }
   }
 
-  // Squii's ground replaces the old landing wash, which could not carry text at
-  // all. Anything placed on it uses --color-ink.
+  // Squii's ground replaces the old landing wash. --color-ink clears 7.72:1 on
+  // it, but --color-ink-muted measures only 2.23:1 and MUST NOT be used there --
+  // the same trap the old wash had. Gating ink-muted here would redden the build,
+  // so the rule is: anything carrying text on the ground uses --color-ink.
   const groundInk = contrast(t.ink, t.squiiGround);
   if (groundInk < MIN_TEXT_CONTRAST) {
     failures.push(
@@ -320,9 +330,9 @@ Replace `src/app/icon.svg` entirely — Squii at the small tier, no arms, no smi
 
 ```svg
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <ellipse cx="14.5" cy="27" rx="8.5" ry="5.2" fill="#f8a6a0" transform="rotate(-27 14.5 27)" />
-  <ellipse cx="49.5" cy="27" rx="8.5" ry="5.2" fill="#f8a6a0" transform="rotate(27 49.5 27)" />
-  <path d="M32 4 C25 4 19 14 17 26 C15.5 34 16 40 17 44 L47 44 C48 40 48.5 34 47 26 C45 14 39 4 32 4 Z" fill="#f8a6a0" />
+  <ellipse cx="14.5" cy="27" rx="8.5" ry="5.2" fill="#fdb6c0" transform="rotate(-27 14.5 27)" />
+  <ellipse cx="49.5" cy="27" rx="8.5" ry="5.2" fill="#fdb6c0" transform="rotate(27 49.5 27)" />
+  <path d="M32 4 C25 4 19 14 17 26 C15.5 34 16 40 17 44 L47 44 C48 40 48.5 34 47 26 C45 14 39 4 32 4 Z" fill="#fdb6c0" />
   <ellipse cx="24.5" cy="32" rx="4.4" ry="5.4" fill="#31356b" />
   <ellipse cx="39.5" cy="32" rx="4.4" ry="5.4" fill="#31356b" />
 </svg>
@@ -510,9 +520,9 @@ In the `@theme` block, after the category tokens:
 ```css
   /* Squii — brand identity, never data. Identical in both themes: he is the
      same character in dark mode, not an inverted one. */
-  --color-squii: #f8a6a0;
+  --color-squii: #fdb6c0;
   --color-squii-ink: #31356b;
-  --color-squii-ground: #b5a0e5;
+  --color-squii-ground: #be9fe0;
 ```
 
 Repeat the **same three values** in the `.dark` block (this is the one place a token deliberately does not retune).
@@ -640,7 +650,19 @@ git add -A && git commit -m "feat(squii): rename every user-facing string"
 
 - [ ] **Step 2: Put Squii beside the mosaic and make the ink come from him**
 
-In `hero.tsx`, place `<Squii size={72} />` adjacent to the mosaic surface (below-left on mobile, left-aligned beside it from `sm:` up).
+In `hero.tsx`, place the mascot adjacent to the mosaic surface (below-left on mobile, left-aligned
+beside it from `sm:` up).
+
+Use the 3D render, `public/squid.png` (1254x1254), via `next/image` — NOT the flat glyph. Two
+constraints from the asset itself:
+
+- It is **RGB with no alpha**, so the lavender is baked in. It must sit on `--color-squii-ground`,
+  which is set to the sampled `#be9fe0` precisely so the edges disappear. Do not place it on canvas,
+  surface, or any other token.
+- It is **2.1MB**. Use `next/image` with an explicit `width`/`height` and `priority` (it is
+  above the fold) so it is served as an optimised, correctly-sized webp rather than the raw file.
+
+The flat `<Squii />` glyph stays in the nav, footer and CTA; the render appears only here.
 
 In `interactive-year.tsx`, when a tile is marked, render a short-lived ink puff in the active category's colour, originating from Squii's position and settling on the tile. Implementation notes:
 
@@ -761,4 +783,4 @@ git add -A && git commit -m "chore(squii): final verification pass"
 
 - `/home` and `/habits` take the rename only. Squii does not appear in daily-use surfaces; their empty states and perfect-day moments deserve their own design pass.
 - The `first habit` and `comeback` motion tiers from the spec are **not implemented** here — both live in the app, which is out of scope. The expression union already carries `wave` so the API does not need to change when they land.
-- The 3D render (`public/squii.png`) is not used. If it is supplied, the landing hero is the place for it.
+- `public/squid.png` is used in the landing hero only (Task 6). It is not used anywhere in the app.
