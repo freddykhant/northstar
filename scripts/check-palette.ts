@@ -21,6 +21,9 @@ const THEMES = {
     soulInk: "#0a7a5e",
     perfect: "#d4a017",
     wash: "#d9d2f7",
+    squii: "#fdb6c0",
+    squiiInk: "#31356b",
+    squiiGround: "#be9fe0",
   },
   dark: {
     mind: "#9c8fff",
@@ -35,6 +38,9 @@ const THEMES = {
     soulInk: "#5fd8b8",
     perfect: "#ffce54",
     wash: "#2a2440",
+    squii: "#fdb6c0",
+    squiiInk: "#31356b",
+    squiiGround: "#be9fe0",
   },
 } as const;
 
@@ -141,6 +147,38 @@ for (const [themeName, t] of Object.entries(THEMES)) {
   if (perfectDl < MIN_DELTA_L) {
     failures.push(
       `${themeName}: perfect vs empty tile dL* ${perfectDl.toFixed(1)} < ${MIN_DELTA_L}`,
+    );
+  }
+
+  // Squii is the mascot, not a category. He sits in the same warm family as
+  // body coral, so if he drifts toward it users start reading the brand colour
+  // as data. Gated at the same dE floor as the categories themselves.
+  //
+  // The danger is the neighbour, not the value: a richer rose #f2857f measures
+  // 37.9 against body and FAILS. Do not "enrich" Squii without re-running this.
+  for (const [name, hex] of cats) {
+    const d = deltaE(t.squii, hex);
+    if (d < MIN_DELTA_E) {
+      failures.push(
+        `${themeName}: squii vs ${name} dE ${d.toFixed(1)} < ${MIN_DELTA_E}`,
+      );
+    }
+  }
+
+  // Squii's ground is NOT gated for text contrast, and deliberately has no
+  // check here. It is a fixed brand colour, identical in both themes because
+  // it must byte-match public/squid.png (RGB, no alpha channel), and it backs
+  // a contained illustration panel, not a page background. Nothing places
+  // text on it: the text-bearing surface near Squii is the wash, which stays
+  // theme-aware and is already gated above (`ink on wash`, both themes).
+  // --color-ink-muted measures only 2.23:1 on the ground, so if anything ever
+  // does put text there, it must use --color-ink (7.72:1 in light) instead.
+
+  // His eyes against his own body — a graphical object, not text.
+  const eyesOnBody = contrast(t.squiiInk, t.squii);
+  if (eyesOnBody < MIN_GRAPHICAL_CONTRAST) {
+    failures.push(
+      `${themeName}: squii eyes on body ${eyesOnBody.toFixed(2)}:1 < ${MIN_GRAPHICAL_CONTRAST}:1`,
     );
   }
 
