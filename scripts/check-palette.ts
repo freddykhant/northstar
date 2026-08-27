@@ -21,6 +21,8 @@ const THEMES = {
     soulInk: "#0a7a5e",
     perfect: "#d4a017",
     wash: "#d9d2f7",
+    // Squii's three values below are intentionally identical to the dark
+    // block's — see the comment there.
     squii: "#fdb6c0",
     squiiInk: "#31356b",
     squiiGround: "#be9fe0",
@@ -38,6 +40,10 @@ const THEMES = {
     soulInk: "#5fd8b8",
     perfect: "#ffce54",
     wash: "#2a2440",
+    // Unlike every other token in this file, Squii's three values are NOT
+    // retuned per theme — they are identical to the light block's above.
+    // He is one character, not a per-theme variant: splitting these values
+    // to "fit" dark mode would give the product two different mascots.
     squii: "#fdb6c0",
     squiiInk: "#31356b",
     squiiGround: "#be9fe0",
@@ -152,10 +158,12 @@ for (const [themeName, t] of Object.entries(THEMES)) {
 
   // Squii is the mascot, not a category. He sits in the same warm family as
   // body coral, so if he drifts toward it users start reading the brand colour
-  // as data. Gated at the same dE floor as the categories themselves.
+  // as data. Gated at the same dE floor as the categories themselves. Dark is
+  // the binding case (43.2, vs 62.6 in light) — margin is 3.2, not comfortable.
   //
   // The danger is the neighbour, not the value: a richer rose #f2857f measures
-  // 37.9 against body and FAILS. Do not "enrich" Squii without re-running this.
+  // 37.9 light / 20.0 dark against body and FAILS both. Do not "enrich" Squii
+  // without re-running this.
   for (const [name, hex] of cats) {
     const d = deltaE(t.squii, hex);
     if (d < MIN_DELTA_E) {

@@ -1,11 +1,17 @@
 // Squii's brand colours. These are BRAND values: they identify the product.
 // They must never be used to encode a category in the mosaic, where colour
 // carries meaning — see scripts/check-palette.ts for the enforced separation.
+//
+// All three values below are the same in light and dark mode: Squii is one
+// character, not a per-theme variant, so he is never retuned between themes.
 
 export const SQUII = {
   /** The body. Sampled from public/squid.png (mid-tone; the render is shaded
-   *  from #febfcb lit to #fdacba shadowed). dE 62.6 from body coral, well clear
-   *  of the gate's 40 floor. */
+   *  from #febfcb lit to #fdacba shadowed). dE from body coral: 62.6 against
+   *  light (#f2542d), 43.2 against dark (#ff7d5c) — floor is 40, so DARK is
+   *  the binding constraint; check the dark figure, not the light one, before
+   *  changing this value. A richer rose #f2857f fails both: 37.9 light /
+   *  20.0 dark. */
   body: "#fdb6c0",
   /** Eyes, and available as a display ink. The render's eyes sample at #444273,
    *  which measures only 4.06:1 on the ground and so cannot be used as text.
