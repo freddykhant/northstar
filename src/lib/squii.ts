@@ -38,3 +38,33 @@ export type MarkTier = "full" | "small";
 export function tierForSize(size: number): MarkTier {
   return size <= 19 ? "small" : "full";
 }
+
+// Geometry shared between the <Squii> component (src/_components/brand/squii.tsx)
+// and the static favicon (src/app/icon.svg). The favicon is a plain SVG file —
+// it cannot import this module — so its markup is a hand-duplicated copy of
+// these values. src/lib/brand.test.ts asserts icon.svg is built from exactly
+// these constants, which is what keeps the two from silently diverging.
+
+/** Small-tier mantle: the arms-less hem used at/below 19px, and always in the
+ *  favicon. */
+export const MANTLE_SMALL =
+  "M32 4 C25 4 19 14 17 26 C15.5 34 16 40 17 44 L47 44 " +
+  "C48 40 48.5 34 47 26 C45 14 39 4 32 4 Z";
+
+/** Full-tier mantle: same hem, but with a scalloped arm fringe (the `Q`
+ *  curves) instead of the straight `L47 44`. Never used in the favicon —
+ *  brand.test.ts asserts icon.svg does NOT contain this string, which is the
+ *  precise "no arms" check (independent of which curve command draws them). */
+export const MANTLE_FULL =
+  "M32 4 C25 4 19 14 17 26 C15.5 34 16 40 17 44 " +
+  "Q20 52.5 23 44 Q26 52.5 29 44 Q32 52.5 35 44 Q38 52.5 41 44 Q44 52.5 47 44 " +
+  "C48 40 48.5 34 47 26 C45 14 39 4 32 4 Z";
+
+/** Fin ellipses, drawn first and rotated ±27° — the flare that reads as a
+ *  squid rather than a ghost. Present at every tier. */
+export const FIN_LEFT = { cx: 14.5, cy: 27, rx: 8.5, ry: 5.2, rotation: -27 } as const;
+export const FIN_RIGHT = { cx: 49.5, cy: 27, rx: 8.5, ry: 5.2, rotation: 27 } as const;
+
+/** Eye ellipses (the "resting"/"gold" open-eye look). Present at every tier. */
+export const EYE_LEFT = { cx: 24.5, cy: 32, rx: 4.4, ry: 5.4 } as const;
+export const EYE_RIGHT = { cx: 39.5, cy: 32, rx: 4.4, ry: 5.4 } as const;

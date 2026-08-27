@@ -1,13 +1,14 @@
-import { SQUII, tierForSize, type SquiiExpression } from "~/lib/squii";
-
-const MANTLE_FULL =
-  "M32 4 C25 4 19 14 17 26 C15.5 34 16 40 17 44 " +
-  "Q20 52.5 23 44 Q26 52.5 29 44 Q32 52.5 35 44 Q38 52.5 41 44 Q44 52.5 47 44 " +
-  "C48 40 48.5 34 47 26 C45 14 39 4 32 4 Z";
-
-const MANTLE_SMALL =
-  "M32 4 C25 4 19 14 17 26 C15.5 34 16 40 17 44 L47 44 " +
-  "C48 40 48.5 34 47 26 C45 14 39 4 32 4 Z";
+import {
+  EYE_LEFT,
+  EYE_RIGHT,
+  FIN_LEFT,
+  FIN_RIGHT,
+  MANTLE_FULL,
+  MANTLE_SMALL,
+  SQUII,
+  tierForSize,
+  type SquiiExpression,
+} from "~/lib/squii";
 
 interface SquiiProps {
   /** px; square. Drives the detail tier — never pass a tier directly. */
@@ -21,21 +22,39 @@ export function Squii({ size = 28, expression = "resting", title }: SquiiProps) 
   const tier = tierForSize(size);
   const body = expression === "gold" ? SQUII.gold : SQUII.body;
   const closed = expression === "shy";
+  // Empty string is treated the same as "no title" so the role/label/hidden
+  // trio stays symmetrical: a caller passing title="" gets a fully
+  // decorative mark, not aria-hidden plus a stray empty aria-label.
+  const announced = title === "" ? undefined : title;
 
   return (
     <svg
       width={size}
       height={size}
       viewBox="0 0 64 64"
-      role={title ? "img" : undefined}
-      aria-label={title}
-      aria-hidden={title ? undefined : true}
+      role={announced ? "img" : undefined}
+      aria-label={announced}
+      aria-hidden={announced ? undefined : true}
       className="shrink-0"
     >
       {/* Fins first, behind the mantle. This flare is what reads as a squid
           rather than a ghost — do not reorder or remove it at any tier. */}
-      <ellipse cx="14.5" cy="27" rx="8.5" ry="5.2" fill={body} transform="rotate(-27 14.5 27)" />
-      <ellipse cx="49.5" cy="27" rx="8.5" ry="5.2" fill={body} transform="rotate(27 49.5 27)" />
+      <ellipse
+        cx={FIN_LEFT.cx}
+        cy={FIN_LEFT.cy}
+        rx={FIN_LEFT.rx}
+        ry={FIN_LEFT.ry}
+        fill={body}
+        transform={`rotate(${FIN_LEFT.rotation} ${FIN_LEFT.cx} ${FIN_LEFT.cy})`}
+      />
+      <ellipse
+        cx={FIN_RIGHT.cx}
+        cy={FIN_RIGHT.cy}
+        rx={FIN_RIGHT.rx}
+        ry={FIN_RIGHT.ry}
+        fill={body}
+        transform={`rotate(${FIN_RIGHT.rotation} ${FIN_RIGHT.cx} ${FIN_RIGHT.cy})`}
+      />
       <path d={tier === "small" ? MANTLE_SMALL : MANTLE_FULL} fill={body} />
 
       {closed ? (
@@ -45,8 +64,8 @@ export function Squii({ size = 28, expression = "resting", title }: SquiiProps) 
         </>
       ) : (
         <>
-          <ellipse cx="24.5" cy="32" rx="4.4" ry="5.4" fill={SQUII.ink} />
-          <ellipse cx="39.5" cy="32" rx="4.4" ry="5.4" fill={SQUII.ink} />
+          <ellipse cx={EYE_LEFT.cx} cy={EYE_LEFT.cy} rx={EYE_LEFT.rx} ry={EYE_LEFT.ry} fill={SQUII.ink} />
+          <ellipse cx={EYE_RIGHT.cx} cy={EYE_RIGHT.cy} rx={EYE_RIGHT.rx} ry={EYE_RIGHT.ry} fill={SQUII.ink} />
         </>
       )}
 
