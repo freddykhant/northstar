@@ -251,7 +251,7 @@ git commit -m "feat(squii): add brand colours, detail tiers, and palette gating"
 - Create: `src/_components/brand/squii.tsx`, `src/_components/brand/no-interpolated-classes.test.ts`
 - Replace: `src/app/icon.svg`
 - Rewrite: `src/lib/brand.test.ts`
-- Delete: `src/lib/brand.ts`, `src/_components/landing/brand-mark.tsx`
+- (Deletion of the old mark happens in Task 6, not here — see Step 5.)
 
 **Interfaces:**
 - Consumes: `SQUII`, `tierForSize`, `SquiiExpression` from `~/lib/squii`
@@ -402,14 +402,12 @@ describe("brand components", () => {
 });
 ```
 
-- [ ] **Step 5: Delete the old mark**
+- [ ] **Step 5: Leave the old mark in place**
 
-```bash
-git rm src/lib/brand.ts src/_components/landing/brand-mark.tsx
-grep -rn "BrandMark\|markBackground\|MARK_RADIUS_RATIO" src/
-```
-
-Expected: matches only in files Task 6 and Task 7 will rewrite. Leave them broken for now **only if** you complete Task 6 in the same session; otherwise stub the imports so `pnpm build` stays green. Prefer completing Task 6 before committing if the build breaks.
+Do NOT delete `src/lib/brand.ts` or `src/_components/landing/brand-mark.tsx` yet. Three landing
+components still import `BrandMark`, and they are not rewritten until Task 6. Deleting now breaks
+`pnpm build` for four tasks, which would make a genuine regression indistinguishable from expected
+breakage. Both files are removed in Task 6, in the same commit that stops using them.
 
 - [ ] **Step 6: Verify and commit**
 
@@ -426,7 +424,7 @@ git add -A && git commit -m "feat(squii): add the mascot glyph and make it the f
 
 **Files:**
 - Create: `src/_components/brand/wordmark.tsx`
-- Delete: `src/_components/landing/wordmark.tsx`
+- (Deletion of the old wordmark happens in Task 6 — see Step 2.)
 
 **Verified geometry.** Authored and rendered at 80/44/30/20px on white and on the lavender ground.
 `squii` is drawn as a **monoline geometric lockup**, not set in Fraunces — Tiimo's own wordmark is a
@@ -488,15 +486,10 @@ export function Wordmark({ height = 30 }: WordmarkProps) {
 The letterforms use `var(--color-ink)` so the lockup inverts with the theme; the eye-dots stay
 Squii's fixed navy in both themes, matching the glyph.
 
-- [ ] **Step 2: Delete the old wordmark**
+- [ ] **Step 2: Leave the old wordmark in place**
 
-```bash
-git rm src/_components/landing/wordmark.tsx
-grep -rn "landing/wordmark" src/
-```
-
-Expected: matches only in files Tasks 5-8 rewrite. Update those imports to
-`~/_components/brand/wordmark` as you reach them.
+Do NOT delete `src/_components/landing/wordmark.tsx` yet, for the same reason as Task 2: the nav and
+footer still import it. Task 6 swaps the call sites and deletes it in one commit.
 
 - [ ] **Step 3: Verify and commit**
 
@@ -640,8 +633,12 @@ git add -A && git commit -m "feat(squii): rename every user-facing string"
 ### Task 6: The landing page
 
 **Files:** `landing-nav.tsx`, `landing-footer.tsx`, `landing-cta.tsx`, `hero.tsx`, `interactive-year.tsx`
+**Deletes:** `src/lib/brand.ts`, `src/_components/landing/brand-mark.tsx`, `src/_components/landing/wordmark.tsx`
 
-- [ ] **Step 1: Swap the marks**
+This task owns the deletions deferred from Tasks 2 and 3, so the old mark stops being imported and
+stops existing in the same commit — the build never goes red.
+
+- [ ] **Step 1: Swap the marks, then delete the old ones**
 
 - `landing-nav.tsx`, `landing-footer.tsx`: replace `<BrandMark …/>` with `<Squii size={26} />` (nav) / `<Squii size={22} />` (footer), and import `Wordmark` from `~/_components/brand/wordmark`.
 - `landing-cta.tsx`: replace `<BrandMark size={40} state="perfect" />` with `<Squii size={40} expression="gold" />`.
@@ -672,12 +669,24 @@ In `interactive-year.tsx`, when a tile is marked, render a short-lived ink puff 
 - Duration 140ms, `--ease-squish`.
 - The puff is `aria-hidden` — the live region already announces the change.
 
-- [ ] **Step 3: Verify and commit**
+- [ ] **Step 3: Delete the retired mark**
 
-Run: `pnpm check && pnpm vitest run && pnpm build`
+Only once nothing imports them:
 
 ```bash
-git add -A && git commit -m "feat(squii): put Squii on the landing page and let him ink the mosaic"
+git rm src/lib/brand.ts src/_components/landing/brand-mark.tsx src/_components/landing/wordmark.tsx
+grep -rn "BrandMark\|markBackground\|MARK_RADIUS_RATIO\|landing/wordmark" src/
+```
+
+Expected: **no output**.
+
+- [ ] **Step 4: Verify and commit**
+
+Run: `pnpm check && pnpm vitest run && pnpm build` — all three must pass. The build has been green
+every task; a failure here is a real regression.
+
+```bash
+git add -A && git commit -m "feat(squii): put Squii on the landing page and retire the tile mark"
 ```
 
 ---
