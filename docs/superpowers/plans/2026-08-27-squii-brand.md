@@ -207,16 +207,16 @@ Then, inside the existing per-theme loop, after the `perfect` checks, add:
     }
   }
 
-  // Squii's ground replaces the old landing wash. --color-ink clears 7.72:1 on
-  // it, but --color-ink-muted measures only 2.23:1 and MUST NOT be used there --
-  // the same trap the old wash had. Gating ink-muted here would redden the build,
-  // so the rule is: anything carrying text on the ground uses --color-ink.
-  const groundInk = contrast(t.ink, t.squiiGround);
-  if (groundInk < MIN_TEXT_CONTRAST) {
-    failures.push(
-      `${themeName}: ink on squii ground ${groundInk.toFixed(2)}:1 < ${MIN_TEXT_CONTRAST}:1`,
-    );
-  }
+  // Squii's ground is NOT gated for text contrast, deliberately. It is a fixed
+  // brand colour, identical in both themes because it must byte-match
+  // public/squid.png (RGB, no alpha). It backs a contained illustration panel,
+  // not a page background, so nothing places text on it. The text-bearing
+  // surface is the wash, which is already gated in both themes above.
+  //
+  // A per-theme `contrast(t.ink, t.squiiGround)` check is incoherent here: in
+  // dark mode t.ink is near-white (#edecf5) against a light lavender ground,
+  // which can never clear 4.5:1. If anything ever does put text on the ground,
+  // it uses --color-ink (7.72:1 in light); --color-ink-muted is 2.23:1 there.
 
   // His eyes against his own body — a graphical object, not text.
   const eyesOnBody = contrast(t.squiiInk, t.squii);
@@ -520,9 +520,14 @@ In the `@theme` block, after the category tokens:
 
 Repeat the **same three values** in the `.dark` block (this is the one place a token deliberately does not retune).
 
-- [ ] **Step 2: Retire the wash**
+- [ ] **Step 2: Retire the wash — LIGHT THEME ONLY**
 
-Replace `--color-wash-from: #d9d2f7;` with `--color-wash-from: var(--color-squii-ground);` in `@theme`. Leave `--color-wash-to` and both dark wash values alone.
+In `@theme`, replace `--color-wash-from: #d9d2f7;` with `--color-wash-from: var(--color-squii-ground);`.
+
+**Leave `--color-wash-to` and BOTH `.dark` wash values exactly as they are.** The wash stays
+theme-aware: light becomes Squii's lavender, dark keeps its independently-tuned aubergine. Squii's
+ground is a fixed illustration-panel colour, not a page background — making the dark hero lavender
+would not be dark mode, and the existing `ink on wash` gate already covers text in both themes.
 
 > This retires a real defect: the old wash could not carry `--color-ink-muted` at any weight (3.51:1) — documented in `check-palette.ts` as a known un-gated hole. Squii's ground carries `--color-ink` at 7.64:1. After this change, **delete that KNOWN UN-GATED HOLE comment** from `check-palette.ts`; it no longer describes reality.
 
@@ -653,9 +658,11 @@ beside it from `sm:` up).
 Use the 3D render, `public/squid.png` (1254x1254), via `next/image` — NOT the flat glyph. Two
 constraints from the asset itself:
 
-- It is **RGB with no alpha**, so the lavender is baked in. It must sit on `--color-squii-ground`,
-  which is set to the sampled `#be9fe0` precisely so the edges disappear. Do not place it on canvas,
-  surface, or any other token.
+- It is **RGB with no alpha**, so the lavender is baked in. Wrap it in a **contained, rounded panel**
+  filled with `--color-squii-ground` (the sampled `#be9fe0`) so its edges disappear into the panel.
+  Do NOT place it directly on the page background: in dark mode the page is aubergine, and an
+  unpanelled render would show as a light lavender square. The panel is the same lavender in both
+  themes — a framed illustration, which is why the ground token does not retune.
 - It is **2.1MB**. Use `next/image` with an explicit `width`/`height` and `priority` (it is
   above the fold) so it is served as an optimised, correctly-sized webp rather than the raw file.
 
