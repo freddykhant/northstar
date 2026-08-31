@@ -18,18 +18,19 @@ function walk(dir: string): string[] {
   });
 }
 
-// Context strings that, when found immediately before a match, mean the hit
-// is legitimate and should not be flagged. Keep this narrow and explicit —
-// broadening the regex instead would let real misses through silently.
-const ALLOWED_CONTEXTS = [
-  // A code comment referencing a docs/ path.
-  "docs/",
-  // brand/wordmark.tsx: a comment explicitly documenting the *previous*
-  // brand's design (a webfont wordmark reading "northstar") as the reason
-  // the new mark is hand-drawn instead. This is a historical reference, not
-  // a stale rename — it must keep saying "northstar" to be accurate.
-  "The previous brand set",
-];
+// The rename is user-facing only, so a comment explaining the PREVIOUS
+// brand's construction is legitimate — it is the rationale that stops
+// someone reintroducing the fragile font-overlay wordmark. Allowed by exact
+// line, not by proximity: a second mention added nearby must fail, and
+// editing this line must fail, so the exception can never quietly widen.
+const ALLOWED_LINES = new Map<string, readonly string[]>([
+  [
+    "_components/brand/wordmark.tsx",
+    [
+      "* `northstar` in Plus Jakarta Sans and overlaid a block on the `t` ascender; the",
+    ],
+  ],
+]);
 
 describe("rename to squii", () => {
   const files = ROOTS.flatMap((r) => walk(join(process.cwd(), r)));
@@ -39,13 +40,31 @@ describe("rename to squii", () => {
   });
 
   for (const file of files) {
-    it(`${file.split("/src/")[1]} carries no user-facing "northstar"`, () => {
+    const relPath = file.split("/src/")[1]!;
+    it(`${relPath} carries no user-facing "northstar"`, () => {
       const source = readFileSync(file, "utf8");
-      const hits = [...source.matchAll(/northstar/gi)].filter((m) => {
-        const before = source.slice(Math.max(0, m.index - 90), m.index);
-        return !ALLOWED_CONTEXTS.some((ctx) => before.includes(ctx));
-      });
-      expect(hits.map((m) => m[0])).toEqual([]);
+      const lines = source.split("\n");
+      const allowedForFile = ALLOWED_LINES.get(relPath) ?? [];
+
+      const problems: string[] = [];
+      for (const [i, line] of lines.entries()) {
+        if (!/northstar/i.test(line)) continue;
+        if (allowedForFile.includes(line.trim())) continue;
+
+        // The line contains "northstar" and isn't an exact allowlisted
+        // line. Distinguish the two ways that can happen so a red build
+        // says which one it's looking at: either this file has no
+        // allowlist entries at all (a plain new/unexpected hit), or it
+        // does but none match verbatim (the allowlisted line drifted, or
+        // a second mention appeared nearby).
+        const reason =
+          allowedForFile.length === 0
+            ? "unallowed"
+            : "not an exact match for any allowlisted line (drifted wording, or a new mention near an allowlisted one)";
+        problems.push(`line ${i + 1} [${reason}]: ${line.trim()}`);
+      }
+
+      expect(problems).toEqual([]);
     });
   }
 });
