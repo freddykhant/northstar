@@ -72,7 +72,7 @@ export default function SignUpPage() {
             aria-hidden
             className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-mind)]"
           />
-          <span className="text-title">northstar</span>
+          <span className="text-title">squii</span>
         </Link>
 
         <Card className="p-8">

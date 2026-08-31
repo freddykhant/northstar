@@ -10,7 +10,7 @@ const ROWS = 7;
 
 /** GitHub's contribution greens, one per reachable state (0-3 categories kept).
  *  Deliberately literal and deliberately NOT a token: this depicts a different
- *  product, and must never become part of Northstar's palette. Four entries, not
+ *  product, and must never become part of Squii's palette. Four entries, not
  *  five — a day has at most three categories, so a five-step ramp would leave the
  *  darkest green unreachable and make the comparison look rigged. */
 const CONTRIB_GREENS = ["#ebedf0", "#9be9a8", "#40c463", "#216e39"] as const;
@@ -19,7 +19,7 @@ const CONTRIB_GREENS = ["#ebedf0", "#9be9a8", "#40c463", "#216e39"] as const;
  *  literal for the same reason the greens are.
  *
  *  The greens are GitHub's LIGHT-mode ramp: CONTRIB_GREENS[0] is its empty
- *  tile. Painted straight onto Northstar's dark canvas (#131219) they inverted
+ *  tile. Painted straight onto Squii's dark canvas (#131219) they inverted
  *  the figure's whole argument — an empty day hit 15.87:1 and became the
  *  brightest object on the page, while a three-category day sank to 2.97:1 and
  *  nearly vanished. The section is captioned "did you show up?"; it cannot
@@ -28,7 +28,7 @@ const CONTRIB_GREENS = ["#ebedf0", "#9be9a8", "#40c463", "#216e39"] as const;
  *
  *  So the figure gets its own surface. It depicts another product's light UI,
  *  and showing it on that product's own surface tone is honest rather than a
- *  cheat. Only the GitHub grid is wrapped — the Northstar figure uses tokens
+ *  cheat. Only the GitHub grid is wrapped — the Squii figure uses tokens
  *  and belongs on canvas by design. */
 const GITHUB_SURFACE = "#f6f8fa";
 

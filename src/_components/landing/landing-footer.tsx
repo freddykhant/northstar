@@ -21,7 +21,7 @@ export function LandingFooter() {
         </nav>
 
         <p className="text-[13px] text-[var(--color-ink-muted)]">
-          © {new Date().getFullYear()} Northstar. Built for consistency.
+          © {new Date().getFullYear()} Squii. Built for consistency.
         </p>
       </div>
     </footer>

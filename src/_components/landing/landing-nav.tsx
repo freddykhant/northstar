@@ -8,7 +8,7 @@ export function LandingNav() {
       <Link
         href="/"
         className="flex items-center gap-2.5"
-        aria-label="Northstar home"
+        aria-label="Squii home"
       >
         <BrandMark size={26} />
         <Wordmark />

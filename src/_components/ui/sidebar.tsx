@@ -32,7 +32,7 @@ export function Sidebar({ user }: SidebarProps) {
           className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-mind)]"
         />
         <span className="text-[20px] font-extrabold tracking-[-0.02em] text-[var(--color-ink)]">
-          northstar
+          squii
         </span>
       </div>
 
