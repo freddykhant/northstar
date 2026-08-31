@@ -24,8 +24,8 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "northstar",
-  description: "habit tracker for the locked in",
+  title: "squii",
+  description: "a habit tracker that lights up the days you showed up",
 };
 
 export default function RootLayout({

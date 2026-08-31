@@ -36,12 +36,18 @@
      the ring still marks the day as perfect. */
   --color-perfect: #d4a017;
 
-  /* Squii's wordmark eye-dots. Unlike his other brand values (see
-     scripts/check-palette.ts, "never retuned per theme"), these dots float on
-     the page background rather than on his own body, so they must respond to
-     the theme the way everything else on the page does. Both values are still
-     his own colours — eye-navy here, body-pink in dark — so the dots always
-     read as his, they just swap which of his colours supplies the contrast. */
+  /* Squii — brand identity, never data. Identical in both themes: he is the
+     same character in dark mode, not an inverted one. */
+  --color-squii: #fdb6c0;
+  --color-squii-ink: #31356b;
+  --color-squii-ground: #be9fe0;
+
+  /* Squii's wordmark eye-dots. Unlike his other brand values above (never
+     retuned per theme), these dots float on the page background rather than
+     on his own body, so they must respond to the theme the way everything
+     else on the page does. Both values are still his own colours — eye-navy
+     here, body-pink in dark — so the dots always read as his, they just swap
+     which of his colours supplies the contrast. */
   --color-squii-dot: #31356b;
 
   /* Elevation */
@@ -59,6 +65,10 @@
 
   /* Motion */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Squii's easing: a soft vinyl toy in water. Buoyant, slight overshoot, soft
+     settle. Deliberately distinct from --ease-out so the mascot moves
+     differently from the interface and reads as a character, not a widget. */
+  --ease-squish: cubic-bezier(0.34, 1.56, 0.64, 1);
   --duration-fast: 140ms;
   --duration-slow: 420ms;
 
@@ -84,7 +94,7 @@
   --text-display--font-weight: 800;
 
   /* Landing wash — marketing surface only. Not an app token. */
-  --color-wash-from: #d9d2f7;
+  --color-wash-from: var(--color-squii-ground);
   --color-wash-to: #f4f3f8;
 }
 
@@ -109,6 +119,12 @@
   --color-tile-empty: #26242f;
 
   --color-perfect: #ffce54;
+
+  /* Squii — identical to the light block above: he is the same character in
+     dark mode, not an inverted one. */
+  --color-squii: #fdb6c0;
+  --color-squii-ink: #31356b;
+  --color-squii-ground: #be9fe0;
 
   /* His body-pink, not his navy — see the light-mode comment above. On the
      dark canvas the navy drops to 1.64:1 and the dots disappear; the pink
@@ -146,7 +162,7 @@
   font-variation-settings:
     "opsz" 144,
     "WONK" 1,
-    "SOFT" 35;
+    "SOFT" 60;
 }
 
 /* Section reveal. Sections start hidden and are revealed by adding

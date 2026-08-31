@@ -20,7 +20,9 @@ const THEMES = {
     bodyInk: "#b83c1c",
     soulInk: "#0a7a5e",
     perfect: "#d4a017",
-    wash: "#d9d2f7",
+    // Retired to Squii's ground (see squiiGround below) — the hero wash is now
+    // his lavender, not an independently tuned hue. Dark keeps its own value.
+    wash: "#be9fe0",
     // Squii's three values below are intentionally identical to the dark
     // block's — see the comment there.
     squii: "#fdb6c0",
@@ -257,17 +259,10 @@ for (const [themeName, t] of Object.entries(THEMES)) {
   // the branch added "no new hues", which was simply false: the wash IS a new
   // hue, in both themes, and leaving it ungated is why a failing pairing
   // shipped. The top of the gradient is checked, not the midpoint, because
-  // that is the wash's most extreme value.
-  //
-  // KNOWN UN-GATED HOLE, deliberate: --color-ink-muted on the light wash
-  // measures 3.51:1 and MUST NOT be used for text there. It is documented
-  // rather than enforced because no wash value can fix it — #6e6c82 is a
-  // mid-tone, so darkening the wash lowers the ratio monotonically until
-  // --color-ink itself fails, and lightening tops out at 5.08:1 against pure
-  // white, which needs a lavender so pale the gradient stops existing.
-  // Anything placed on the wash uses --color-ink. Asserting ink-muted here
-  // would just tempt the next person to drop MIN_TEXT_CONTRAST to fit it,
-  // which is the exact failure this gate exists to prevent.
+  // that is the wash's most extreme value. In light mode the wash is now
+  // Squii's ground (--color-squii-ground), which carries --color-ink at
+  // 7.72:1 — the old wash's inability to carry even --color-ink-muted
+  // (3.51:1) is retired along with it.
   const washInkRatio = contrast(t.ink, t.wash);
   if (washInkRatio < MIN_TEXT_CONTRAST) {
     failures.push(
