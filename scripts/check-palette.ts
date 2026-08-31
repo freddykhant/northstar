@@ -26,6 +26,9 @@ const THEMES = {
     squii: "#fdb6c0",
     squiiInk: "#31356b",
     squiiGround: "#be9fe0",
+    // The wordmark's eye-dots. Unlike squii/squiiInk/squiiGround above, this
+    // ONE Squii value IS retuned per theme — see the dark block's comment.
+    squiiDot: "#31356b",
   },
   dark: {
     mind: "#9c8fff",
@@ -47,6 +50,12 @@ const THEMES = {
     squii: "#fdb6c0",
     squiiInk: "#31356b",
     squiiGround: "#be9fe0",
+    // The wordmark's eye-dots float on the page background, not on Squii's
+    // own body, so unlike his other three values this one must respond to
+    // the theme: his navy drops to 1.64:1 on the dark canvas and vanishes.
+    // His body-pink takes over here instead — still one of his own colours,
+    // just the one that supplies contrast on this background in this theme.
+    squiiDot: "#fdb6c0",
   },
 } as const;
 
@@ -187,6 +196,16 @@ for (const [themeName, t] of Object.entries(THEMES)) {
   if (eyesOnBody < MIN_GRAPHICAL_CONTRAST) {
     failures.push(
       `${themeName}: squii eyes on body ${eyesOnBody.toFixed(2)}:1 < ${MIN_GRAPHICAL_CONTRAST}:1`,
+    );
+  }
+
+  // The wordmark's eye-dots against the page canvas — a graphical object,
+  // not text. This is what regresses if squiiDot is ever set back to a
+  // fixed value: the dots would vanish in whichever theme it stops tracking.
+  const dotOnCanvas = contrast(t.squiiDot, t.canvas);
+  if (dotOnCanvas < MIN_GRAPHICAL_CONTRAST) {
+    failures.push(
+      `${themeName}: squii dot on canvas ${dotOnCanvas.toFixed(2)}:1 < ${MIN_GRAPHICAL_CONTRAST}:1`,
     );
   }
 

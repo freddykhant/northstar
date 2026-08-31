@@ -1,14 +1,16 @@
-import { SQUII } from "~/lib/squii";
-
 interface WordmarkProps {
-  /** Rendered height in px. The lockup scales from this. */
+  /** Rendered height in px. The lockup scales from this. Verified at
+   *  80/44/30/20px; 20px is the tested floor. Below it the ~5.2 stroke scales
+   *  to under ~1.9px and the eye-dots' ~4.4 minor axis to under ~1.5px, which
+   *  has not been checked for legibility. */
   height?: number;
 }
 
 /**
  * The `squii` lockup: monoline geometric letterforms, with the two dots of the
- * `ii` drawn as Squii's eyes in his navy — so the wordmark contains the mascot
- * without drawing him.
+ * `ii` drawn as Squii's eyes — his oval ratio, and one of his own colours
+ * (eye-navy on light, body-pink on dark; see --color-squii-dot) — so the
+ * wordmark contains the mascot without drawing him.
  *
  * Drawn rather than set in a webfont, deliberately. The previous brand set
  * `northstar` in Plus Jakarta Sans and overlaid a block on the `t` ascender; the
@@ -35,10 +37,12 @@ export function Wordmark({ height = 30 }: WordmarkProps) {
         <path d="M83 15 L83 30" />
         <path d="M93 15 L93 30" />
       </g>
-      {/* The i-dots ARE Squii's eyes: his navy, his oval ratio. This is the
-          brand detail — do not recolour them to match the letterforms. */}
-      <ellipse cx="83" cy="7.5" rx="3.6" ry="4.4" fill={SQUII.ink} />
-      <ellipse cx="93" cy="7.5" rx="3.6" ry="4.4" fill={SQUII.ink} />
+      {/* The i-dots ARE Squii's eyes: his oval ratio, and always one of his
+          own colours via --color-squii-dot (theme-aware so they stay visible
+          on the page background — see globals.css). Do not recolour them to
+          match the letterforms. */}
+      <ellipse cx="83" cy="7.5" rx="3.6" ry="4.4" fill="var(--color-squii-dot)" />
+      <ellipse cx="93" cy="7.5" rx="3.6" ry="4.4" fill="var(--color-squii-dot)" />
     </svg>
   );
 }
