@@ -1,14 +1,16 @@
 import Link from "next/link";
-import { BrandMark } from "./brand-mark";
-import { Wordmark } from "./wordmark";
+import { Squii } from "~/_components/brand/squii";
+import { Wordmark } from "~/_components/brand/wordmark";
 
 export function LandingFooter() {
   return (
     <footer className="border-t border-[var(--color-hairline)] px-6 py-10">
       <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 sm:flex-row">
+        {/* Same arrangement as the nav: the Wordmark supplies the single
+            accessible name, the glyph beside it is decorative. */}
         <div className="flex items-center gap-2.5">
-          <BrandMark size={22} />
-          <Wordmark size={22} />
+          <Squii size={22} />
+          <Wordmark height={26} />
         </div>
 
         <nav className="flex items-center gap-5 text-[14px] text-[var(--color-ink-muted)]">

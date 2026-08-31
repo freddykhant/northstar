@@ -1,10 +1,16 @@
 import Link from "next/link";
-import { BrandMark } from "./brand-mark";
+import { Squii } from "~/_components/brand/squii";
 
 export function LandingCta() {
   return (
     <section className="reveal border-t border-[var(--color-hairline)] px-6 py-28 text-center">
-      <BrandMark size={40} state="perfect" />
+      {/* Gold Squii is decorative here on purpose: it reads as the PROMISE of a
+          perfect day, not a claim that one was earned. The earned instance
+          lives in the app. Decorative (no `title`) so it adds nothing to the
+          heading that follows. */}
+      <span className="inline-block">
+        <Squii size={40} expression="gold" />
+      </span>
       <h2 className="font-display mx-auto mt-6 max-w-2xl text-[clamp(30px,4.5vw,48px)] leading-[1.1] tracking-[-0.02em] text-[var(--color-ink)]">
         Start with today.
       </h2>

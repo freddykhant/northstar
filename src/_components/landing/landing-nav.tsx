@@ -1,17 +1,18 @@
 import Link from "next/link";
-import { BrandMark } from "./brand-mark";
-import { Wordmark } from "./wordmark";
+import { Squii } from "~/_components/brand/squii";
+import { Wordmark } from "~/_components/brand/wordmark";
 
 export function LandingNav() {
   return (
     <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6">
-      <Link
-        href="/"
-        className="flex items-center gap-2.5"
-        aria-label="Squii home"
-      >
-        <BrandMark size={26} />
-        <Wordmark />
+      {/* Exactly one accessible name in this lockup. The Wordmark is already a
+          role="img" labelled "squii", so the Link carries no aria-label of its
+          own — an aria-label on the Link would override the Wordmark's and make
+          it dead weight, and naming both double-announces. The glyph is
+          decorative (no `title`), so the link announces as "squii, link". */}
+      <Link href="/" className="flex items-center gap-2.5">
+        <Squii size={26} />
+        <Wordmark height={30} />
       </Link>
 
       <div className="flex items-center gap-2">
