@@ -4,8 +4,14 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Squii } from "~/_components/brand/squii";
+import { Wordmark } from "~/_components/brand/wordmark";
 import { Card } from "~/_components/ui/primitives";
+import type { SquiiExpression } from "~/lib/squii";
 import { api } from "~/trpc/react";
+
+/** How long Squii holds his gold before we leave for /home. */
+const SUCCESS_HOLD_MS = 600;
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -15,6 +21,7 @@ export default function SignUpPage() {
   const [lastName, setLastName] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [expression, setExpression] = useState<SquiiExpression>("resting");
 
   const signUpMutation = api.auth.signUp.useMutation({
     onSuccess: async () => {
@@ -29,6 +36,8 @@ export default function SignUpPage() {
         setError("Account created but sign in failed. Please try logging in.");
         setIsLoading(false);
       } else {
+        setExpression("gold");
+        await new Promise((resolve) => setTimeout(resolve, SUCCESS_HOLD_MS));
         router.push("/home");
       }
     },
@@ -62,17 +71,14 @@ export default function SignUpPage() {
     "mb-1.5 block text-[11px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase";
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[var(--color-canvas)] px-4 py-12 text-[var(--color-ink)]">
+    <main className="flex min-h-screen items-center justify-center bg-gradient-to-b from-[var(--color-wash-from)] to-[var(--color-wash-to)] px-4 py-12 text-[var(--color-ink)]">
       <div className="w-full max-w-sm">
-        <Link
-          href="/"
-          className="mb-10 flex items-baseline justify-center gap-2"
-        >
-          <span
-            aria-hidden
-            className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-mind)]"
-          />
-          <span className="text-title">squii</span>
+        {/* The Wordmark is a role="img" labelled "squii", so the Link carries
+            no aria-label of its own (same as landing-nav). The glyph is
+            decorative. */}
+        <Link href="/" className="mb-8 flex flex-col items-center gap-3">
+          <Squii size={64} expression={expression} />
+          <Wordmark height={30} />
         </Link>
 
         <Card className="p-8">
@@ -140,6 +146,8 @@ export default function SignUpPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Min. 8 characters"
+                onFocus={() => setExpression("shy")}
+                onBlur={() => setExpression("resting")}
                 required
                 className={inputClass}
               />
@@ -154,7 +162,7 @@ export default function SignUpPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full rounded-[var(--radius-control)] bg-[var(--color-mind)] py-2.5 text-[13px] font-bold text-[var(--color-surface)] hover:opacity-90 disabled:opacity-50"
+              className="w-full rounded-full bg-[var(--color-ink)] px-7 py-3.5 text-[15px] font-semibold text-[var(--color-canvas)] hover:opacity-90 disabled:opacity-50"
             >
               {isLoading ? "Creating account…" : "Create account"}
             </button>
@@ -169,7 +177,7 @@ export default function SignUpPage() {
           <button
             type="button"
             onClick={handleGoogleSignIn}
-            className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-control)] border border-[var(--color-hairline)] bg-transparent py-2.5 text-[13px] font-medium text-[var(--color-ink)] hover:border-[var(--color-ink-faint)]"
+            className="flex w-full items-center justify-center gap-2 rounded-full border border-[var(--color-hairline)] bg-transparent py-2.5 text-[13px] font-medium text-[var(--color-ink)] hover:border-[var(--color-ink-faint)]"
           >
             <svg className="h-4 w-4" viewBox="0 0 24 24">
               <path
