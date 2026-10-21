@@ -9,8 +9,8 @@ export function HomeEmpty() {
         Start with one habit
       </h2>
       <p className="mt-2 text-[14px] text-[var(--color-ink-muted)]">
-        Squii tracks three parts of your life. Every day you show up for one
-        of them, that day lights up in your mosaic.
+        Squii tracks three parts of your life. Every day you show up for one of
+        them, that day lights up in your mosaic.
       </p>
 
       <div className="mt-4 flex flex-col gap-2">

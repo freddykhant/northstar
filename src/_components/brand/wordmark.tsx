@@ -21,7 +21,13 @@ interface WordmarkProps {
  */
 export function Wordmark({ height = 30 }: WordmarkProps) {
   return (
-    <svg viewBox="0 0 100 44" height={height} role="img" aria-label="squii" className="shrink-0">
+    <svg
+      viewBox="0 0 100 44"
+      height={height}
+      role="img"
+      aria-label="squii"
+      className="shrink-0"
+    >
       <g
         fill="none"
         stroke="var(--color-ink)"
@@ -41,8 +47,20 @@ export function Wordmark({ height = 30 }: WordmarkProps) {
           own colours via --color-squii-dot (theme-aware so they stay visible
           on the page background — see globals.css). Do not recolour them to
           match the letterforms. */}
-      <ellipse cx="83" cy="7.5" rx="3.6" ry="4.4" fill="var(--color-squii-dot)" />
-      <ellipse cx="93" cy="7.5" rx="3.6" ry="4.4" fill="var(--color-squii-dot)" />
+      <ellipse
+        cx="83"
+        cy="7.5"
+        rx="3.6"
+        ry="4.4"
+        fill="var(--color-squii-dot)"
+      />
+      <ellipse
+        cx="93"
+        cy="7.5"
+        rx="3.6"
+        ry="4.4"
+        fill="var(--color-squii-dot)"
+      />
     </svg>
   );
 }

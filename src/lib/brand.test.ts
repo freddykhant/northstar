@@ -18,8 +18,12 @@ import {
 describe("app icon", () => {
   const svg = readFileSync(join(process.cwd(), "src/app/icon.svg"), "utf8");
 
-  const ellipseAttrs = (e: { cx: number; cy: number; rx: number; ry: number }) =>
-    `cx="${e.cx}" cy="${e.cy}" rx="${e.rx}" ry="${e.ry}"`;
+  const ellipseAttrs = (e: {
+    cx: number;
+    cy: number;
+    rx: number;
+    ry: number;
+  }) => `cx="${e.cx}" cy="${e.cy}" rx="${e.rx}" ry="${e.ry}"`;
 
   const rotateAttr = (fin: { cx: number; cy: number; rotation: number }) =>
     `rotate(${fin.rotation} ${fin.cx} ${fin.cy})`;

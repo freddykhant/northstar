@@ -62,8 +62,20 @@ export const MANTLE_FULL =
 
 /** Fin ellipses, drawn first and rotated ±27° — the flare that reads as a
  *  squid rather than a ghost. Present at every tier. */
-export const FIN_LEFT = { cx: 14.5, cy: 27, rx: 8.5, ry: 5.2, rotation: -27 } as const;
-export const FIN_RIGHT = { cx: 49.5, cy: 27, rx: 8.5, ry: 5.2, rotation: 27 } as const;
+export const FIN_LEFT = {
+  cx: 14.5,
+  cy: 27,
+  rx: 8.5,
+  ry: 5.2,
+  rotation: -27,
+} as const;
+export const FIN_RIGHT = {
+  cx: 49.5,
+  cy: 27,
+  rx: 8.5,
+  ry: 5.2,
+  rotation: 27,
+} as const;
 
 /** Eye ellipses (the "resting"/"gold" open-eye look). Present at every tier. */
 export const EYE_LEFT = { cx: 24.5, cy: 32, rx: 4.4, ry: 5.4 } as const;

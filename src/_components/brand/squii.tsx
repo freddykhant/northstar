@@ -18,7 +18,11 @@ interface SquiiProps {
   title?: string;
 }
 
-export function Squii({ size = 28, expression = "resting", title }: SquiiProps) {
+export function Squii({
+  size = 28,
+  expression = "resting",
+  title,
+}: SquiiProps) {
   const tier = tierForSize(size);
   const body = expression === "gold" ? SQUII.gold : SQUII.body;
   const closed = expression === "shy";
@@ -59,18 +63,48 @@ export function Squii({ size = 28, expression = "resting", title }: SquiiProps) 
 
       {closed ? (
         <>
-          <path d="M19 30 q5.5 -4 11 0" fill="none" stroke={SQUII.ink} strokeWidth="2" strokeLinecap="round" />
-          <path d="M34 30 q5.5 -4 11 0" fill="none" stroke={SQUII.ink} strokeWidth="2" strokeLinecap="round" />
+          <path
+            d="M19 30 q5.5 -4 11 0"
+            fill="none"
+            stroke={SQUII.ink}
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+          <path
+            d="M34 30 q5.5 -4 11 0"
+            fill="none"
+            stroke={SQUII.ink}
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
         </>
       ) : (
         <>
-          <ellipse cx={EYE_LEFT.cx} cy={EYE_LEFT.cy} rx={EYE_LEFT.rx} ry={EYE_LEFT.ry} fill={SQUII.ink} />
-          <ellipse cx={EYE_RIGHT.cx} cy={EYE_RIGHT.cy} rx={EYE_RIGHT.rx} ry={EYE_RIGHT.ry} fill={SQUII.ink} />
+          <ellipse
+            cx={EYE_LEFT.cx}
+            cy={EYE_LEFT.cy}
+            rx={EYE_LEFT.rx}
+            ry={EYE_LEFT.ry}
+            fill={SQUII.ink}
+          />
+          <ellipse
+            cx={EYE_RIGHT.cx}
+            cy={EYE_RIGHT.cy}
+            rx={EYE_RIGHT.rx}
+            ry={EYE_RIGHT.ry}
+            fill={SQUII.ink}
+          />
         </>
       )}
 
       {tier === "full" && (
-        <path d="M29.4 38.4 q2.6 3.2 5.2 0" fill="none" stroke={SQUII.ink} strokeWidth="2" strokeLinecap="round" />
+        <path
+          d="M29.4 38.4 q2.6 3.2 5.2 0"
+          fill="none"
+          stroke={SQUII.ink}
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
       )}
     </svg>
   );

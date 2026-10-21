@@ -14,7 +14,9 @@ describe("brand components", () => {
 
   for (const file of files) {
     it(`${file} builds no class names by interpolation`, () => {
-      expect(hasInterpolatedClassName(readFileSync(join(DIR, file), "utf8"))).toBe(false);
+      expect(
+        hasInterpolatedClassName(readFileSync(join(DIR, file), "utf8")),
+      ).toBe(false);
     });
   }
 });
