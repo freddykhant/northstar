@@ -8,11 +8,10 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Squii } from "~/_components/brand/squii";
 import { Wordmark } from "~/_components/brand/wordmark";
 import { Card } from "~/_components/ui/primitives";
+import { INK_EASE } from "~/lib/landing-interaction";
 import type { SquiiExpression } from "~/lib/squii";
 
 const SUCCESS_HOLD_MS = 700;
-// --ease-squish control points (INK_EASE is not exported in this tree).
-const SQUISH_EASE = [0.34, 1.56, 0.64, 1] as const;
 
 export default function SignInPage() {
   const router = useRouter();
@@ -45,7 +44,9 @@ export default function SignInPage() {
       setIsLoading(false);
     } else {
       setExpression("wave");
-      await new Promise((resolve) => setTimeout(resolve, SUCCESS_HOLD_MS));
+      await new Promise((resolve) =>
+        setTimeout(resolve, reduceMotion ? 0 : SUCCESS_HOLD_MS),
+      );
       router.push("/home");
     }
   };
@@ -67,7 +68,7 @@ export default function SignInPage() {
                 ? { rotate: [0, -14, 10, -6, 0] }
                 : { rotate: 0 }
             }
-            transition={{ duration: 0.7, ease: SQUISH_EASE }}
+            transition={{ duration: SUCCESS_HOLD_MS / 1000, ease: INK_EASE }}
           >
             <Squii size={64} expression={expression} />
           </motion.div>
@@ -115,8 +116,10 @@ export default function SignInPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                onFocus={() => setExpression("shy")}
-                onBlur={() => setExpression("resting")}
+                onFocus={() => setExpression((e) => (e === "wave" ? e : "shy"))}
+                onBlur={() =>
+                  setExpression((e) => (e === "wave" ? e : "resting"))
+                }
                 placeholder="Enter your password"
                 required
                 className="w-full rounded-[var(--radius-control)] border border-[var(--color-hairline)] bg-transparent px-3 py-2.5 text-[14px] text-[var(--color-ink)] placeholder-[var(--color-ink-faint)] focus:border-[var(--color-mind)] focus:outline-none"

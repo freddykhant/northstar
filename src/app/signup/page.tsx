@@ -146,8 +146,10 @@ export default function SignUpPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Min. 8 characters"
-                onFocus={() => setExpression("shy")}
-                onBlur={() => setExpression("resting")}
+                onFocus={() => setExpression((e) => (e === "gold" ? e : "shy"))}
+                onBlur={() =>
+                  setExpression((e) => (e === "gold" ? e : "resting"))
+                }
                 required
                 className={inputClass}
               />
