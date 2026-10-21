@@ -39,7 +39,7 @@ export function Hero({ referenceKey }: HeroProps) {
       </div>
 
       <div
-        className="animate-rise-in relative mx-auto mt-14 flex max-w-4xl flex-col-reverse items-start gap-6 sm:flex-row sm:items-center sm:gap-8"
+        className="animate-rise-in relative mx-auto mt-14 flex max-w-4xl flex-col-reverse items-start gap-6 lg:flex-row lg:items-center lg:gap-8"
         style={{ animationDelay: "240ms", animationFillMode: "both" }}
       >
         {/* Squii's panel. `public/squid.png` is RGB with NO alpha, so its
@@ -52,9 +52,18 @@ export function Hero({ referenceKey }: HeroProps) {
             illustration, not a themed surface.
 
             DOM order puts Squii first so `flex-col-reverse` drops him
-            BELOW-left of the mosaic on mobile and `sm:flex-row` seats him
-            left of it from `sm:` up. He is decorative (empty alt): the mosaic
-            beside him carries all the information.
+            BELOW-left of the mosaic, and `lg:flex-row` seats him left of it
+            from `lg:` up. He is decorative (empty alt): the mosaic beside him
+            carries all the information.
+
+            Side-by-side starts at `lg`, NOT `sm`. The mosaic's intrinsic width
+            is 20*18 + 19*6 = 474px, 538px inside this panel's `sm:p-8`. Squii's
+            panel is 192px (168 + p-3) and never shrinks. At a 640px viewport
+            the row would leave the mosaic ~368px of a 538px need — it would
+            still fit the PAGE (thanks to `min-w-0`) but only by handing the
+            overflow to the grid's own `overflow-x-auto`, which opens scrolled
+            to the oldest, emptiest weeks. Stacking until 1024px keeps the
+            mosaic whole at every width where the two are side by side.
 
             Explicit width/height plus `priority` matter here — the source is
             1254x1254 and 1.2MB, so it must be served as an optimised,
@@ -70,7 +79,7 @@ export function Hero({ referenceKey }: HeroProps) {
           />
         </div>
 
-        <div className="w-full min-w-0 rounded-[28px] border border-[var(--color-hairline)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-lift)] sm:flex-1 sm:p-8">
+        <div className="w-full min-w-0 rounded-[28px] border border-[var(--color-hairline)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-lift)] sm:p-8 lg:flex-1">
           <InteractiveYear referenceKey={referenceKey} />
         </div>
       </div>

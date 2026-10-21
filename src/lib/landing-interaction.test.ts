@@ -1,5 +1,7 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { becamePerfect, toggleCategory } from "./landing-interaction";
+import { becamePerfect, INK_EASE, toggleCategory } from "./landing-interaction";
 import type { DayCategories } from "./types";
 
 const day = (mind: boolean, body: boolean, soul: boolean): DayCategories => ({
@@ -58,5 +60,21 @@ describe("becamePerfect", () => {
     const before = mapOf(day(false, false, false));
     const after = toggleCategory(before, "2026-08-16", "mind");
     expect(becamePerfect(before, after, "2026-08-16")).toBe(false);
+  });
+});
+
+describe("INK_EASE", () => {
+  // framer-motion cannot read a CSS custom property, so the token is restated
+  // in JS. Reading globals.css off disk (as brand.test.ts does for icon.svg)
+  // is what stops the two copies drifting.
+  it("equals --ease-squish in globals.css", () => {
+    const css = readFileSync(
+      join(process.cwd(), "src/styles/globals.css"),
+      "utf8",
+    );
+    const m = /--ease-squish:\s*cubic-bezier\(([^)]*)\)/.exec(css);
+    expect(m).not.toBeNull();
+    const points = m![1]!.split(",").map((n) => Number(n.trim()));
+    expect(points).toEqual([...INK_EASE]);
   });
 });

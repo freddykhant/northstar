@@ -1,11 +1,15 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MosaicTile } from "~/_components/ui/mosaic";
 import { SegmentedControl } from "~/_components/ui/primitives";
 import { CATEGORY_LABELS } from "~/lib/constants";
-import { becamePerfect, toggleCategory } from "~/lib/landing-interaction";
+import {
+  becamePerfect,
+  INK_EASE,
+  toggleCategory,
+} from "~/lib/landing-interaction";
 import {
   buildDemoYear,
   HERO_DAYS,
@@ -21,18 +25,13 @@ const GAP = 6;
 const ROWS = 7;
 
 /** Where the ink comes from, in px relative to the tile it lands on. Squii's
- *  panel sits below-left of the mosaic on mobile and left of it from `sm:` up,
+ *  panel sits below-left of the mosaic when stacked and left of it from `lg:` up,
  *  so a single down-and-left origin reads as "from him" in both layouts. The
  *  puff is deliberately a short local gesture rather than a measured flight
  *  across the two panels: a 140ms travel over several hundred px would read as
  *  a glitch, and cross-component coordinates would need re-measuring on every
  *  scroll and resize. */
 const INK_ORIGIN = { x: -22, y: 12 };
-
-/** The exact control points of `--ease-squish` in globals.css. Framer takes a
- *  bezier array, not a CSS custom property, so the token cannot be referenced
- *  here — keep these two in sync. */
-const INK_EASE: [number, number, number, number] = [0.34, 1.56, 0.64, 1];
 
 /** Seconds. 140ms, per the brand's motion spec. */
 const INK_DURATION = 0.14;
@@ -89,6 +88,15 @@ export function InteractiveYear({ referenceKey }: InteractiveYearProps) {
   const puffId = useRef(0);
   const gridRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
+
+  // On a narrow viewport the scroller is narrower than the 20 weeks, and a
+  // fresh scroller opens at the LEFT: the oldest, emptiest weeks. Start at the
+  // right, where the reference week is. One-shot, instant (no smooth scroll),
+  // so it is not motion and needs no reduced-motion path.
+  useEffect(() => {
+    const el = gridRef.current;
+    if (el) el.scrollLeft = el.scrollWidth;
+  }, []);
 
   // Column-major: index i is week floor(i / 7), weekday i % 7. Oldest first,
   // so the last column is the reference date's week.
@@ -160,12 +168,18 @@ export function InteractiveYear({ referenceKey }: InteractiveYearProps) {
         onChange={setCategory}
       />
 
+      {/* overflow-x:auto forces overflow-y to auto too, so the puff's y:+12
+          origin transform would add ~12px of scrollable area for 140ms and
+          flicker a scrollbar on Windows/Linux. overflow-y-hidden makes that
+          impossible. The 8px padding (cancelled by -m-2, so layout is
+          unchanged) keeps the tiles' 4px focus ring and 1.18x pulse inside
+          the clip box instead of being cut at the edges. */}
       <div
         ref={gridRef}
         role="group"
         aria-label="Demo mosaic, last 20 weeks"
         aria-describedby={GRID_HINT_ID}
-        className="grid grid-flow-col overflow-x-auto"
+        className="-m-2 grid grid-flow-col overflow-x-auto overflow-y-hidden p-2"
         style={{
           gridTemplateRows: `repeat(${ROWS}, ${TILE}px)`,
           gridTemplateColumns: `repeat(${HERO_WEEKS}, ${TILE}px)`,
