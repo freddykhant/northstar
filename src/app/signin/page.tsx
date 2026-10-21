@@ -4,7 +4,15 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { Squii } from "~/_components/brand/squii";
+import { Wordmark } from "~/_components/brand/wordmark";
 import { Card } from "~/_components/ui/primitives";
+import type { SquiiExpression } from "~/lib/squii";
+
+const SUCCESS_HOLD_MS = 700;
+// --ease-squish control points (INK_EASE is not exported in this tree).
+const SQUISH_EASE = [0.34, 1.56, 0.64, 1] as const;
 
 export default function SignInPage() {
   const router = useRouter();
@@ -12,6 +20,8 @@ export default function SignInPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [expression, setExpression] = useState<SquiiExpression>("resting");
+  const reduceMotion = useReducedMotion();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +44,8 @@ export default function SignInPage() {
       setError("Invalid email or password");
       setIsLoading(false);
     } else {
+      setExpression("wave");
+      await new Promise((resolve) => setTimeout(resolve, SUCCESS_HOLD_MS));
       router.push("/home");
     }
   };
@@ -43,18 +55,23 @@ export default function SignInPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[var(--color-canvas)] px-4 text-[var(--color-ink)]">
+    <main className="flex min-h-screen items-center justify-center bg-gradient-to-b from-[var(--color-wash-from)] to-[var(--color-wash-to)] px-4 text-[var(--color-ink)]">
       <div className="w-full max-w-sm">
-        {/* Wordmark */}
-        <Link
-          href="/"
-          className="mb-10 flex items-baseline justify-center gap-2"
-        >
-          <span
-            aria-hidden
-            className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-mind)]"
-          />
-          <span className="text-title">squii</span>
+        {/* The Wordmark labels itself (role="img"), so the Link has no
+            aria-label of its own; same pattern as landing-nav.tsx. */}
+        <Link href="/" className="mb-8 flex flex-col items-center gap-3">
+          <motion.div
+            style={{ transformOrigin: "50% 90%" }}
+            animate={
+              expression === "wave" && !reduceMotion
+                ? { rotate: [0, -14, 10, -6, 0] }
+                : { rotate: 0 }
+            }
+            transition={{ duration: 0.7, ease: SQUISH_EASE }}
+          >
+            <Squii size={64} expression={expression} />
+          </motion.div>
+          <Wordmark height={30} />
         </Link>
 
         <Card className="p-8">
@@ -98,6 +115,8 @@ export default function SignInPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onFocus={() => setExpression("shy")}
+                onBlur={() => setExpression("resting")}
                 placeholder="Enter your password"
                 required
                 className="w-full rounded-[var(--radius-control)] border border-[var(--color-hairline)] bg-transparent px-3 py-2.5 text-[14px] text-[var(--color-ink)] placeholder-[var(--color-ink-faint)] focus:border-[var(--color-mind)] focus:outline-none"
@@ -113,7 +132,7 @@ export default function SignInPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full rounded-[var(--radius-control)] bg-[var(--color-mind)] py-2.5 text-[13px] font-bold text-[var(--color-surface)] hover:opacity-90 disabled:opacity-50"
+              className="w-full rounded-full bg-[var(--color-ink)] px-7 py-3.5 text-[15px] font-semibold text-[var(--color-canvas)] hover:opacity-90 disabled:opacity-50"
             >
               {isLoading ? "Signing in…" : "Sign in"}
             </button>
@@ -128,7 +147,7 @@ export default function SignInPage() {
           <button
             type="button"
             onClick={handleGoogleSignIn}
-            className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-control)] border border-[var(--color-hairline)] bg-transparent py-2.5 text-[13px] font-medium text-[var(--color-ink)] hover:border-[var(--color-ink-faint)]"
+            className="flex w-full items-center justify-center gap-2 rounded-full border border-[var(--color-hairline)] bg-transparent py-2.5 text-[13px] font-medium text-[var(--color-ink)] hover:border-[var(--color-ink-faint)]"
           >
             <svg className="h-4 w-4" viewBox="0 0 24 24">
               <path
