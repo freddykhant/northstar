@@ -12,10 +12,10 @@ export function LandingNav() {
           decorative (no `title`), so the link announces as "squii, link". */}
       <Link href="/" className="flex items-center gap-2.5">
         {/* Heights 26/30 are optical, not ratios. The lockup's viewBox is 44
-        tall, but its ink runs y=3.1 (top of the eye-dots) to y=35.6
-        (bottom of the `s`, counting the 2.6 half-stroke), about 0.74 of
-        the box. Centreline arithmetic that ignores strokeWidth and the
-        dot radius undercounts that. */}
+            tall, but its ink runs y 3.1 to 41.6 (eye-dots to the `q` descender,
+            counting the 2.6 half-stroke), about 0.875 of the box. Centreline
+            arithmetic that ignores strokeWidth and the dot radius undercounts
+            that, so the wordmark is about the same height as the glyph. */}
         <Squii size={26} />
         <Wordmark height={30} />
       </Link>
