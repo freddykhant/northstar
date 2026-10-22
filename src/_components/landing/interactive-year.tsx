@@ -203,7 +203,7 @@ export function InteractiveYear({ referenceKey }: InteractiveYearProps) {
               onFocus={() => setFocusIndex(index)}
               onKeyDown={(e) => onKeyDown(e, index)}
               onClick={() => handleToggle(key, date)}
-              className="relative rounded-[4px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-ink)]"
+              className="relative cursor-pointer touch-manipulation rounded-[4px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-ink)]"
             >
               <MosaicTile
                 categories={value}
@@ -252,7 +252,8 @@ export function InteractiveYear({ referenceKey }: InteractiveYearProps) {
         id={GRID_HINT_ID}
         className="text-[12px] text-[var(--color-ink-muted)]"
       >
-        Pick a category, then click a day. Three in one day turns it gold.
+        Pick a category, then click or tap a day. Three in one day turns it
+        gold.
       </p>
 
       <p aria-live="polite" className="sr-only">

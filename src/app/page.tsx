@@ -21,13 +21,22 @@ export default async function LandingPage() {
   const referenceKey = formatDateAsLocal(new Date());
 
   return (
-    <div className="min-h-screen bg-[var(--color-canvas)] text-[var(--color-ink)] selection:bg-[var(--color-mind)]/20">
+    <div className="min-h-dvh bg-[var(--color-canvas)] text-[var(--color-ink)] selection:bg-[var(--color-mind)]/20">
+      {/* skip-links: first tab stop, visible only while focused. */}
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-full focus:bg-[var(--color-ink)] focus:px-4 focus:py-2 focus:text-[13px] focus:font-semibold focus:text-[var(--color-canvas)]"
+      >
+        Skip to content
+      </a>
       <LandingNav />
-      <Hero referenceKey={referenceKey} />
-      <Comparison referenceKey={referenceKey} />
-      <LopsidedMonth referenceKey={referenceKey} />
-      <Categories />
-      <LandingCta />
+      <main id="main">
+        <Hero referenceKey={referenceKey} />
+        <Comparison referenceKey={referenceKey} />
+        <LopsidedMonth referenceKey={referenceKey} />
+        <Categories />
+        <LandingCta />
+      </main>
       <LandingFooter />
       <RevealOnScroll />
     </div>
