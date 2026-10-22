@@ -21,6 +21,7 @@ export default function SignUpPage() {
   const [lastName, setLastName] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [expression, setExpression] = useState<SquiiExpression>("resting");
 
   const signUpMutation = api.auth.signUp.useMutation({
@@ -66,7 +67,7 @@ export default function SignUpPage() {
   };
 
   const inputClass =
-    "w-full rounded-[var(--radius-control)] border border-[var(--color-hairline)] bg-transparent px-3 py-2.5 text-[14px] text-[var(--color-ink)] placeholder-[var(--color-ink-faint)] focus:border-[var(--color-mind)] focus:outline-none";
+    "w-full rounded-[var(--radius-control)] border border-[var(--color-hairline)] bg-transparent px-3 py-3 text-[16px] text-[var(--color-ink)] placeholder-[var(--color-ink-faint)] focus:border-[var(--color-mind)] focus:ring-2 focus:ring-[var(--color-mind)]/40 focus:outline-none";
   const labelClass =
     "mb-1.5 block text-[11px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase";
 
@@ -89,7 +90,11 @@ export default function SignUpPage() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form
+            onSubmit={handleSubmit}
+            aria-busy={isLoading}
+            className="space-y-4"
+          >
             <div className="flex gap-3">
               <div className="flex-1">
                 <label htmlFor="firstName" className={labelClass}>
@@ -97,6 +102,8 @@ export default function SignUpPage() {
                 </label>
                 <input
                   id="firstName"
+                  autoComplete="given-name"
+                  aria-describedby={error ? "form-error" : undefined}
                   type="text"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
@@ -111,6 +118,8 @@ export default function SignUpPage() {
                 </label>
                 <input
                   id="lastName"
+                  autoComplete="family-name"
+                  aria-describedby={error ? "form-error" : undefined}
                   type="text"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
@@ -127,6 +136,8 @@ export default function SignUpPage() {
               </label>
               <input
                 id="email"
+                autoComplete="email"
+                aria-describedby={error ? "form-error" : undefined}
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -140,23 +151,73 @@ export default function SignUpPage() {
               <label htmlFor="password" className={labelClass}>
                 Password
               </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Min. 8 characters"
-                onFocus={() => setExpression((e) => (e === "gold" ? e : "shy"))}
-                onBlur={() =>
-                  setExpression((e) => (e === "gold" ? e : "resting"))
-                }
-                required
-                className={inputClass}
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  autoCapitalize="none"
+                  spellCheck={false}
+                  aria-describedby={error ? "form-error" : undefined}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() =>
+                    setExpression((e) =>
+                      e === "gold" || showPassword ? e : "shy",
+                    )
+                  }
+                  onBlur={() =>
+                    setExpression((e) => (e === "gold" ? e : "resting"))
+                  }
+                  placeholder="Min. 8 characters"
+                  required
+                  className={inputClass + " pr-12"}
+                />
+                <button
+                  type="button"
+                  aria-label="Show password"
+                  aria-pressed={showPassword}
+                  onClick={() => {
+                    setShowPassword((v) => !v);
+                    // The field has just lost focus to this button, so Squii
+                    // is already resting; make that explicit.
+                    setExpression((e) => (e === "gold" ? e : "resting"));
+                  }}
+                  className="absolute top-1/2 right-0 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
+                >
+                  <svg
+                    aria-hidden
+                    viewBox="0 0 24 24"
+                    className="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    {showPassword ? (
+                      <>
+                        <path d="M3 3l18 18" />
+                        <path d="M10.6 6.1A9.9 9.9 0 0 1 12 6c5 0 8.5 4 9.5 6a14 14 0 0 1-2.6 3.3M6.6 6.7A14 14 0 0 0 2.5 12c1 2 4.5 6 9.5 6 1.4 0 2.7-.3 3.8-.8" />
+                        <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+                      </>
+                    ) : (
+                      <>
+                        <path d="M2.5 12C3.5 10 7 6 12 6s8.5 4 9.5 6c-1 2-4.5 6-9.5 6S3.5 14 2.5 12z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </>
+                    )}
+                  </svg>
+                </button>
+              </div>
             </div>
 
             {error && (
-              <div className="rounded-[var(--radius-control)] border border-[var(--color-body)]/30 bg-[var(--color-body)]/8 px-3 py-2 text-[12px] text-[var(--color-body-ink)]">
+              <div
+                id="form-error"
+                role="alert"
+                className="rounded-[var(--radius-control)] border border-[var(--color-body)]/30 bg-[var(--color-body)]/8 px-3 py-2 text-[13px] text-[var(--color-body-ink)]"
+              >
                 {error}
               </div>
             )}
@@ -207,7 +268,7 @@ export default function SignUpPage() {
           Already have an account?{" "}
           <Link
             href="/signin"
-            className="text-[var(--color-ink)] hover:underline"
+            className="-my-2 inline-block py-2 font-medium text-[var(--color-ink)] underline underline-offset-4"
           >
             Sign in
           </Link>
