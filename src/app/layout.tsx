@@ -1,6 +1,6 @@
 import "~/styles/globals.css";
 
-import { type Metadata } from "next";
+import { type Metadata, type Viewport } from "next";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
 import { AuthProvider } from "~/_components/auth-provider";
@@ -9,7 +9,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-jakarta",
   display: "swap",
   weight: ["400", "500", "600", "700", "800"],
 });
@@ -26,6 +26,13 @@ const fraunces = Fraunces({
 export const metadata: Metadata = {
   title: "squii",
   description: "a habit tracker that lights up the days you showed up",
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f4f3f8" },
+    { media: "(prefers-color-scheme: dark)", color: "#131219" },
+  ],
 };
 
 export default function RootLayout({

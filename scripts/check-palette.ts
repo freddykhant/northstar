@@ -4,6 +4,9 @@
 // metric against the empty tile, where the question is "does a marked day read
 // as darker than an unmarked one".
 
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
 type RGB = [number, number, number];
 type Lab = [number, number, number];
 
@@ -14,6 +17,10 @@ const THEMES = {
     soul: "#0fa47f",
     tileEmpty: "#e7e4f1",
     surface: "#ffffff",
+    sunken: "#edebf4",
+    fieldBorder: "#85839a",
+    muted: "#6a6880",
+    washTo: "#f4f3f8",
     canvas: "#f4f3f8",
     ink: "#191822",
     mindInk: "#5346b8",
@@ -38,6 +45,10 @@ const THEMES = {
     soul: "#35c9a3",
     tileEmpty: "#26242f",
     surface: "#1c1b25",
+    sunken: "#26242f",
+    fieldBorder: "#77758c",
+    muted: "#9694ac",
+    washTo: "#131219",
     canvas: "#131219",
     ink: "#edecf5",
     mindInk: "#b3a8ff",
@@ -103,8 +114,7 @@ function toLab(hex: string): Lab {
   const x = (0.4124 * r + 0.3576 * g + 0.1805 * b) / 0.95047;
   const y = 0.2126 * r + 0.7152 * g + 0.0722 * b;
   const z = (0.0193 * r + 0.1192 * g + 0.9505 * b) / 1.08883;
-  const f = (t: number) =>
-    t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116;
+  const f = (t: number) => (t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116);
   const [fx, fy, fz] = [f(x), f(y), f(z)];
   return [116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)];
 }
@@ -288,6 +298,102 @@ for (const [themeName, t] of Object.entries(THEMES)) {
         `${themeName}: checkbox stroke on ${cat} ${ratio.toFixed(2)}:1 < ${MIN_GRAPHICAL_CONTRAST}:1`,
       );
     }
+  }
+
+  // Wordmark dots also sit on the landing wash, both ends of the gradient.
+  for (const [end, hex] of [
+    ["wash-from", t.wash],
+    ["wash-to", t.washTo],
+  ] as const) {
+    const r = contrast(t.squiiDot, hex);
+    if (r < MIN_GRAPHICAL_CONTRAST) {
+      failures.push(
+        `${themeName}: squii dot on ${end} ${r.toFixed(2)}:1 < ${MIN_GRAPHICAL_CONTRAST}:1`,
+      );
+    }
+  }
+
+  // Text on the bottom of the wash gradient. ink-muted is deliberately NOT
+  // checked on wash-from (Squii's ground): it never carries text there.
+  for (const [name, hex] of [
+    ["ink", t.ink],
+    ["ink-muted", t.muted],
+  ] as const) {
+    const r = contrast(hex, t.washTo);
+    if (r < MIN_TEXT_CONTRAST) {
+      failures.push(
+        `${themeName}: ${name} on wash-to ${r.toFixed(2)}:1 < ${MIN_TEXT_CONTRAST}:1`,
+      );
+    }
+  }
+
+  // ink-muted text on the sunken track (segmented control) and on surface
+  // (the ::placeholder pairing, and secondary text everywhere).
+  for (const [name, hex] of [
+    ["sunken", t.sunken],
+    ["surface", t.surface],
+    ["canvas", t.canvas],
+  ] as const) {
+    const r = contrast(t.muted, hex);
+    if (r < MIN_TEXT_CONTRAST) {
+      failures.push(
+        `${themeName}: ink-muted on ${name} ${r.toFixed(2)}:1 < ${MIN_TEXT_CONTRAST}:1`,
+      );
+    }
+  }
+
+  // Input / unchecked-checkbox boundary (SC 1.4.11, non-text, 3:1).
+  for (const [name, hex] of [
+    ["surface", t.surface],
+    ["canvas", t.canvas],
+  ] as const) {
+    const r = contrast(t.fieldBorder, hex);
+    if (r < MIN_GRAPHICAL_CONTRAST) {
+      failures.push(
+        `${themeName}: field border on ${name} ${r.toFixed(2)}:1 < ${MIN_GRAPHICAL_CONTRAST}:1`,
+      );
+    }
+  }
+}
+
+// Drift guard: THEMES duplicates globals.css by hand. Every hex declared in
+// the light @theme block and the .dark block must match, so editing one file
+// without the other fails here.
+const css = readFileSync(join(process.cwd(), "src/styles/globals.css"), "utf8");
+const blockOf = (start: string): string => {
+  const i = css.indexOf(start);
+  if (i < 0) return "";
+  return css.slice(i, css.indexOf("\n}", i));
+};
+const CSS_BLOCKS = {
+  light: blockOf("@theme {"),
+  dark: blockOf(".dark {"),
+} as const;
+const CSS_NAMES: Record<string, string> = {
+  wash: "wash-from",
+  washTo: "wash-to",
+  muted: "ink-muted",
+};
+const kebab = (k: string) =>
+  CSS_NAMES[k] ?? k.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
+
+for (const [themeName, t] of Object.entries(THEMES)) {
+  const block = CSS_BLOCKS[themeName as keyof typeof CSS_BLOCKS];
+  for (const [key, hex] of Object.entries(t)) {
+    const m = new RegExp(`--color-${kebab(key)}:\\s*([^;]+);`).exec(block);
+    if (!m) {
+      failures.push(
+        `${themeName}: --color-${kebab(key)} missing in globals.css`,
+      );
+    } else if (/^#[0-9a-f]{6}$/i.test(m[1]!.trim())) {
+      if (m[1]!.trim().toLowerCase() !== hex.toLowerCase()) {
+        failures.push(
+          `${themeName}: --color-${kebab(key)} is ${m[1]!.trim()} in globals.css but ${hex} in check-palette.ts`,
+        );
+      }
+    }
+    // A var(...) value (light wash-from -> squii-ground) is checked via the
+    // token it points at.
   }
 }
 

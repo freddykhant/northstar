@@ -5,7 +5,7 @@
 @theme {
   /* Typography — one family. */
   --font-sans:
-    var(--font-sans), ui-sans-serif, -apple-system, BlinkMacSystemFont,
+    var(--font-jakarta), ui-sans-serif, -apple-system, BlinkMacSystemFont,
     system-ui, sans-serif;
 
   /* Surfaces — light */
@@ -13,8 +13,11 @@
   --color-surface: #ffffff;
   --color-sunken: #edebf4;
   --color-hairline: #e7e5ef;
+  /* Input / unchecked-checkbox boundary. SC 1.4.11 needs 3:1; hairline is
+     decorative (cards, dividers) and measures 1.25:1, so fields get their own. */
+  --color-field-border: #85839a;
   --color-ink: #191822;
-  --color-ink-muted: #6e6c82;
+  --color-ink-muted: #6a6880;
   --color-ink-faint: #a9a7b8;
 
   /* Categories — light */
@@ -100,10 +103,12 @@
 
 /* Dark — retuned values, never an inversion. */
 .dark {
+  color-scheme: dark;
   --color-canvas: #131219;
   --color-surface: #1c1b25;
   --color-sunken: #26242f;
   --color-hairline: #2a2836;
+  --color-field-border: #77758c;
   --color-ink: #edecf5;
   --color-ink-muted: #9694ac;
   --color-ink-faint: #6e6c82;
@@ -204,6 +209,27 @@ html {
 body {
   background-color: var(--color-canvas);
   color: var(--color-ink);
+}
+
+html {
+  color-scheme: light;
+}
+
+/* One focus ring for every text field. Unlayered, so it wins over Tailwind's
+   layered `focus:outline-none`. mind-ink: 7.15:1 on white, 8.08:1 on dark
+   surface. */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-mind-ink);
+  outline-offset: 2px;
+}
+
+/* Native opacity-50 default fails 4.5:1 in light; ink-muted is 5.08:1 on
+   surface (light), 5.78:1 (dark). */
+::placeholder {
+  color: var(--color-ink-muted);
+  opacity: 1;
 }
 
 .tabular {

@@ -300,7 +300,7 @@ export default function HabitsPage() {
                   }
                   placeholder={`e.g., ${EXAMPLES[formData.categoryId][0]}`}
                   autoFocus
-                  className="w-full rounded-[var(--radius-control)] border border-[var(--color-hairline)] bg-transparent px-3 py-2.5 text-[14px] text-[var(--color-ink)] placeholder-[var(--color-ink-faint)] focus:border-[var(--color-mind)] focus:outline-none"
+                  className="w-full rounded-[var(--radius-control)] border border-[var(--color-field-border)] bg-transparent px-3 py-2.5 text-[14px] text-[var(--color-ink)] focus:border-[var(--color-mind)] focus:outline-none"
                 />
                 {!editingHabit && (
                   <div className="mt-2 flex flex-wrap gap-1.5">
@@ -337,7 +337,7 @@ export default function HabitsPage() {
                   }
                   placeholder="Why this matters to you."
                   rows={2}
-                  className="w-full rounded-[var(--radius-control)] border border-[var(--color-hairline)] bg-transparent px-3 py-2.5 text-[13px] text-[var(--color-ink)] placeholder-[var(--color-ink-faint)] focus:border-[var(--color-mind)] focus:outline-none"
+                  className="w-full rounded-[var(--radius-control)] border border-[var(--color-field-border)] bg-transparent px-3 py-2.5 text-[13px] text-[var(--color-ink)] focus:border-[var(--color-mind)] focus:outline-none"
                 />
               </div>
 

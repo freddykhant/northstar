@@ -19,7 +19,7 @@ export function SegmentedControl<T extends string>({
           type="button"
           aria-pressed={value === o.id}
           onClick={() => onChange(o.id)}
-          className={`rounded-[8px] px-3 py-1 text-[12px] font-semibold ${
+          className={`rounded-[8px] px-3 py-2 text-[12px] font-semibold ${
             value === o.id
               ? "bg-[var(--color-surface)] text-[var(--color-ink)] shadow-[var(--shadow-card)]"
               : "text-[var(--color-ink-muted)]"

@@ -67,7 +67,7 @@ export default function SignUpPage() {
   };
 
   const inputClass =
-    "w-full rounded-[var(--radius-control)] border border-[var(--color-hairline)] bg-transparent px-3 py-3 text-[16px] text-[var(--color-ink)] placeholder-[var(--color-ink-faint)] focus:border-[var(--color-mind)] focus:ring-2 focus:ring-[var(--color-mind)]/40 focus:outline-none";
+    "w-full rounded-[var(--radius-control)] border border-[var(--color-field-border)] bg-transparent px-3 py-3 text-[16px] text-[var(--color-ink)] focus:border-[var(--color-mind)] focus:outline-none";
   const labelClass =
     "mb-1.5 block text-[11px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase";
 

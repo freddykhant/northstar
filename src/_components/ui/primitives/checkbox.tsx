@@ -25,7 +25,7 @@ export function Checkbox({ checked, category, disabled }: CheckboxProps) {
       style={{
         borderColor: checked
           ? `var(--color-${category})`
-          : "var(--color-hairline)",
+          : "var(--color-field-border)",
         backgroundColor: checked ? `var(--color-${category})` : "transparent",
         opacity: disabled ? 0.5 : 1,
       }}
