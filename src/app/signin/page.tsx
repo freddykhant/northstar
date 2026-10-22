@@ -52,7 +52,14 @@ export default function SignInPage() {
     }
   };
 
-  const handleGoogleSignIn = () => {
+  // Google leaves the page for its own consent screen, so there is no success
+  // moment to wave on afterwards — Squii waves on the way out instead.
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    setExpression("wave");
+    await new Promise((resolve) =>
+      setTimeout(resolve, reduceMotion ? 0 : SUCCESS_HOLD_MS),
+    );
     void signIn("google", { callbackUrl: "/home" });
   };
 
@@ -210,8 +217,9 @@ export default function SignInPage() {
 
           <button
             type="button"
-            onClick={handleGoogleSignIn}
-            className="flex w-full items-center justify-center gap-2 rounded-full border border-[var(--color-hairline)] bg-transparent py-3.5 text-[15px] font-medium text-[var(--color-ink)] hover:border-[var(--color-ink-faint)]"
+            onClick={() => void handleGoogleSignIn()}
+            disabled={isLoading}
+            className="flex w-full items-center justify-center gap-2 rounded-full border border-[var(--color-hairline)] bg-transparent py-3.5 text-[15px] font-medium text-[var(--color-ink)] hover:border-[var(--color-ink-faint)] disabled:opacity-50"
           >
             <svg className="h-4 w-4" viewBox="0 0 24 24">
               <path

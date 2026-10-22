@@ -231,6 +231,11 @@ export function InteractiveYear({ referenceKey }: InteractiveYearProps) {
                   transition={{
                     duration: INK_DURATION,
                     ease: INK_EASE,
+                    // Opacity must not share the squish curve: its overshoot
+                    // drives 0.9 -> 0 below zero, which clamps, so the ink
+                    // vanished ~35% of the way in. easeIn keeps it visible
+                    // while it travels and fades it as it lands.
+                    opacity: { duration: INK_DURATION, ease: "easeIn" },
                   }}
                   onAnimationComplete={() =>
                     setPuff((current) =>
