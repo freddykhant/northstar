@@ -10,7 +10,7 @@ export function LandingNav() {
           own — an aria-label on the Link would override the Wordmark's and make
           it dead weight, and naming both double-announces. The glyph is
           decorative (no `title`), so the link announces as "squii, link". */}
-      <Link href="/" className="flex items-center gap-2.5">
+      <Link href="/" className="-my-2 flex items-center gap-2.5 py-2">
         {/* Heights 26/30 are optical, not ratios. The lockup's viewBox is 44
             tall, but its ink runs y 3.1 to 41.6 (eye-dots to the `q` descender,
             counting the 2.6 half-stroke), about 0.875 of the box. Centreline
@@ -23,13 +23,13 @@ export function LandingNav() {
       <div className="flex items-center gap-2">
         <Link
           href="/signin"
-          className="rounded-full bg-[var(--color-sunken)] px-4 py-2 text-[13px] font-semibold text-[var(--color-ink)] hover:bg-[var(--color-hairline)]"
+          className="inline-flex min-h-11 items-center rounded-full bg-[var(--color-sunken)] px-4 text-[13px] font-semibold text-[var(--color-ink)] hover:bg-[var(--color-hairline)]"
         >
           Log in
         </Link>
         <Link
           href="/signup"
-          className="rounded-full bg-[var(--color-ink)] px-4 py-2 text-[13px] font-semibold text-[var(--color-canvas)] hover:opacity-90"
+          className="inline-flex min-h-11 items-center rounded-full bg-[var(--color-ink)] px-4 text-[13px] font-semibold text-[var(--color-canvas)] hover:opacity-90"
         >
           Start tracking
         </Link>

@@ -19,10 +19,16 @@ export function LandingFooter() {
         </div>
 
         <nav className="flex items-center gap-5 text-[14px] text-[var(--color-ink-muted)]">
-          <Link href="/signin" className="hover:text-[var(--color-ink)]">
+          <Link
+            href="/signin"
+            className="inline-flex min-h-11 items-center hover:text-[var(--color-ink)]"
+          >
             Log in
           </Link>
-          <Link href="/signup" className="hover:text-[var(--color-ink)]">
+          <Link
+            href="/signup"
+            className="inline-flex min-h-11 items-center hover:text-[var(--color-ink)]"
+          >
             Sign up
           </Link>
         </nav>

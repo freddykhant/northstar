@@ -61,8 +61,11 @@ export function Comparison({ referenceKey }: { referenceKey: string }) {
               One colour &mdash; did you show up?
             </figcaption>
             <div
-              className="overflow-x-auto rounded-[var(--radius-card)] p-4"
+              className="overflow-x-auto rounded-[var(--radius-card)] p-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-ink)]"
               style={{ background: GITHUB_SURFACE }}
+              role="img"
+              aria-label="Six months of a contribution graph in one colour: the same days as the figure beside it, shown only as busy or not"
+              tabIndex={0}
             >
               <div className="grid grid-flow-col" style={grid}>
                 {days.map((day, i) => (
@@ -84,7 +87,13 @@ export function Comparison({ referenceKey }: { referenceKey: string }) {
             <figcaption className="mb-3 text-[13px] font-semibold text-[var(--color-ink)]">
               Three colours &mdash; which part of you showed up?
             </figcaption>
-            <div className="grid grid-flow-col overflow-x-auto" style={grid}>
+            <div
+              className="grid grid-flow-col overflow-x-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-ink)]"
+              style={grid}
+              role="img"
+              aria-label="The same six months in three colours: mind, body and soul each keep their own colour on every day"
+              tabIndex={0}
+            >
               {days.map((day, i) => (
                 <MosaicTile
                   key={i}
