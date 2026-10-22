@@ -5,7 +5,7 @@
 // as darker than an unmarked one".
 
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 type RGB = [number, number, number];
 type Lab = [number, number, number];
@@ -359,7 +359,10 @@ for (const [themeName, t] of Object.entries(THEMES)) {
 // Drift guard: THEMES duplicates globals.css by hand. Every hex declared in
 // the light @theme block and the .dark block must match, so editing one file
 // without the other fails here.
-const css = readFileSync(join(process.cwd(), "src/styles/globals.css"), "utf8");
+const css = readFileSync(
+  fileURLToPath(new URL("../src/styles/globals.css", import.meta.url)),
+  "utf8",
+);
 const blockOf = (start: string): string => {
   const i = css.indexOf(start);
   if (i < 0) return "";

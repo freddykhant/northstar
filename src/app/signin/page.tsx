@@ -144,12 +144,17 @@ export default function SignInPage() {
                   aria-label="Show password"
                   aria-pressed={showPassword}
                   onClick={() => {
-                    setShowPassword((v) => !v);
-                    // The field has just lost focus to this button, so Squii
-                    // is already resting; make that explicit.
-                    setExpression((e) => (e === "wave" ? e : "resting"));
+                    const willShow = !showPassword;
+                    setShowPassword(willShow);
+                    // Hidden while the field still has focus: shy. Otherwise
+                    // the field has lost focus to this button: resting.
+                    const stillTyping =
+                      !willShow && document.activeElement?.id === "password";
+                    setExpression((e) =>
+                      e === "wave" ? e : stillTyping ? "shy" : "resting",
+                    );
                   }}
-                  className="absolute top-1/2 right-0 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
+                  className="absolute top-1/2 right-0 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-ink)]"
                 >
                   <svg
                     aria-hidden
@@ -206,7 +211,7 @@ export default function SignInPage() {
           <button
             type="button"
             onClick={handleGoogleSignIn}
-            className="flex w-full items-center justify-center gap-2 rounded-full border border-[var(--color-hairline)] bg-transparent py-2.5 text-[13px] font-medium text-[var(--color-ink)] hover:border-[var(--color-ink-faint)]"
+            className="flex w-full items-center justify-center gap-2 rounded-full border border-[var(--color-hairline)] bg-transparent py-3.5 text-[15px] font-medium text-[var(--color-ink)] hover:border-[var(--color-ink-faint)]"
           >
             <svg className="h-4 w-4" viewBox="0 0 24 24">
               <path
@@ -230,11 +235,11 @@ export default function SignInPage() {
           </button>
         </Card>
 
-        <p className="mt-6 text-center text-[13px] text-[var(--color-ink-muted)]">
+        <p className="mt-6 text-center text-[13px] text-[var(--color-ink)]">
           Don&apos;t have an account?{" "}
           <Link
             href="/signup"
-            className="-my-2 inline-block py-2 font-medium text-[var(--color-ink)] underline underline-offset-4"
+            className="inline-flex min-h-11 items-center font-medium text-[var(--color-ink)] underline underline-offset-4"
           >
             Sign up
           </Link>

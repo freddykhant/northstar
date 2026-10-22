@@ -225,7 +225,7 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 
-/* Native opacity-50 default fails 4.5:1 in light; ink-muted is 5.08:1 on
+/* Native opacity-50 default fails 4.5:1 in light; ink-muted is 5.38:1 on
    surface (light), 5.78:1 (dark). */
 ::placeholder {
   color: var(--color-ink-muted);

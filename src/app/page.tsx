@@ -30,7 +30,7 @@ export default async function LandingPage() {
         Skip to content
       </a>
       <LandingNav />
-      <main id="main">
+      <main id="main" tabIndex={-1} className="focus:outline-none">
         <Hero referenceKey={referenceKey} />
         <Comparison referenceKey={referenceKey} />
         <LopsidedMonth referenceKey={referenceKey} />

@@ -64,7 +64,7 @@ export function Comparison({ referenceKey }: { referenceKey: string }) {
               className="overflow-x-auto rounded-[var(--radius-card)] p-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-ink)]"
               style={{ background: GITHUB_SURFACE }}
               role="img"
-              aria-label="Six months of a contribution graph in one colour: the same days as the figure beside it, shown only as busy or not"
+              aria-label="Six months of a contribution graph in one colour: the same days as the figure that precedes or follows it, shown only as busy or not"
               tabIndex={0}
             >
               <div className="grid grid-flow-col" style={grid}>
