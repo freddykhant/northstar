@@ -4,6 +4,14 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { Squii } from "~/_components/brand/squii";
+import { Wordmark } from "~/_components/brand/wordmark";
+import { Card } from "~/_components/ui/primitives";
+import { INK_EASE } from "~/lib/landing-interaction";
+import type { SquiiExpression } from "~/lib/squii";
+
+const SUCCESS_HOLD_MS = 700;
 
 export default function SignInPage() {
   const router = useRouter();
@@ -11,6 +19,9 @@ export default function SignInPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [expression, setExpression] = useState<SquiiExpression>("resting");
+  const reduceMotion = useReducedMotion();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,86 +44,158 @@ export default function SignInPage() {
       setError("Invalid email or password");
       setIsLoading(false);
     } else {
+      setExpression("wave");
+      await new Promise((resolve) =>
+        setTimeout(resolve, reduceMotion ? 0 : SUCCESS_HOLD_MS),
+      );
       router.push("/home");
     }
   };
 
-  const handleGoogleSignIn = () => {
+  // Google leaves the page for its own consent screen, so there is no success
+  // moment to wave on afterwards — Squii waves on the way out instead.
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    setExpression("wave");
+    await new Promise((resolve) =>
+      setTimeout(resolve, reduceMotion ? 0 : SUCCESS_HOLD_MS),
+    );
     void signIn("google", { callbackUrl: "/home" });
   };
 
+  const inputClass =
+    "w-full rounded-[var(--radius-control)] border border-[var(--color-field-border)] bg-transparent px-3 py-3 text-[16px] text-[var(--color-ink)] focus:border-[var(--color-mind)] focus:outline-none";
+  const labelClass =
+    "mb-1.5 block text-[11px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase";
+
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[var(--color-paper)] px-4 text-[var(--color-ink)] dark:bg-[var(--color-paper-dark)] dark:text-[var(--color-ink-dark)]">
+    <main className="flex min-h-screen items-center justify-center bg-gradient-to-b from-[var(--color-wash-from)] to-[var(--color-wash-to)] px-4 text-[var(--color-ink)]">
       <div className="w-full max-w-sm">
-        {/* Wordmark */}
-        <Link
-          href="/"
-          className="mb-10 flex items-baseline justify-center gap-2"
-        >
-          <span
-            aria-hidden
-            className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-ember)]"
-          />
-          <span
-            className="font-serif text-[22px] italic tracking-tight"
-            style={{ fontOpticalSizing: "auto" }}
+        {/* The Wordmark labels itself (role="img"), so the Link has no
+            aria-label of its own; same pattern as landing-nav.tsx. */}
+        <Link href="/" className="mb-8 flex flex-col items-center gap-3">
+          <motion.div
+            style={{ transformOrigin: "50% 90%" }}
+            animate={
+              expression === "wave" && !reduceMotion
+                ? { rotate: [0, -14, 10, -6, 0] }
+                : { rotate: 0 }
+            }
+            transition={{ duration: SUCCESS_HOLD_MS / 1000, ease: INK_EASE }}
           >
-            northstar
-          </span>
+            <Squii size={64} expression={expression} />
+          </motion.div>
+          <Wordmark height={30} />
         </Link>
 
-        <div className="rounded-[12px] border border-black/8 bg-[var(--color-paper-raised)] p-8 dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)]">
+        <Card className="p-8">
           <div className="mb-6">
-            <h1
-              className="mb-1 font-serif text-[24px] font-medium"
-              style={{ fontOpticalSizing: "auto" }}
-            >
+            <h1 className="text-title mb-1 text-[var(--color-ink)]">
               Welcome back
             </h1>
-            <p className="text-[13px] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+            <p className="text-[13px] text-[var(--color-ink-muted)]">
               Sign in to continue.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form
+            onSubmit={handleSubmit}
+            aria-busy={isLoading}
+            className="space-y-4"
+          >
             <div>
-              <label
-                htmlFor="email"
-                className="mb-1.5 block text-[11px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]"
-              >
+              <label htmlFor="email" className={labelClass}>
                 Email
               </label>
               <input
                 id="email"
+                autoComplete="username"
+                aria-describedby={error ? "form-error" : undefined}
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@email.com"
                 required
-                className="w-full rounded-[6px] border border-black/8 bg-transparent px-3 py-2.5 text-[14px] text-[var(--color-ink)] placeholder-[var(--color-ink-muted)]/60 focus:border-[var(--color-ember)] focus:outline-none dark:border-white/8 dark:text-[var(--color-ink-dark)]"
+                className={inputClass}
               />
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="mb-1.5 block text-[11px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]"
-              >
+              <label htmlFor="password" className={labelClass}>
                 Password
               </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                required
-                className="w-full rounded-[6px] border border-black/8 bg-transparent px-3 py-2.5 text-[14px] text-[var(--color-ink)] placeholder-[var(--color-ink-muted)]/60 focus:border-[var(--color-ember)] focus:outline-none dark:border-white/8 dark:text-[var(--color-ink-dark)]"
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  autoCapitalize="none"
+                  spellCheck={false}
+                  aria-describedby={error ? "form-error" : undefined}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() =>
+                    setExpression((e) =>
+                      e === "wave" || showPassword ? e : "shy",
+                    )
+                  }
+                  onBlur={() =>
+                    setExpression((e) => (e === "wave" ? e : "resting"))
+                  }
+                  placeholder="Enter your password"
+                  required
+                  className={inputClass + " pr-12"}
+                />
+                <button
+                  type="button"
+                  aria-label="Show password"
+                  aria-pressed={showPassword}
+                  onClick={() => {
+                    const willShow = !showPassword;
+                    setShowPassword(willShow);
+                    // Hidden while the field still has focus: shy. Otherwise
+                    // the field has lost focus to this button: resting.
+                    const stillTyping =
+                      !willShow && document.activeElement?.id === "password";
+                    setExpression((e) =>
+                      e === "wave" ? e : stillTyping ? "shy" : "resting",
+                    );
+                  }}
+                  className="absolute top-1/2 right-0 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-ink)]"
+                >
+                  <svg
+                    aria-hidden
+                    viewBox="0 0 24 24"
+                    className="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    {showPassword ? (
+                      <>
+                        <path d="M3 3l18 18" />
+                        <path d="M10.6 6.1A9.9 9.9 0 0 1 12 6c5 0 8.5 4 9.5 6a14 14 0 0 1-2.6 3.3M6.6 6.7A14 14 0 0 0 2.5 12c1 2 4.5 6 9.5 6 1.4 0 2.7-.3 3.8-.8" />
+                        <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+                      </>
+                    ) : (
+                      <>
+                        <path d="M2.5 12C3.5 10 7 6 12 6s8.5 4 9.5 6c-1 2-4.5 6-9.5 6S3.5 14 2.5 12z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </>
+                    )}
+                  </svg>
+                </button>
+              </div>
             </div>
 
             {error && (
-              <div className="rounded-[6px] border border-[var(--color-ember)]/30 bg-[var(--color-ember)]/8 px-3 py-2 text-[12px] text-[var(--color-ember)]">
+              <div
+                id="form-error"
+                role="alert"
+                className="rounded-[var(--radius-control)] border border-[var(--color-body)]/30 bg-[var(--color-body)]/8 px-3 py-2 text-[13px] text-[var(--color-body-ink)]"
+              >
                 {error}
               </div>
             )}
@@ -120,22 +203,23 @@ export default function SignInPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full rounded-[6px] bg-[var(--color-ink)] py-2.5 text-[13px] font-medium text-[var(--color-paper)] hover:bg-black disabled:opacity-50 dark:bg-[var(--color-ink-dark)] dark:text-[var(--color-paper-dark)] dark:hover:bg-white"
+              className="w-full rounded-full bg-[var(--color-ink)] px-7 py-3.5 text-[15px] font-semibold text-[var(--color-canvas)] hover:opacity-90 disabled:opacity-50"
             >
               {isLoading ? "Signing in…" : "Sign in"}
             </button>
           </form>
 
-          <div className="my-5 flex items-center gap-3 text-[10px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
-            <div className="h-px flex-1 bg-black/8 dark:bg-white/8" />
+          <div className="my-5 flex items-center gap-3 text-[10px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase">
+            <div className="h-px flex-1 bg-[var(--color-hairline)]" />
             or
-            <div className="h-px flex-1 bg-black/8 dark:bg-white/8" />
+            <div className="h-px flex-1 bg-[var(--color-hairline)]" />
           </div>
 
           <button
             type="button"
-            onClick={handleGoogleSignIn}
-            className="flex w-full items-center justify-center gap-2 rounded-[6px] border border-black/8 bg-transparent py-2.5 text-[13px] font-medium text-[var(--color-ink)] hover:border-black/16 dark:border-white/8 dark:text-[var(--color-ink-dark)] dark:hover:border-white/16"
+            onClick={() => void handleGoogleSignIn()}
+            disabled={isLoading}
+            className="flex w-full items-center justify-center gap-2 rounded-full border border-[var(--color-hairline)] bg-transparent py-3.5 text-[15px] font-medium text-[var(--color-ink)] hover:border-[var(--color-ink-faint)] disabled:opacity-50"
           >
             <svg className="h-4 w-4" viewBox="0 0 24 24">
               <path
@@ -157,13 +241,13 @@ export default function SignInPage() {
             </svg>
             Continue with Google
           </button>
-        </div>
+        </Card>
 
-        <p className="mt-6 text-center text-[13px] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+        <p className="mt-6 text-center text-[13px] text-[var(--color-ink)]">
           Don&apos;t have an account?{" "}
           <Link
             href="/signup"
-            className="text-[var(--color-ink)] hover:underline dark:text-[var(--color-ink-dark)]"
+            className="inline-flex min-h-11 items-center font-medium text-[var(--color-ink)] underline underline-offset-4"
           >
             Sign up
           </Link>

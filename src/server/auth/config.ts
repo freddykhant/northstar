@@ -79,7 +79,7 @@ export const authConfig = {
             const [newUser] = await db
               .insert(schema.users)
               .values({
-                email: user.email!,
+                email: user.email,
                 name: user.name ?? null,
                 image: user.image ?? null,
               })
@@ -95,7 +95,7 @@ export const authConfig = {
     session: ({ session, token }) => {
       if (token && session.user) {
         session.user.id = token.id as string;
-        session.user.email = token.email as string;
+        session.user.email = token.email!;
       }
       return session;
     },

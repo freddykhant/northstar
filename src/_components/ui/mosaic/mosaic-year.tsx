@@ -1,0 +1,129 @@
+"use client";
+
+import { useMemo } from "react";
+import {
+  dayLabel,
+  tileBackgroundCompact,
+  type DayCategories,
+} from "~/lib/mosaic";
+import { formatDateAsLocal } from "~/lib/utils";
+import { MosaicTile } from "./mosaic-tile";
+
+const EMPTY: DayCategories = { mind: false, body: false, soul: false };
+const TILE = 11;
+const GAP = 3;
+
+interface MosaicYearProps {
+  completionMap: Map<string, DayCategories>;
+  onShow?: (
+    date: Date,
+    c: DayCategories,
+    e: React.SyntheticEvent<HTMLElement>,
+  ) => void;
+  onHide?: () => void;
+  todayKey?: string;
+  pulseToday?: boolean;
+}
+
+export function MosaicYear({
+  completionMap,
+  onShow,
+  onHide,
+  todayKey,
+  pulseToday = false,
+}: MosaicYearProps) {
+  const weeks = useMemo(() => {
+    const today = new Date();
+    const start = new Date(today.getFullYear(), 0, 1);
+    // Back up to the Sunday on or before Jan 1 so every column is a full week.
+    start.setDate(start.getDate() - start.getDay());
+
+    const cols: Date[][] = [];
+    const cursor = new Date(start);
+    while (cursor <= today) {
+      const col: Date[] = [];
+      for (let d = 0; d < 7; d++) {
+        col.push(new Date(cursor));
+        cursor.setDate(cursor.getDate() + 1);
+      }
+      cols.push(col);
+    }
+    return cols;
+  }, []);
+
+  const monthLabels = useMemo(() => {
+    const labels: { index: number; label: string }[] = [];
+    let lastMonth = -1;
+    weeks.forEach((col, i) => {
+      const first = col[0]!;
+      if (first.getMonth() !== lastMonth && first.getDate() <= 7) {
+        lastMonth = first.getMonth();
+        labels.push({
+          index: i,
+          label: first.toLocaleDateString("en-US", { month: "short" }),
+        });
+      }
+    });
+    return labels;
+  }, [weeks]);
+
+  const today = new Date();
+
+  return (
+    <div className="overflow-x-auto pb-1">
+      <div style={{ minWidth: weeks.length * (TILE + GAP) }}>
+        <div className="relative mb-1.5 h-3">
+          {monthLabels.map((m) => (
+            <span
+              key={`${m.label}-${m.index}`}
+              className="text-eyebrow absolute text-[var(--color-ink-muted)] uppercase"
+              style={{ left: m.index * (TILE + GAP) }}
+            >
+              {m.label}
+            </span>
+          ))}
+        </div>
+
+        <div className="flex" style={{ gap: GAP }}>
+          {weeks.map((col, i) => (
+            <div key={i} className="flex flex-col" style={{ gap: GAP }}>
+              {col.map((date) => {
+                const key = formatDateAsLocal(date);
+                // The grid pads back to the Sunday before Jan 1 so every column is a full
+                // week; those leading days belong to the previous year and must hold grid
+                // position without rendering.
+                const outOfRange =
+                  date > today || date.getFullYear() !== today.getFullYear();
+                const categories = completionMap.get(key) ?? EMPTY;
+                const label = outOfRange
+                  ? undefined
+                  : dayLabel(date, categories);
+                return (
+                  <div
+                    key={key}
+                    style={{ opacity: outOfRange ? 0 : 1 }}
+                    aria-hidden={outOfRange}
+                  >
+                    <MosaicTile
+                      categories={categories}
+                      background={tileBackgroundCompact(categories)}
+                      size={TILE}
+                      radius="var(--radius-tile-year)"
+                      pulse={pulseToday && key === todayKey}
+                      title={label}
+                      focusable={!outOfRange}
+                      onShow={(e) =>
+                        !outOfRange && onShow?.(date, categories, e)
+                      }
+                      onHide={onHide}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

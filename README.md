@@ -1,15 +1,15 @@
-# Northstar
+# Squii
 
 A habit tracker that lights up squares like the greens in your GitHub profile, making it rewarding to see the fruits of your consistency and commitment to your habits.
 
-![Northstar](assets/northstar1.gif)
+![Squii](assets/northstar1.gif)
 
 ## Features
 
 - Create habits under categories - mind, body, soul
 - Check in every day, tick off your habits
 - See a graph of your habits, watch each day light up for how much you've accomplished
-- Paint and flourish your Northstar graph, show yourself that you've showed up everyday
+- Paint and flourish your Squii graph, show yourself that you've showed up everyday
 
 ## Tech Stack
 

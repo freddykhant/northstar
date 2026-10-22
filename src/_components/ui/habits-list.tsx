@@ -2,11 +2,7 @@
 
 import { DotsThree } from "@phosphor-icons/react";
 import { useState } from "react";
-import {
-  CATEGORY_DESCRIPTIONS,
-  CATEGORY_HEX,
-  CATEGORY_LABELS,
-} from "~/lib/constants";
+import { CATEGORY_DESCRIPTIONS, CATEGORY_LABELS } from "~/lib/constants";
 import type { CategoryId } from "~/lib/types";
 
 type Category = "mind" | "body" | "soul";
@@ -59,49 +55,41 @@ export function HabitsList({
         const categoryHabits = groupedHabits[category];
         if (categoryHabits.length === 0) return null;
 
-        const tint = CATEGORY_HEX[category as CategoryId];
-
         return (
           <section key={category}>
-            <div className="mb-4 flex items-baseline gap-3 border-b border-black/8 pb-2 dark:border-white/8">
+            <div className="mb-4 flex items-baseline gap-3 border-b border-[var(--color-hairline)] pb-2">
               <span
                 aria-hidden
                 className="inline-block h-2 w-2 rounded-full"
-                style={{ backgroundColor: tint }}
+                style={{ backgroundColor: `var(--color-${category})` }}
               />
-              <h2 className="text-[11px] font-medium tracking-[0.14em] text-[var(--color-ink)] uppercase dark:text-[var(--color-ink-dark)]">
+              <h2 className="text-[11px] font-medium tracking-[0.14em] text-[var(--color-ink)] uppercase">
                 {CATEGORY_LABELS[category as CategoryId]}
               </h2>
-              <p className="text-[11px] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+              <p className="text-[11px] text-[var(--color-ink-muted)]">
                 {CATEGORY_DESCRIPTIONS[category as CategoryId]}
               </p>
             </div>
 
-            <ul className="divide-y divide-black/8 dark:divide-white/8">
+            <ul className="divide-y divide-[var(--color-hairline)]">
               {categoryHabits.map((habit) => (
                 <li
                   key={habit.id}
                   className="group flex items-center justify-between py-3.5"
                 >
                   <div className="min-w-0 flex-1">
-                    <h3 className="text-[14px] text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]">
+                    <h3 className="text-[14px] text-[var(--color-ink)]">
                       {habit.name}
                     </h3>
                     {habit.description && (
-                      <p className="mt-0.5 text-[12px] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+                      <p className="mt-0.5 text-[12px] text-[var(--color-ink-muted)]">
                         {habit.description}
                       </p>
                     )}
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span
-                      className={`text-[10px] font-medium tracking-[0.12em] uppercase ${
-                        habit.isActive
-                          ? "text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]"
-                          : "text-[var(--color-ink-muted)]/60 dark:text-[var(--color-ink-dark-muted)]/60"
-                      }`}
-                    >
+                    <span className="text-eyebrow text-[var(--color-ink-muted)] uppercase">
                       {habit.isActive ? "Active" : "Paused"}
                     </span>
 
@@ -114,7 +102,7 @@ export function HabitsList({
                         }
                         disabled={isToggling || isDeleting}
                         aria-label="More options"
-                        className="rounded-[4px] p-1.5 opacity-0 hover:bg-black/6 group-hover:opacity-100 disabled:opacity-30 dark:hover:bg-white/6"
+                        className="rounded-[var(--radius-control)] p-1.5 opacity-0 group-hover:opacity-100 hover:bg-[var(--color-sunken)] disabled:opacity-30"
                       >
                         <DotsThree size={16} weight="bold" />
                       </button>
@@ -125,14 +113,14 @@ export function HabitsList({
                             className="fixed inset-0 z-10"
                             onClick={() => setOpenMenuId(null)}
                           />
-                          <div className="absolute top-full right-0 z-20 mt-1 w-40 overflow-hidden rounded-[8px] border border-black/8 bg-[var(--color-paper-raised)] py-1 dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)]">
+                          <div className="absolute top-full right-0 z-20 mt-1 w-40 overflow-hidden rounded-[var(--radius-control)] border border-[var(--color-hairline)] bg-[var(--color-surface)] py-1 shadow-[var(--shadow-lift)]">
                             <button
                               onClick={() => {
                                 onEdit(habit);
                                 setOpenMenuId(null);
                               }}
                               disabled={isToggling || isDeleting}
-                              className="w-full px-3 py-2 text-left text-[13px] text-[var(--color-ink)] hover:bg-black/4 disabled:opacity-50 dark:text-[var(--color-ink-dark)] dark:hover:bg-white/4"
+                              className="w-full px-3 py-2 text-left text-[13px] text-[var(--color-ink)] hover:bg-[var(--color-sunken)] disabled:opacity-50"
                             >
                               Edit
                             </button>
@@ -142,7 +130,7 @@ export function HabitsList({
                                 setOpenMenuId(null);
                               }}
                               disabled={isToggling || isDeleting}
-                              className="w-full px-3 py-2 text-left text-[13px] text-[var(--color-ink)] hover:bg-black/4 disabled:opacity-50 dark:text-[var(--color-ink-dark)] dark:hover:bg-white/4"
+                              className="w-full px-3 py-2 text-left text-[13px] text-[var(--color-ink)] hover:bg-[var(--color-sunken)] disabled:opacity-50"
                             >
                               {habit.isActive ? "Pause" : "Resume"}
                             </button>
@@ -158,7 +146,7 @@ export function HabitsList({
                                 setOpenMenuId(null);
                               }}
                               disabled={isToggling || isDeleting}
-                              className="w-full px-3 py-2 text-left text-[13px] text-[var(--color-ember)] hover:bg-[var(--color-ember)]/8 disabled:opacity-50"
+                              className="w-full px-3 py-2 text-left text-[13px] text-[var(--color-body-ink)] hover:bg-[var(--color-body)]/8 disabled:opacity-50"
                             >
                               Delete
                             </button>

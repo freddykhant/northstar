@@ -4,7 +4,14 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Squii } from "~/_components/brand/squii";
+import { Wordmark } from "~/_components/brand/wordmark";
+import { Card } from "~/_components/ui/primitives";
+import type { SquiiExpression } from "~/lib/squii";
 import { api } from "~/trpc/react";
+
+/** How long Squii holds his gold before we leave for /home. */
+const SUCCESS_HOLD_MS = 600;
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -14,6 +21,8 @@ export default function SignUpPage() {
   const [lastName, setLastName] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [expression, setExpression] = useState<SquiiExpression>("resting");
 
   const signUpMutation = api.auth.signUp.useMutation({
     onSuccess: async () => {
@@ -28,6 +37,8 @@ export default function SignUpPage() {
         setError("Account created but sign in failed. Please try logging in.");
         setIsLoading(false);
       } else {
+        setExpression("gold");
+        await new Promise((resolve) => setTimeout(resolve, SUCCESS_HOLD_MS));
         router.push("/home");
       }
     },
@@ -56,43 +67,34 @@ export default function SignUpPage() {
   };
 
   const inputClass =
-    "w-full rounded-[6px] border border-black/8 bg-transparent px-3 py-2.5 text-[14px] text-[var(--color-ink)] placeholder-[var(--color-ink-muted)]/60 focus:border-[var(--color-ember)] focus:outline-none dark:border-white/8 dark:text-[var(--color-ink-dark)]";
+    "w-full rounded-[var(--radius-control)] border border-[var(--color-field-border)] bg-transparent px-3 py-3 text-[16px] text-[var(--color-ink)] focus:border-[var(--color-mind)] focus:outline-none";
   const labelClass =
-    "mb-1.5 block text-[11px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]";
+    "mb-1.5 block text-[11px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase";
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[var(--color-paper)] px-4 py-12 text-[var(--color-ink)] dark:bg-[var(--color-paper-dark)] dark:text-[var(--color-ink-dark)]">
+    <main className="flex min-h-screen items-center justify-center bg-gradient-to-b from-[var(--color-wash-from)] to-[var(--color-wash-to)] px-4 py-12 text-[var(--color-ink)]">
       <div className="w-full max-w-sm">
-        <Link
-          href="/"
-          className="mb-10 flex items-baseline justify-center gap-2"
-        >
-          <span
-            aria-hidden
-            className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-ember)]"
-          />
-          <span
-            className="font-serif text-[22px] italic tracking-tight"
-            style={{ fontOpticalSizing: "auto" }}
-          >
-            northstar
-          </span>
+        {/* The Wordmark is a role="img" labelled "squii", so the Link carries
+            no aria-label of its own (same as landing-nav). The glyph is
+            decorative. */}
+        <Link href="/" className="mb-8 flex flex-col items-center gap-3">
+          <Squii size={64} expression={expression} />
+          <Wordmark height={30} />
         </Link>
 
-        <div className="rounded-[12px] border border-black/8 bg-[var(--color-paper-raised)] p-8 dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)]">
+        <Card className="p-8">
           <div className="mb-6">
-            <h1
-              className="mb-1 font-serif text-[24px] font-medium"
-              style={{ fontOpticalSizing: "auto" }}
-            >
-              Begin
-            </h1>
-            <p className="text-[13px] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+            <h1 className="text-title mb-1 text-[var(--color-ink)]">Begin</h1>
+            <p className="text-[13px] text-[var(--color-ink-muted)]">
               Create your account to start tracking.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form
+            onSubmit={handleSubmit}
+            aria-busy={isLoading}
+            className="space-y-4"
+          >
             <div className="flex gap-3">
               <div className="flex-1">
                 <label htmlFor="firstName" className={labelClass}>
@@ -100,6 +102,8 @@ export default function SignUpPage() {
                 </label>
                 <input
                   id="firstName"
+                  autoComplete="given-name"
+                  aria-describedby={error ? "form-error" : undefined}
                   type="text"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
@@ -114,6 +118,8 @@ export default function SignUpPage() {
                 </label>
                 <input
                   id="lastName"
+                  autoComplete="family-name"
+                  aria-describedby={error ? "form-error" : undefined}
                   type="text"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
@@ -130,6 +136,8 @@ export default function SignUpPage() {
               </label>
               <input
                 id="email"
+                autoComplete="email"
+                aria-describedby={error ? "form-error" : undefined}
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -143,19 +151,78 @@ export default function SignUpPage() {
               <label htmlFor="password" className={labelClass}>
                 Password
               </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Min. 8 characters"
-                required
-                className={inputClass}
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  autoCapitalize="none"
+                  spellCheck={false}
+                  aria-describedby={error ? "form-error" : undefined}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() =>
+                    setExpression((e) =>
+                      e === "gold" || showPassword ? e : "shy",
+                    )
+                  }
+                  onBlur={() =>
+                    setExpression((e) => (e === "gold" ? e : "resting"))
+                  }
+                  placeholder="Min. 8 characters"
+                  required
+                  className={inputClass + " pr-12"}
+                />
+                <button
+                  type="button"
+                  aria-label="Show password"
+                  aria-pressed={showPassword}
+                  onClick={() => {
+                    const willShow = !showPassword;
+                    setShowPassword(willShow);
+                    // Hidden while the field still has focus: shy. Otherwise
+                    // the field has lost focus to this button: resting.
+                    const stillTyping =
+                      !willShow && document.activeElement?.id === "password";
+                    setExpression((e) =>
+                      e === "gold" ? e : stillTyping ? "shy" : "resting",
+                    );
+                  }}
+                  className="absolute top-1/2 right-0 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-ink)]"
+                >
+                  <svg
+                    aria-hidden
+                    viewBox="0 0 24 24"
+                    className="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    {showPassword ? (
+                      <>
+                        <path d="M3 3l18 18" />
+                        <path d="M10.6 6.1A9.9 9.9 0 0 1 12 6c5 0 8.5 4 9.5 6a14 14 0 0 1-2.6 3.3M6.6 6.7A14 14 0 0 0 2.5 12c1 2 4.5 6 9.5 6 1.4 0 2.7-.3 3.8-.8" />
+                        <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+                      </>
+                    ) : (
+                      <>
+                        <path d="M2.5 12C3.5 10 7 6 12 6s8.5 4 9.5 6c-1 2-4.5 6-9.5 6S3.5 14 2.5 12z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </>
+                    )}
+                  </svg>
+                </button>
+              </div>
             </div>
 
             {error && (
-              <div className="rounded-[6px] border border-[var(--color-ember)]/30 bg-[var(--color-ember)]/8 px-3 py-2 text-[12px] text-[var(--color-ember)]">
+              <div
+                id="form-error"
+                role="alert"
+                className="rounded-[var(--radius-control)] border border-[var(--color-body)]/30 bg-[var(--color-body)]/8 px-3 py-2 text-[13px] text-[var(--color-body-ink)]"
+              >
                 {error}
               </div>
             )}
@@ -163,22 +230,22 @@ export default function SignUpPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full rounded-[6px] bg-[var(--color-ink)] py-2.5 text-[13px] font-medium text-[var(--color-paper)] hover:bg-black disabled:opacity-50 dark:bg-[var(--color-ink-dark)] dark:text-[var(--color-paper-dark)] dark:hover:bg-white"
+              className="w-full rounded-full bg-[var(--color-ink)] px-7 py-3.5 text-[15px] font-semibold text-[var(--color-canvas)] hover:opacity-90 disabled:opacity-50"
             >
               {isLoading ? "Creating account…" : "Create account"}
             </button>
           </form>
 
-          <div className="my-5 flex items-center gap-3 text-[10px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
-            <div className="h-px flex-1 bg-black/8 dark:bg-white/8" />
+          <div className="my-5 flex items-center gap-3 text-[10px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase">
+            <div className="h-px flex-1 bg-[var(--color-hairline)]" />
             or
-            <div className="h-px flex-1 bg-black/8 dark:bg-white/8" />
+            <div className="h-px flex-1 bg-[var(--color-hairline)]" />
           </div>
 
           <button
             type="button"
             onClick={handleGoogleSignIn}
-            className="flex w-full items-center justify-center gap-2 rounded-[6px] border border-black/8 bg-transparent py-2.5 text-[13px] font-medium text-[var(--color-ink)] hover:border-black/16 dark:border-white/8 dark:text-[var(--color-ink-dark)] dark:hover:border-white/16"
+            className="flex w-full items-center justify-center gap-2 rounded-full border border-[var(--color-hairline)] bg-transparent py-3.5 text-[15px] font-medium text-[var(--color-ink)] hover:border-[var(--color-ink-faint)]"
           >
             <svg className="h-4 w-4" viewBox="0 0 24 24">
               <path
@@ -200,13 +267,13 @@ export default function SignUpPage() {
             </svg>
             Continue with Google
           </button>
-        </div>
+        </Card>
 
-        <p className="mt-6 text-center text-[13px] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+        <p className="mt-6 text-center text-[13px] text-[var(--color-ink)]">
           Already have an account?{" "}
           <Link
             href="/signin"
-            className="text-[var(--color-ink)] hover:underline dark:text-[var(--color-ink-dark)]"
+            className="inline-flex min-h-11 items-center font-medium text-[var(--color-ink)] underline underline-offset-4"
           >
             Sign in
           </Link>

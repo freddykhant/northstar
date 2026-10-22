@@ -3,8 +3,14 @@
 import { useEffect, useState } from "react";
 import { formatDateAsLocal } from "~/lib/utils";
 import { api } from "~/trpc/react";
+import { Card, SegmentedControl } from "./primitives";
 
 type MoodLevel = 1 | 2 | 3 | 4 | 5;
+
+const VIEWS: { id: "week" | "year"; label: string }[] = [
+  { id: "week", label: "Week" },
+  { id: "year", label: "Year" },
+];
 
 const MOOD_EMOJIS: Record<MoodLevel, string> = {
   1: "😢",
@@ -187,23 +193,27 @@ export function MoodTracker() {
   };
 
   const Spinner = () => (
-    <div className="h-5 w-5 animate-spin rounded-full border-2 border-black/10 border-t-[var(--color-ember)] dark:border-white/10" />
+    <div className="h-5 w-5 animate-spin rounded-full border-2 border-[var(--color-hairline)] border-t-[var(--color-mind)]" />
   );
 
   if (todayLoading) {
     return (
-      <div className="flex items-center justify-center rounded-[12px] border border-black/8 bg-[var(--color-paper-raised)] py-10 dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)]">
+      <Card className="flex items-center justify-center py-10">
         <Spinner />
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="rounded-[12px] border border-black/8 bg-[var(--color-paper-raised)] p-6 dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)]">
+    <Card>
       {moodError && (
-        <div className="mb-4 flex items-center justify-between rounded-[6px] border border-[var(--color-ember)]/30 bg-[var(--color-ember)]/8 px-3 py-2 text-[12px] text-[var(--color-ember)]">
+        <div className="mb-4 flex items-center justify-between rounded-[6px] border border-[var(--color-mind)]/30 bg-[var(--color-mind)]/8 px-3 py-2 text-[12px] text-[var(--color-mind)]">
           <span>{moodError}</span>
-          <button onClick={() => setMoodError(null)} aria-label="Dismiss">
+          <button
+            type="button"
+            onClick={() => setMoodError(null)}
+            aria-label="Dismiss"
+          >
             ✕
           </button>
         </div>
@@ -211,23 +221,21 @@ export function MoodTracker() {
 
       {!hasSubmitted ? (
         <div>
-          <h3
-            className="mb-4 font-serif text-[20px] leading-none font-medium text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]"
-            style={{ fontOpticalSizing: "auto" }}
-          >
+          <h2 className="text-title mb-4 text-[var(--color-ink)]">
             How are you feeling today?
-          </h3>
+          </h2>
 
           <div className="mb-5 flex justify-between gap-2">
             {([1, 2, 3, 4, 5] as MoodLevel[]).map((level) => (
               <button
                 key={level}
+                type="button"
                 onClick={() => setSelectedMood(level)}
                 aria-label={`Mood level ${level}`}
                 className={`flex flex-1 items-center justify-center rounded-[8px] border py-3 text-[24px] ${
                   selectedMood === level
-                    ? "border-[var(--color-ember)] bg-[var(--color-ember)]/8"
-                    : "border-black/8 hover:border-black/16 dark:border-white/8 dark:hover:border-white/16"
+                    ? "border-[var(--color-mind)] bg-[var(--color-mind)]/8"
+                    : "border-[var(--color-hairline)] hover:border-[var(--color-ink-faint)]"
                 }`}
               >
                 <span aria-hidden>{MOOD_EMOJIS[level]}</span>
@@ -236,9 +244,10 @@ export function MoodTracker() {
           </div>
 
           <button
+            type="button"
             onClick={handleSubmit}
             disabled={!selectedMood || setMoodMutation.isPending}
-            className="w-full rounded-[8px] bg-[var(--color-ink)] py-2.5 text-[13px] font-medium text-[var(--color-paper)] hover:bg-black disabled:opacity-50 dark:bg-[var(--color-ink-dark)] dark:text-[var(--color-paper-dark)] dark:hover:bg-white"
+            className="w-full rounded-[8px] bg-[var(--color-ink)] py-2.5 text-[13px] font-medium text-[var(--color-canvas)] hover:opacity-90 disabled:opacity-50"
           >
             {setMoodMutation.isPending ? "Saving…" : "Save today's mood"}
           </button>
@@ -246,27 +255,12 @@ export function MoodTracker() {
       ) : (
         <div>
           <div className="mb-5 flex items-center justify-between">
-            <h3
-              className="font-serif text-[20px] leading-none font-medium text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]"
-              style={{ fontOpticalSizing: "auto" }}
-            >
-              Your mood
-            </h3>
-            <div className="flex items-center gap-0 rounded-[6px] border border-black/8 p-[2px] dark:border-white/8">
-              {(["week", "year"] as const).map((mode) => (
-                <button
-                  key={mode}
-                  onClick={() => setViewMode(mode)}
-                  className={`rounded-[4px] px-3 py-1 text-[11px] tracking-[0.04em] capitalize ${
-                    viewMode === mode
-                      ? "bg-black/6 text-[var(--color-ink)] dark:bg-white/8 dark:text-[var(--color-ink-dark)]"
-                      : "text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]"
-                  }`}
-                >
-                  {mode}
-                </button>
-              ))}
-            </div>
+            <h2 className="text-title text-[var(--color-ink)]">Your mood</h2>
+            <SegmentedControl
+              options={VIEWS}
+              value={viewMode}
+              onChange={setViewMode}
+            />
           </div>
 
           {viewMode === "week" ? (
@@ -283,13 +277,13 @@ export function MoodTracker() {
                       className="flex flex-1 flex-col items-center gap-2"
                     >
                       <div
-                        className="w-full rounded-t-[2px] bg-[var(--color-ember)]/70"
+                        className="w-full rounded-t-[2px] bg-[var(--color-mind)]/70"
                         style={{
                           height: `${(day.level / 5) * 100}%`,
                           minHeight: "8px",
                         }}
                       />
-                      <span className="text-[10px] tracking-[0.08em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
+                      <span className="text-[10px] tracking-[0.08em] text-[var(--color-ink-muted)] uppercase">
                         {day.dayLabel.slice(0, 1)}
                       </span>
                     </div>
@@ -297,18 +291,15 @@ export function MoodTracker() {
                 )}
               </div>
 
-              <div className="flex items-center justify-between border-t border-black/8 pt-4 dark:border-white/8">
-                <span className="text-[11px] tracking-[0.08em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
+              <div className="flex items-center justify-between border-t border-[var(--color-hairline)] pt-4">
+                <span className="text-[11px] tracking-[0.08em] text-[var(--color-ink-muted)] uppercase">
                   Weekly average
                 </span>
                 <div className="flex items-baseline gap-2">
                   <span aria-hidden className="text-[20px]">
                     {MOOD_EMOJIS[Math.round(weekAverage) as MoodLevel]}
                   </span>
-                  <span
-                    className="tabular font-serif text-[20px] font-medium text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]"
-                    style={{ fontOpticalSizing: "auto" }}
-                  >
+                  <span className="tabular text-[20px] font-medium text-[var(--color-ink)]">
                     {weekAverage.toFixed(1)}
                   </span>
                 </div>
@@ -325,34 +316,29 @@ export function MoodTracker() {
                   <span aria-hidden className="text-[48px]">
                     {MOOD_EMOJIS[Math.round(yearAverage) as MoodLevel]}
                   </span>
-                  <span
-                    className="tabular font-serif text-[56px] leading-none font-medium text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]"
-                    style={{
-                      fontOpticalSizing: "auto",
-                      letterSpacing: "-0.02em",
-                    }}
-                  >
+                  <span className="tabular text-[56px] leading-none font-bold tracking-[-0.02em] text-[var(--color-ink)]">
                     {yearAverage.toFixed(1)}
                   </span>
                 </div>
               )}
-              <div className="border-t border-black/8 pt-4 text-center text-[11px] tracking-[0.08em] text-[var(--color-ink-muted)] uppercase dark:border-white/8 dark:text-[var(--color-ink-dark-muted)]">
+              <div className="border-t border-[var(--color-hairline)] pt-4 text-center text-[11px] tracking-[0.08em] text-[var(--color-ink-muted)] uppercase">
                 Yearly average
               </div>
             </>
           )}
 
           <button
+            type="button"
             onClick={() => {
               setSelectedMood(null);
               void utils.mood.getByDate.invalidate();
             }}
-            className="mt-4 w-full rounded-[6px] border border-black/8 py-2 text-[12px] text-[var(--color-ink-muted)] hover:border-black/16 hover:text-[var(--color-ink)] dark:border-white/8 dark:text-[var(--color-ink-dark-muted)] dark:hover:border-white/16 dark:hover:text-[var(--color-ink-dark)]"
+            className="mt-4 w-full rounded-[6px] border border-[var(--color-hairline)] py-2 text-[12px] text-[var(--color-ink-muted)] hover:border-[var(--color-ink-faint)] hover:text-[var(--color-ink)]"
           >
-            Update today's mood
+            Update today&apos;s mood
           </button>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

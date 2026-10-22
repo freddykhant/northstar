@@ -26,28 +26,18 @@ export function Sidebar({ user }: SidebarProps) {
   const sidebarContent = (
     <>
       {/* Wordmark */}
-      <div className="flex items-baseline gap-2 border-b border-black/8 px-6 py-6 dark:border-white/8">
+      <div className="flex items-baseline gap-2 border-b border-[var(--color-hairline)] px-6 py-6">
         <span
           aria-hidden
-          className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-ember)]"
+          className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-mind)]"
         />
-        <span
-          className="font-serif text-[20px] italic tracking-tight text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]"
-          style={{ fontOpticalSizing: "auto" }}
-        >
-          northstar
-        </span>
-      </div>
-
-      {/* Section label */}
-      <div className="px-6 pt-6 pb-2">
-        <span className="text-[10px] font-medium tracking-[0.14em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
-          Navigate
+        <span className="text-[20px] font-extrabold tracking-[-0.02em] text-[var(--color-ink)]">
+          squii
         </span>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3">
+      <nav className="flex-1 px-3 pt-6">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -55,15 +45,13 @@ export function Sidebar({ user }: SidebarProps) {
               key={item.href}
               href={item.href}
               onClick={() => setMobileOpen(false)}
-              className={`relative flex items-center gap-3 rounded-[6px] px-3 py-2 text-[13px] ${
+              aria-current={isActive ? "page" : undefined}
+              className={`flex items-center gap-3 rounded-[var(--radius-control)] px-3 py-2 text-[13px] font-semibold ${
                 isActive
-                  ? "text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]"
-                  : "text-[var(--color-ink-muted)] hover:bg-black/3 hover:text-[var(--color-ink)] dark:text-[var(--color-ink-dark-muted)] dark:hover:bg-white/4 dark:hover:text-[var(--color-ink-dark)]"
+                  ? "bg-[var(--color-sunken)] text-[var(--color-ink)]"
+                  : "text-[var(--color-ink-muted)] hover:bg-[var(--color-sunken)] hover:text-[var(--color-ink)]"
               }`}
             >
-              {isActive && (
-                <span className="absolute top-1.5 bottom-1.5 left-0 w-[2px] rounded-full bg-[var(--color-ember)]" />
-              )}
               {item.label}
             </Link>
           );
@@ -71,7 +59,7 @@ export function Sidebar({ user }: SidebarProps) {
       </nav>
 
       {/* Bottom */}
-      <div className="border-t border-black/8 p-4 dark:border-white/8">
+      <div className="border-t border-[var(--color-hairline)] p-4">
         {user && <UserButton user={user} position="sidebar" />}
       </div>
     </>
@@ -81,7 +69,7 @@ export function Sidebar({ user }: SidebarProps) {
     <>
       {/* Mobile hamburger */}
       <button
-        className="fixed top-4 left-4 z-50 flex items-center justify-center rounded-[6px] border border-black/8 bg-[var(--color-paper-raised)] p-2 dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)] md:hidden"
+        className="fixed top-4 left-4 z-50 flex items-center justify-center rounded-[6px] border border-[var(--color-hairline)] bg-[var(--color-surface)] p-2 md:hidden"
         onClick={() => setMobileOpen((o) => !o)}
         aria-label="Toggle navigation"
       >
@@ -102,7 +90,7 @@ export function Sidebar({ user }: SidebarProps) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-40 flex h-screen w-60 flex-col overflow-hidden border-r border-black/8 bg-[var(--color-paper)] transition-transform duration-200 dark:border-white/8 dark:bg-[var(--color-paper-dark)] ${
+        className={`fixed top-0 left-0 z-40 flex h-screen w-60 flex-col overflow-hidden border-r border-[var(--color-hairline)] bg-[var(--color-canvas)] transition-transform duration-200 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >

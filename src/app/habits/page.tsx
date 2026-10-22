@@ -5,13 +5,9 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { HabitsList } from "~/_components/ui/habits-list";
+import { Card, Pill } from "~/_components/ui/primitives";
 import { Sidebar } from "~/_components/ui/sidebar";
-import {
-  CATEGORY_DESCRIPTIONS,
-  CATEGORY_HEX,
-  CATEGORY_IDS,
-  CATEGORY_LABELS,
-} from "~/lib/constants";
+import { CATEGORY_DESCRIPTIONS, CATEGORY_IDS } from "~/lib/constants";
 import type { CategoryId } from "~/lib/types";
 import { api } from "~/trpc/react";
 
@@ -116,7 +112,7 @@ export default function HabitsPage() {
 
   if (status === "loading" || habitsLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[var(--color-paper)] text-[var(--color-ink-muted)] dark:bg-[var(--color-paper-dark)] dark:text-[var(--color-ink-dark-muted)]">
+      <div className="flex min-h-screen items-center justify-center bg-[var(--color-canvas)] text-[var(--color-ink-muted)]">
         <div className="text-[13px]">Loading…</div>
       </div>
     );
@@ -137,7 +133,12 @@ export default function HabitsPage() {
     }
   };
 
-  const handleEdit = (habit: { id: number; name: string; description: string | null; categoryId: string }) => {
+  const handleEdit = (habit: {
+    id: number;
+    name: string;
+    description: string | null;
+    categoryId: string;
+  }) => {
     setEditingHabit(habit.id);
     setFormData({
       name: habit.name,
@@ -147,16 +148,14 @@ export default function HabitsPage() {
     setIsModalOpen(true);
   };
 
-  const selectedTint = CATEGORY_HEX[formData.categoryId];
-
   return (
-    <div className="relative flex min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)] dark:bg-[var(--color-paper-dark)] dark:text-[var(--color-ink-dark)]">
+    <div className="relative flex min-h-screen bg-[var(--color-canvas)] text-[var(--color-ink)]">
       <Sidebar user={session?.user} />
 
-      <main className="relative flex-1 md:ml-64">
-        <div className="mx-auto max-w-3xl px-6 py-16">
+      <div className="relative flex-1 md:ml-60">
+        <main className="mx-auto max-w-4xl px-5 pt-8 pb-24 sm:px-6 lg:px-8">
           {mutationError && (
-            <div className="mb-6 flex items-center justify-between rounded-[6px] border border-[var(--color-ember)]/30 bg-[var(--color-ember)]/8 px-3 py-2 text-[12px] text-[var(--color-ember)]">
+            <div className="mb-6 flex items-center justify-between rounded-[var(--radius-control)] border border-[var(--color-body)]/30 bg-[var(--color-body)]/10 px-4 py-3 text-[13px] font-semibold text-[var(--color-body-ink)]">
               <span>{mutationError}</span>
               <button
                 onClick={() => setMutationError(null)}
@@ -168,24 +167,16 @@ export default function HabitsPage() {
           )}
 
           {/* Page header */}
-          <header className="mb-12 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+          <header className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h1
-                className="font-serif text-[36px] leading-[1.05] font-medium sm:text-[40px]"
-                style={{
-                  fontOpticalSizing: "auto",
-                  letterSpacing: "-0.02em",
-                }}
-              >
-                Habits
-              </h1>
-              <p className="mt-3 text-[13px] tracking-[0.04em] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+              <h1 className="text-display text-[var(--color-ink)]">Habits</h1>
+              <p className="mt-3 text-[13px] tracking-[0.04em] text-[var(--color-ink-muted)]">
                 Practices for mind, body, and soul.
               </p>
             </div>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="inline-flex w-fit items-center gap-2 rounded-[6px] bg-[var(--color-ink)] px-4 py-2.5 text-[13px] font-medium text-[var(--color-paper)] hover:bg-black dark:bg-[var(--color-ink-dark)] dark:text-[var(--color-paper-dark)] dark:hover:bg-white"
+              className="inline-flex w-fit items-center gap-2 rounded-[var(--radius-control)] bg-[var(--color-ink)] px-4 py-2.5 text-[13px] font-bold text-[var(--color-canvas)] hover:opacity-90"
             >
               <Plus size={14} weight="bold" />
               New habit
@@ -202,59 +193,53 @@ export default function HabitsPage() {
               isDeleting={deleteMutation.isPending}
             />
           ) : (
-            <div className="rounded-[12px] border border-black/8 bg-[var(--color-paper-raised)] p-12 text-center dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)]">
+            <Card className="p-12 text-center">
               <Feather
                 size={32}
                 weight="duotone"
-                className="mx-auto mb-4 text-[var(--color-ember)]"
+                className="mx-auto mb-4 text-[var(--color-mind)]"
               />
-              <h2
-                className="mb-2 font-serif text-[22px] font-medium"
-                style={{ fontOpticalSizing: "auto" }}
-              >
+              <h2 className="text-title mb-2 text-[var(--color-ink)]">
                 A blank page
               </h2>
-              <p className="mb-6 font-serif text-[14px] italic text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+              <p className="mb-6 text-[14px] text-[var(--color-ink-muted)]">
                 Begin with one practice you can hold for a week.
               </p>
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="inline-flex items-center gap-2 rounded-[6px] bg-[var(--color-ink)] px-5 py-2.5 text-[13px] font-medium text-[var(--color-paper)] hover:bg-black dark:bg-[var(--color-ink-dark)] dark:text-[var(--color-paper-dark)] dark:hover:bg-white"
+                className="inline-flex items-center gap-2 rounded-[var(--radius-control)] bg-[var(--color-ink)] px-5 py-2.5 text-[13px] font-bold text-[var(--color-canvas)] hover:opacity-90"
               >
                 <Plus size={14} weight="bold" />
                 Create your first habit
               </button>
-            </div>
+            </Card>
           )}
-        </div>
-      </main>
+        </main>
+      </div>
 
-      {/* Modal — paper sheet */}
+      {/* Modal */}
       {isModalOpen && (
         <div
           className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-6"
           onClick={closeModal}
         >
-          <div className="absolute inset-0 bg-black/30 dark:bg-black/60" />
+          <div className="absolute inset-0 bg-black/30" />
           <div
-            className="relative w-full max-w-lg rounded-t-[12px] border border-black/8 bg-[var(--color-paper-raised)] p-7 sm:rounded-[12px] dark:border-white/8 dark:bg-[var(--color-paper-dark-raised)]"
+            className="relative w-full max-w-lg rounded-t-[var(--radius-card)] border border-[var(--color-hairline)] bg-[var(--color-surface)] p-7 shadow-[var(--shadow-lift)] sm:rounded-[var(--radius-card)]"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={closeModal}
               aria-label="Close"
-              className="absolute top-4 right-4 rounded-[4px] p-1.5 text-[var(--color-ink-muted)] hover:bg-black/4 hover:text-[var(--color-ink)] dark:text-[var(--color-ink-dark-muted)] dark:hover:bg-white/6 dark:hover:text-[var(--color-ink-dark)]"
+              className="absolute top-4 right-4 rounded-[var(--radius-control)] p-1.5 text-[var(--color-ink-muted)] hover:bg-[var(--color-sunken)] hover:text-[var(--color-ink)]"
             >
               <X size={16} />
             </button>
 
-            <h2
-              className="mb-1 font-serif text-[24px] font-medium"
-              style={{ fontOpticalSizing: "auto" }}
-            >
+            <h2 className="text-title mb-1 text-[var(--color-ink)]">
               {editingHabit ? "Edit habit" : "New habit"}
             </h2>
-            <p className="mb-6 text-[12px] tracking-[0.04em] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+            <p className="mb-6 text-[12px] tracking-[0.04em] text-[var(--color-ink-muted)]">
               {editingHabit
                 ? "Update the details below."
                 : "A category and a name is all you need."}
@@ -263,39 +248,37 @@ export default function HabitsPage() {
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Category */}
               <div>
-                <label className="mb-2 block text-[11px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]">
+                <label className="mb-2 block text-[11px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase">
                   Category
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                   {CATEGORY_IDS.map((cat) => {
-                    const tint = CATEGORY_HEX[cat];
                     const isSelected = formData.categoryId === cat;
                     return (
                       <button
                         key={cat}
                         type="button"
+                        aria-pressed={isSelected}
                         onClick={() =>
                           setFormData({ ...formData, categoryId: cat })
                         }
-                        className={`flex items-center gap-2 rounded-[6px] border px-3 py-2.5 text-left ${
+                        style={
                           isSelected
-                            ? "border-[var(--color-ember)] bg-[var(--color-ember)]/8"
-                            : "border-black/8 hover:border-black/16 dark:border-white/8 dark:hover:border-white/16"
+                            ? { borderColor: `var(--color-${cat})` }
+                            : undefined
+                        }
+                        className={`flex items-center justify-center rounded-[var(--radius-control)] border px-2 py-2.5 ${
+                          isSelected
+                            ? ""
+                            : "border-[var(--color-hairline)] hover:border-[var(--color-ink-faint)]"
                         }`}
                       >
-                        <span
-                          aria-hidden
-                          className="inline-block h-1.5 w-1.5 shrink-0 rounded-full"
-                          style={{ backgroundColor: tint }}
-                        />
-                        <span className="text-[13px] text-[var(--color-ink)] dark:text-[var(--color-ink-dark)]">
-                          {CATEGORY_LABELS[cat]}
-                        </span>
+                        <Pill category={cat} />
                       </button>
                     );
                   })}
                 </div>
-                <p className="mt-2 text-[11px] text-[var(--color-ink-muted)] dark:text-[var(--color-ink-dark-muted)]">
+                <p className="mt-2 text-[11px] text-[var(--color-ink-muted)]">
                   {CATEGORY_DESCRIPTIONS[formData.categoryId]}
                 </p>
               </div>
@@ -304,7 +287,7 @@ export default function HabitsPage() {
               <div>
                 <label
                   htmlFor="habit-name"
-                  className="mb-2 block text-[11px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]"
+                  className="mb-2 block text-[11px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase"
                 >
                   Name
                 </label>
@@ -317,7 +300,7 @@ export default function HabitsPage() {
                   }
                   placeholder={`e.g., ${EXAMPLES[formData.categoryId][0]}`}
                   autoFocus
-                  className="w-full rounded-[6px] border border-black/8 bg-transparent px-3 py-2.5 text-[14px] text-[var(--color-ink)] placeholder-[var(--color-ink-muted)]/60 focus:border-[var(--color-ember)] focus:outline-none dark:border-white/8 dark:text-[var(--color-ink-dark)]"
+                  className="w-full rounded-[var(--radius-control)] border border-[var(--color-field-border)] bg-transparent px-3 py-2.5 text-[14px] text-[var(--color-ink)] focus:border-[var(--color-mind)] focus:outline-none"
                 />
                 {!editingHabit && (
                   <div className="mt-2 flex flex-wrap gap-1.5">
@@ -328,7 +311,7 @@ export default function HabitsPage() {
                         onClick={() =>
                           setFormData({ ...formData, name: example })
                         }
-                        className="rounded-[4px] border border-black/8 px-2 py-1 text-[11px] text-[var(--color-ink-muted)] hover:border-black/16 hover:text-[var(--color-ink)] dark:border-white/8 dark:text-[var(--color-ink-dark-muted)] dark:hover:border-white/16 dark:hover:text-[var(--color-ink-dark)]"
+                        className="rounded-[8px] border border-[var(--color-hairline)] px-2 py-1 text-[11px] text-[var(--color-ink-muted)] hover:border-[var(--color-ink-faint)] hover:text-[var(--color-ink)]"
                       >
                         {example}
                       </button>
@@ -341,9 +324,10 @@ export default function HabitsPage() {
               <div>
                 <label
                   htmlFor="habit-description"
-                  className="mb-2 block text-[11px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase dark:text-[var(--color-ink-dark-muted)]"
+                  className="mb-2 block text-[11px] tracking-[0.14em] text-[var(--color-ink-muted)] uppercase"
                 >
-                  Note <span className="text-[10px] normal-case">(optional)</span>
+                  Note{" "}
+                  <span className="text-[10px] normal-case">(optional)</span>
                 </label>
                 <textarea
                   id="habit-description"
@@ -353,7 +337,7 @@ export default function HabitsPage() {
                   }
                   placeholder="Why this matters to you."
                   rows={2}
-                  className="w-full rounded-[6px] border border-black/8 bg-transparent px-3 py-2.5 text-[13px] text-[var(--color-ink)] placeholder-[var(--color-ink-muted)]/60 focus:border-[var(--color-ember)] focus:outline-none dark:border-white/8 dark:text-[var(--color-ink-dark)]"
+                  className="w-full rounded-[var(--radius-control)] border border-[var(--color-field-border)] bg-transparent px-3 py-2.5 text-[13px] text-[var(--color-ink)] focus:border-[var(--color-mind)] focus:outline-none"
                 />
               </div>
 
@@ -361,7 +345,7 @@ export default function HabitsPage() {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="rounded-[6px] border border-black/8 px-4 py-2.5 text-[13px] text-[var(--color-ink-muted)] hover:border-black/16 hover:text-[var(--color-ink)] dark:border-white/8 dark:text-[var(--color-ink-dark-muted)] dark:hover:border-white/16 dark:hover:text-[var(--color-ink-dark)]"
+                  className="rounded-[var(--radius-control)] border border-[var(--color-hairline)] px-4 py-2.5 text-[13px] text-[var(--color-ink-muted)] hover:border-[var(--color-ink-faint)] hover:text-[var(--color-ink)]"
                 >
                   Cancel
                 </button>
@@ -372,12 +356,7 @@ export default function HabitsPage() {
                     createMutation.isPending ||
                     updateMutation.isPending
                   }
-                  style={{
-                    backgroundColor: editingHabit
-                      ? "var(--color-ink)"
-                      : selectedTint,
-                  }}
-                  className="ml-auto rounded-[6px] px-5 py-2.5 text-[13px] font-medium text-[#fbf9f3] hover:opacity-90 disabled:opacity-40"
+                  className="ml-auto rounded-[var(--radius-control)] bg-[var(--color-ink)] px-5 py-2.5 text-[13px] font-bold text-[var(--color-canvas)] hover:opacity-90 disabled:opacity-40"
                 >
                   {createMutation.isPending || updateMutation.isPending
                     ? "Saving…"
