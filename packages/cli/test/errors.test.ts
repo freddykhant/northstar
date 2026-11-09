@@ -60,3 +60,17 @@ describe("toFriendlyMessage", () => {
     expect(toFriendlyMessage("weird", inn)).toBe(fallback);
   });
 });
+
+describe("toFriendlyMessage extras", () => {
+  const fallback = "Something went wrong on Squii's side. Try again in a moment.";
+  it("treats unreachable networks as offline", () => {
+    for (const code of ["ENETUNREACH", "EHOSTUNREACH"]) {
+      expect(toFriendlyMessage(fetchFailed(code), inn)).toBe("Squii can't reach the internet right now.");
+    }
+  });
+  it("does not forward tRPC's own procedure-not-found", () => {
+    expect(toFriendlyMessage(trpcError("NOT_FOUND", 'No procedure found on path "habit.nope"'), inn)).toBe(
+      fallback,
+    );
+  });
+});

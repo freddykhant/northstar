@@ -23,6 +23,8 @@ const OFFLINE_CODES = new Set([
   "ECONNRESET",
   "ETIMEDOUT",
   "EAI_AGAIN",
+  "ENETUNREACH",
+  "EHOSTUNREACH",
   "UND_ERR_CONNECT_TIMEOUT",
 ]);
 
@@ -51,7 +53,10 @@ export function toFriendlyMessage(err: unknown, ctx: { signedIn: boolean }): str
         ? "You've been signed out. Run `squii login`."
         : "You're not signed in yet. Run `squii login`.";
     }
-    if (typeof code === "string" && PASSTHROUGH.has(code)) return err.message;
+    if (code === "NOT_FOUND" && err.message.startsWith("No procedure found")) {
+        return "Something went wrong on Squii's side. Try again in a moment.";
+      }
+      if (typeof code === "string" && PASSTHROUGH.has(code)) return err.message;
   }
   return "Something went wrong on Squii's side. Try again in a moment.";
 }
