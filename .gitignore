@@ -16,6 +16,7 @@ db.sqlite
 # production
 /build
 dist/
+/apps/api/server.mjs
 
 # misc
 .DS_Store
