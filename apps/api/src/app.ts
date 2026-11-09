@@ -2,6 +2,9 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { Hono } from "hono";
 import { resolveCliToken } from "./cli-auth/store.ts";
 import type { Db } from "./db/client.ts";
+import { homePage } from "./pages/home.ts";
+import { privacyPage } from "./pages/privacy.ts";
+import { signinPage } from "./pages/signin.ts";
 import { appRouter } from "./trpc/root.ts";
 
 export type AppDeps = {
@@ -58,6 +61,13 @@ export function createApp(deps: AppDeps): Hono {
       },
     }),
   );
+
+  app.on(["GET", "POST"], "/api/auth/*", (c) => deps.auth.handler(c.req.raw));
+
+  // /squid.png is served from public/ by the host (Vercel CDN, or dev.ts locally).
+  app.get("/", (c) => c.html(homePage()));
+  app.get("/privacy", (c) => c.html(privacyPage()));
+  app.get("/signin", (c) => c.html(signinPage(c.req.query("next"))));
 
   return app;
 }
