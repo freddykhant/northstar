@@ -27,23 +27,11 @@ Order matters: prove the new build boots on Vercel (preview, no database needed)
    - `$PREVIEW/` shows the Squii page with `npm i -g squii`.
    - `$PREVIEW/trpc/me.whoami` shows a JSON `UNAUTHORIZED` error (the 426 check with an old `x-squii-version` runs against production in step 7, where curl works).
    - If either shows "This page is unavailable", read the deployment's Runtime Logs in the dashboard (`vercel logs` only streams new lines). Do not continue to step 6 until both checks pass.
-6. **Reset the database. DESTRUCTIVE: Freddy must reconfirm the wipe at the time, and the agent stops and asks before running (b) to (d).** `drizzle-kit` reads `STORAGE_DATABASE_URL` from the shell environment only (it does not load `.env`). Run from the repo root.
-   - Prerequisite: `psql`. Either `brew install libpq` and `export PATH="/opt/homebrew/opt/libpq/bin:$PATH"` (use `/usr/local/opt/libpq/bin` on Intel Macs), or run the SQL of (b), (c) and (e) in the Neon console SQL editor instead and skip `psql`.
-   - (a) Confirm the target. Read the URL without echoing it or saving it to shell history, then print host and database name without the password; Freddy confirms it is the Squii/Northstar Neon database:
-     ```sh
-     read -rs STORAGE_DATABASE_URL; export STORAGE_DATABASE_URL   # paste the production URL, press Enter
-     node -e 'const u=new URL(process.env.STORAGE_DATABASE_URL);console.log("host:",u.host,"db:",u.pathname.slice(1))'
-     ```
-   - (b) List existing tables: `psql "$STORAGE_DATABASE_URL" -c '\dt'`. Expect the old `northstar_*` tables (and nothing Freddy wants to keep).
-   - (c) Drop the old tables (names from `git show web-final:src/server/db/schema.ts`):
-     ```sh
-     psql "$STORAGE_DATABASE_URL" -c 'DROP TABLE IF EXISTS
-       northstar_category, northstar_habit, northstar_completion, northstar_mood,
-       northstar_user, northstar_account, northstar_session, northstar_verification_token CASCADE;'
-     ```
-     An old `drizzle.__drizzle_migrations` table may remain. It is harmless: drizzle applies a migration only if its `when` is later than the last recorded one, and the new migration's `when` (2026-11) is later. To start clean anyway, also run `psql "$STORAGE_DATABASE_URL" -c 'DROP SCHEMA IF EXISTS drizzle CASCADE;'`.
-   - (d) Migrate: `pnpm --filter @squii/api exec drizzle-kit migrate`
-   - (e) Check: `psql "$STORAGE_DATABASE_URL" -c '\dt'` lists exactly `user, session, account, verification, habit, completion, mood, cli_auth_code, cli_token` plus drizzle's migrations table (it lives in the `drizzle` schema, so it does not show in `\dt`).
+6. **Create the Squii tables (done 2026-11-09, additive).** The new tables (`user`, `session`, `account`, `verification`, `habit`, `completion`, `mood`, `cli_auth_code`, `cli_token`) were created beside the old `northstar_*` tables, so the old production app kept working until the promote. How it was done, for a fresh database:
+   - Postgres index names are schema-wide. The old `northstar_completion` had an index named `completion_user_date_idx`, which collided with ours; it was renamed to `northstar_completion_user_date_idx` first.
+   - Migrate with drizzle-kit, which runs the migration in one transaction: `node --env-file=../../.env node_modules/drizzle-kit/bin.cjs migrate` from `apps/api`. drizzle-kit exits 1 **without printing the error** when a statement fails; to see it, read the error from a disposable database, not from drizzle-orm's `neon-http` migrator against production: that migrator is not transactional and leaves a half-applied schema.
+   - Check: the 9 tables exist and `select count(*) from drizzle.__drizzle_migrations` is 1.
+   - Dropping the old tables happens after step 8, and only with Freddy's go-ahead at the time: `DROP TABLE northstar_category, northstar_habit, northstar_completion, northstar_user, northstar_account, northstar_session, northstar_verification_token CASCADE;` (there is no `northstar_mood` in production).
 7. **Promote to production.** Merge the branch (or promote the preview in the Vercel dashboard). Smoke-test production the same way as step 5 but with `https://northstar-one.vercel.app`.
 8. **Freddy: real sign-in.** `node packages/cli/dist/index.js login`; the browser opens, sign in with Google, Continue, "You're in". Check: `node packages/cli/dist/index.js whoami` prints name and email. Repeat with GitHub after `logout`.
 
