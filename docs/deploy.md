@@ -1,6 +1,6 @@
 # Deploying the Squii API
 
-The API (`apps/api`) runs on Vercel at https://northstar-one.vercel.app. The Vercel entry is `apps/api/src/index.ts`; it default-exports the Hono app from `createApp`. Static files in `apps/api/public/` (for example `squid.png`) are served by Vercel's CDN, not by the app.
+The API (`apps/api`) runs on Vercel at https://northstar-one.vercel.app. The Vercel entry is `apps/api/src/index.ts`; it imports `Hono`, mounts the `createApp` app on a new `Hono` instance and default-exports it (the Vercel docs require the entry to import the `hono` package). Static files in `apps/api/public/` (for example `squid.png`) are served by Vercel's CDN, not by the app.
 
 ## Settings that must be exact
 
@@ -21,7 +21,21 @@ The API (`apps/api`) runs on Vercel at https://northstar-one.vercel.app. The Ver
 2. **Freddy: GitHub OAuth apps.** Production: homepage `https://northstar-one.vercel.app`, callback `https://northstar-one.vercel.app/api/auth/callback/github`. Local: a second app with callback `http://localhost:8787/api/auth/callback/github`.
 3. **Freddy: Google OAuth client.** Add the redirect URIs `https://northstar-one.vercel.app/api/auth/callback/google` and `http://localhost:8787/api/auth/callback/google`. On the consent screen set the homepage to `/` and the privacy policy to `/privacy`, then publish it to production.
 4. **Freddy: Vercel project.** Root directory `apps/api`, framework preset Hono. Env vars: `STORAGE_DATABASE_URL` (existing), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL=https://northstar-one.vercel.app`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `MIN_CLI_VERSION=0.1.0`.
-5. **Reset the database (destructive; Freddy must reconfirm the wipe at the time).** Drop the old `northstar_*` tables, then run `pnpm --filter @squii/api exec drizzle-kit migrate`. Check: `\dt` lists exactly `user, session, account, verification, habit, completion, mood, cli_auth_code, cli_token` plus drizzle's migrations table.
+5. **Reset the database. DESTRUCTIVE: Freddy must reconfirm the wipe at the time, and the agent stops and asks before running (b) to (d).** `drizzle-kit` reads `STORAGE_DATABASE_URL` from the shell environment only (it does not load `.env`), so pass it explicitly. Run from the repo root:
+   - (a) Confirm the target. Prints host and database name without the password; Freddy confirms it is the Squii/Northstar Neon database:
+     ```sh
+     export STORAGE_DATABASE_URL='postgres://...'   # paste the production URL
+     node -e 'const u=new URL(process.env.STORAGE_DATABASE_URL);console.log("host:",u.host,"db:",u.pathname.slice(1))'
+     ```
+   - (b) List existing tables: `psql "$STORAGE_DATABASE_URL" -c '\dt'`. Expect the old `northstar_*` tables (and nothing Freddy wants to keep).
+   - (c) Drop the old tables (names from `git show web-final:src/server/db/schema.ts`):
+     ```sh
+     psql "$STORAGE_DATABASE_URL" -c 'DROP TABLE IF EXISTS
+       northstar_category, northstar_habit, northstar_completion, northstar_mood,
+       northstar_user, northstar_account, northstar_session, northstar_verification_token CASCADE;'
+     ```
+   - (d) Migrate with the URL passed explicitly: `STORAGE_DATABASE_URL="$STORAGE_DATABASE_URL" pnpm --filter @squii/api exec drizzle-kit migrate`
+   - (e) Check: `psql "$STORAGE_DATABASE_URL" -c '\dt'` lists exactly `user, session, account, verification, habit, completion, mood, cli_auth_code, cli_token` plus drizzle's migrations table (`__drizzle_migrations`, possibly in the `drizzle` schema, in which case it does not show in `\dt`).
 6. **Deploy and smoke-test.** Push the branch and let Vercel build, or ask Freddy to promote it. Checks:
    - `curl -s https://northstar-one.vercel.app/ | grep "npm i -g squii"` matches.
    - `curl -s -o /dev/null -w "%{http_code}" -H "x-squii-version: 0.0.1" https://northstar-one.vercel.app/trpc/me.whoami` prints `426`.
