@@ -1,5 +1,6 @@
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { Hono } from "hono";
+import { cliRoutes } from "./cli-auth/routes.ts";
 import { resolveCliToken } from "./cli-auth/store.ts";
 import type { Db } from "./db/client.ts";
 import { homePage } from "./pages/home.ts";
@@ -63,6 +64,8 @@ export function createApp(deps: AppDeps): Hono {
   );
 
   app.on(["GET", "POST"], "/api/auth/*", (c) => deps.auth.handler(c.req.raw));
+
+  app.route("/cli", cliRoutes(deps));
 
   // /squid.png is served from public/ by the host (Vercel CDN, or dev.ts locally).
   app.get("/", (c) => c.html(homePage()));
