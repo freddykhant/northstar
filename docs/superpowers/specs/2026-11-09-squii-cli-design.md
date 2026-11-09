@@ -286,7 +286,9 @@ everyone's data. Drizzle + Neon stay, behind the hosted API (Freddy agreed).
 
 The Next.js app, NextAuth, the landing page and auth pages are deleted.
 
-**Language and runtime (Freddy):** TypeScript throughout. Node 20+ (call). **No
+**Language and runtime (Freddy):** TypeScript throughout. Node 22.12+ (call;
+raised from 20 while planning: Node 20 reached end of life in April 2026, and
+commander 15, vitest 5 and tsup 9 all require 22.12+). **No
 native dependencies** in the CLI, so install can't fail on a build step.
 
 **Hosting (call):** the API on Vercel with Neon, the stack the repo already
