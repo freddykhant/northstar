@@ -24,6 +24,7 @@
     "superjson": "^2.2.6"
   },
   "devDependencies": {
+    "@hono/node-server": "^2.1.6",
     "@squii/api": "workspace:*",
     "@squii/core": "workspace:*",
     "tsup": "^9.0.0"

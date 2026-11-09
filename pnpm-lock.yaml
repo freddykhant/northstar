@@ -20,6 +20,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@hono/node-server':
+        specifier: ^2.1.6
+        version: 2.1.6(hono@4.13.17)
       '@neondatabase/serverless':
         specifier: ^1.2.0
         version: 1.2.0
@@ -51,6 +54,9 @@ importers:
       drizzle-kit:
         specifier: ^0.31.11
         version: 0.31.11
+      tsx:
+        specifier: ^4.23.15
+        version: 4.23.15
 
   packages/cli:
     dependencies:
@@ -70,6 +76,9 @@ importers:
         specifier: ^2.2.6
         version: 2.2.6
     devDependencies:
+      '@hono/node-server':
+        specifier: ^2.1.6
+        version: 2.1.6(hono@4.13.17)
       '@squii/api':
         specifier: workspace:*
         version: link:../../apps/api
@@ -625,6 +634,12 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@hono/node-server@2.1.6':
+    resolution: {integrity: sha512-p/KH9MnfNcsm3sR6x4lNgm5j+QN4Et8srKredl9DZfXiyZ1UQ3aQ2YVpFLbqktYN5JI+DB+VZFKM2PqE5hLKjQ==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      hono: ^4 || ^5.0.0-0
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -1933,6 +1948,10 @@ snapshots:
 
   '@esbuild/win32-x64@0.28.2':
     optional: true
+
+  '@hono/node-server@2.1.6(hono@4.13.17)':
+    dependencies:
+      hono: 4.13.17
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
