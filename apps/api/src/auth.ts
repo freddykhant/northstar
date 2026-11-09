@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import type { AppDeps } from "./app.ts";
+import type { AppDeps } from "./create-app.ts";
 import type { Db } from "./db/client.ts";
 import * as authSchema from "./db/auth-schema.ts";
 import type { Env } from "./env.ts";

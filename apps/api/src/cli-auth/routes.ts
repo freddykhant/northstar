@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import type { AppDeps } from "../app.ts";
+import type { AppDeps } from "../create-app.ts";
 import { cliConfirmPage, cliErrorPage } from "../pages/cli-confirm.ts";
 import { cliDonePage } from "../pages/cli-done.ts";
 import { user } from "../db/schema.ts";

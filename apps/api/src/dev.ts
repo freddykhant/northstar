@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
-import { createApp } from "./app.ts";
+import { createApp } from "./create-app.ts";
 import { createAuth } from "./auth.ts";
 import { createDb } from "./db/client.ts";
 import { loadEnv } from "./env.ts";

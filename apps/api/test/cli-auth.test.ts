@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
-import { createApp } from "../src/app.ts";
+import { createApp } from "../src/create-app.ts";
 import { sha256Base64Url, verifyPkce } from "../src/cli-auth/crypto.ts";
 import { issueCliToken, resolveCliToken } from "../src/cli-auth/store.ts";
 import type { Db } from "../src/db/client.ts";

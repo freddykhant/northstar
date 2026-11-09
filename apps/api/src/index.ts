@@ -1,8 +1,10 @@
 // Vercel entry (Hono preset detects src/index.ts and uses the default export;
 // its docs ask for a file that imports the hono package, hence the direct import).
+// Keep this the only preset entry name in src/ (app, index, server): with two,
+// the preset picks src/app.ts, which is why the factory lives in create-app.ts.
 // Env is read at import, so a missing variable fails the cold start loudly.
 import { Hono } from "hono";
-import { createApp } from "./app.ts";
+import { createApp } from "./create-app.ts";
 import { createAuth } from "./auth.ts";
 import { createDb } from "./db/client.ts";
 import { loadEnv } from "./env.ts";

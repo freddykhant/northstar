@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createApp } from "../src/app.ts";
+import { createApp } from "../src/create-app.ts";
 import { createAuth } from "../src/auth.ts";
 import { loadEnv } from "../src/env.ts";
 import { escapeHtml } from "../src/pages/layout.ts";
