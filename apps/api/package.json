@@ -1,0 +1,23 @@
+{
+  "name": "@squii/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.2.0",
+    "@squii/core": "workspace:*",
+    "better-auth": "^1.7.18",
+    "drizzle-orm": "^0.45.4",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.15",
+    "drizzle-kit": "^0.31.11"
+  }
+}
