@@ -1,0 +1,32 @@
+{
+  "name": "squii",
+  "version": "0.1.0",
+  "description": "A calm, CLI-first habit tracker.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "bin": {
+    "squii": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.8.0",
+    "@trpc/client": "^11.25.2",
+    "commander": "^15.0.0",
+    "open": "^11.0.0",
+    "superjson": "^2.2.6"
+  },
+  "devDependencies": {
+    "@hono/node-server": "^2.1.6",
+    "@squii/api": "workspace:*",
+    "@squii/core": "workspace:*",
+    "tsup": "^9.0.0"
+  }
+}
