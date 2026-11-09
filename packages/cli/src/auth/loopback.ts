@@ -56,6 +56,8 @@ export async function startLoopback(opts: {
     settle(() => resolveCode(got));
   });
 
+  // server.close() stops accepting connections immediately; in-flight responses
+  // (which carry `connection: close`) still flush before the socket ends.
   function close(): Promise<void> {
     closing ??= new Promise<void>((resolve) => {
       if (timer) clearTimeout(timer);
@@ -68,13 +70,10 @@ export async function startLoopback(opts: {
   function settle(fn: () => void): void {
     if (settled) return;
     settled = true;
-    if (timer) clearTimeout(timer);
+    // Stop listening BEFORE settling, so the port is free once `code` settles.
+    void close();
+    setTimeout(() => server.closeAllConnections(), 250).unref();
     fn();
-    // Let the in-flight response flush, then drop any keep-alive sockets.
-    setImmediate(() => {
-      void close();
-      setTimeout(() => server.closeAllConnections(), 250).unref();
-    });
   }
 
   await new Promise<void>((resolve, reject) => {
