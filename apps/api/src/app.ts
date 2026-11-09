@@ -44,6 +44,8 @@ export function createApp(deps: AppDeps): Hono {
 
   app.use("*", async (c, next) => {
     const v = c.req.header("x-squii-version");
+    // Logout must always be able to revoke a token, even from an outdated CLI.
+    if (c.req.path === "/cli/revoke") return next();
     if (v !== undefined && isOlderThan(v, deps.minCliVersion)) {
       return c.json({ error: "upgrade_required", minVersion: deps.minCliVersion }, 426);
     }
@@ -55,6 +57,10 @@ export function createApp(deps: AppDeps): Hono {
       endpoint: "/trpc",
       req: c.req.raw,
       router: appRouter,
+      onError: ({ error, path }) => {
+        // Server-side only. Never log headers or tokens.
+        console.error(`tRPC error on ${path ?? "<unknown>"}:`, error);
+      },
       createContext: async ({ req }) => {
         const match = /^Bearer\s+(\S+)$/i.exec(req.headers.get("authorization") ?? "");
         const userId = match?.[1] ? await resolveCliToken(deps.db, match[1], now()) : null;

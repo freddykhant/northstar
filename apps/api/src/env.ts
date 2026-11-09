@@ -8,7 +8,8 @@ const envSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().min(1),
   GITHUB_CLIENT_ID: z.string().min(1),
   GITHUB_CLIENT_SECRET: z.string().min(1),
-  MIN_CLI_VERSION: z.string().min(1).default("0.0.0"),
+  // An empty value (e.g. a blank line in .env) counts as unset.
+  MIN_CLI_VERSION: z.preprocess((v) => (v === "" ? undefined : v), z.string().min(1).default("0.0.0")),
 });
 
 export function loadEnv(source: Record<string, string | undefined> = process.env) {

@@ -2,7 +2,8 @@ import { addDays, daysBetween, isLocalDate, type LocalDate } from "@squii/core";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-export const localDateInput = z.string().refine(isLocalDate, { message: "Expected a date like 2026-11-09." });
+const DATE_MESSAGE = "Dates look like 2026-11-09.";
+export const localDateInput = z.string({ message: DATE_MESSAGE }).refine(isLocalDate, { message: DATE_MESSAGE });
 
 /** The UTC calendar date of `now`. */
 export function utcDateOf(now: Date): LocalDate {

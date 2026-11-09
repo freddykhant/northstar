@@ -5,9 +5,8 @@ import { z } from "zod";
 import { completion, habit } from "../../db/schema.ts";
 import { assertBackfillable, assertPlausibleToday, localDateInput } from "../dates.ts";
 import { protectedProcedure, router } from "../init.ts";
-import { habitColumns, habitOrderBy, type Habit } from "./habit.ts";
+import { habitColumns, habitId, habitOrderBy, type Habit } from "./habit.ts";
 
-const habitId = z.number().int().positive().max(2147483647);
 
 export const completionRouter = router({
   ink: protectedProcedure

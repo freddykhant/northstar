@@ -66,7 +66,7 @@ export function cliRoutes(deps: AppDeps): Hono {
   app.post("/authorize", async (c) => {
     const origin = c.req.header("origin");
     if (origin !== undefined && origin !== new URL(deps.publicUrl).origin) {
-      return c.html(cliErrorPage("That request came from somewhere unexpected."), 403);
+      return c.html(cliErrorPage("That request came from somewhere unexpected. Run `squii login` again."), 403);
     }
     let body: Record<string, unknown>;
     try {

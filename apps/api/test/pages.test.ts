@@ -116,3 +116,28 @@ describe("createAuth", () => {
     expect(await auth.getSessionUser(new Headers())).toBeNull();
   });
 });
+
+describe("home copy", () => {
+  it("marks the install as coming soon and does not mention squii hello", async () => {
+    const text = await (await (await app()).request("/")).text();
+    expect(text).toContain("npm i -g squii");
+    expect(text).toContain("coming soon");
+    expect(text).not.toContain("squii hello");
+  });
+});
+
+describe("loadEnv", () => {
+  const base = {
+    STORAGE_DATABASE_URL: "postgres://unused",
+    BETTER_AUTH_SECRET: "x",
+    BETTER_AUTH_URL: "http://localhost:8787",
+    GOOGLE_CLIENT_ID: "a",
+    GOOGLE_CLIENT_SECRET: "a",
+    GITHUB_CLIENT_ID: "a",
+    GITHUB_CLIENT_SECRET: "a",
+  };
+  it("treats an empty MIN_CLI_VERSION as unset", () => {
+    expect(loadEnv({ ...base, MIN_CLI_VERSION: "" }).MIN_CLI_VERSION).toBe("0.0.0");
+    expect(loadEnv({ ...base, MIN_CLI_VERSION: "0.1.0" }).MIN_CLI_VERSION).toBe("0.1.0");
+  });
+});

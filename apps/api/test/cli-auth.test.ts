@@ -172,6 +172,7 @@ describe("POST /cli/authorize", () => {
     const u = await seedUser(db);
     const res = await postAuthorize(appWith(), u.id, {}, { origin: "https://evil.example" });
     expect(res.status).toBe(403);
+    expect(await res.text()).toContain("Run `squii login` again.");
     expect(await db.select().from(cliAuthCode)).toHaveLength(0);
   });
 

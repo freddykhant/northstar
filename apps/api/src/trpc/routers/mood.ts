@@ -4,13 +4,19 @@ import { mood } from "../../db/schema.ts";
 import { assertBackfillable, assertPlausibleToday, localDateInput } from "../dates.ts";
 import { protectedProcedure, router } from "../init.ts";
 
+const LEVEL_MESSAGE = "Mood is a number from 1 to 5.";
+
 export const moodRouter = router({
   set: protectedProcedure
     .input(
       z.object({
         date: localDateInput,
         today: localDateInput,
-        level: z.number().int().min(1).max(5),
+        level: z
+          .number({ message: LEVEL_MESSAGE })
+          .int(LEVEL_MESSAGE)
+          .min(1, LEVEL_MESSAGE)
+          .max(5, LEVEL_MESSAGE),
       }),
     )
     .mutation(async ({ ctx, input }) => {

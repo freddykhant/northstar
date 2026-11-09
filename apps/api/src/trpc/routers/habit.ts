@@ -29,12 +29,19 @@ const categoryRank = sql.raw(
 /** Canonical habit list ordering: mind, body, soul, then oldest first. */
 export const habitOrderBy = [asc(categoryRank), asc(habit.createdAt), asc(habit.id)] as const;
 
+const NAME_MESSAGE = "Habit names can be 1 to 80 characters.";
 const nameSchema = z
-  .string()
+  .string({ message: NAME_MESSAGE })
   .transform((s) => s.trim().replace(/\s+/g, " "))
-  .pipe(z.string().min(1).max(80));
+  .pipe(z.string().min(1, NAME_MESSAGE).max(80, NAME_MESSAGE));
 
-const categorySchema = z.enum(CATEGORY_IDS);
+const categorySchema = z.enum(CATEGORY_IDS, { message: "Category is one of mind, body or soul." });
+
+export const habitId = z
+  .number({ message: "No habit with that id." })
+  .int("No habit with that id.")
+  .positive("No habit with that id.")
+  .max(2147483647, "No habit with that id.");
 
 function pgCode(err: unknown): unknown {
   const e = err as { code?: unknown; cause?: { code?: unknown } } | null;
@@ -93,7 +100,7 @@ export const habitRouter = router({
     }),
 
   update: protectedProcedure
-    .input(z.object({ id: z.number().int(), name: nameSchema.optional(), categoryId: categorySchema.optional() }))
+    .input(z.object({ id: habitId, name: nameSchema.optional(), categoryId: categorySchema.optional() }))
     .mutation(async ({ ctx, input }): Promise<Habit> => {
       const active = and(
         eq(habit.id, input.id),
@@ -126,7 +133,7 @@ export const habitRouter = router({
     }),
 
   archive: protectedProcedure
-    .input(z.object({ id: z.number().int() }))
+    .input(z.object({ id: habitId }))
     .mutation(async ({ ctx, input }): Promise<Habit> => {
       const now = ctx.now();
       const rows = await ctx.db
