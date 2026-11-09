@@ -13,8 +13,4 @@ A habit tracker that lights up squares like the greens in your GitHub profile, m
 
 ## Tech Stack
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+TypeScript CLI (Ink, clack), Hono + tRPC API, Drizzle + Neon, Better Auth
